@@ -1,33 +1,15 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Exam Generator</title>
-</head>
+<html>
+  <head>
+     <title>Flask-WTF Example</title>
+  </head>
 <body>
-    <h3>Generated Questions</h3>
-    <div class="container my-2">
-        <form method="POST">
-            {{ form.hidden_tag() }}
-            <ul>
-                <h4><li>{{ question.question_text }}</li></h4>
-                {{ form.ans.label }} &nbsp; &nbsp;{{ form.ans() }}{{ form.submit() }}
-                <p>{{ correct_answer }}</p>
-                <p id="result-message"></p>
-
-                {% if message %}
-                <p>{{ message }}</p>
-                {% endif %}
-            </ul>
-            <input type="hidden" name="question" value="{{ question.question_text }}">
-            <input type="hidden" name="correct_answer" value="{{ question.correct_answer }}">
-        </form>
-        
-    </div>
-    <a href="{{ url_for('add_question') }}">Add Question</a>
-    <a href="{{ url_for('test02') }}">test02</a>
-
+   <h1>Welcome to my website</h1>
+   <form method="POST" action="{{ url_for('index') }}">
+     {{ form.csrf_token }}
+     {{ form.name.label }}
+     {{ form.name }}
+     {{ form.submit }}
+   </form>
 </body>
 </html>

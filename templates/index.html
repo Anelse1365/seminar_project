@@ -1,15 +1,37 @@
 <!DOCTYPE html>
 <html>
-  <head>
-     <title>Flask-WTF Example</title>
-  </head>
+<head>
+    <title>Flask-WTF Example</title>
+    <style>
+        input[type="text"] {
+            width: 80%; /* กำหนดความกว้างให้เต็มพื้นที่ขององค์ประกอบพ่อแม่ */
+            padding: 10px; /* กำหนดระยะห่างภายในช่อง */
+            font-size: 16px; /* กำหนดขนาดตัวอักษร */
+        }
+    </style>
+</head>
 <body>
-   <h1>Welcome to my website</h1>
-   <form method="POST" action="{{ url_for('index') }}">
-     {{ form.csrf_token }}
-     {{ form.name.label }}
-     {{ form.name }}
-     {{ form.submit }}
-   </form>
+    <h1>Welcome to my website</h1>
+    <form method="POST" action="{{ url_for('index') }}">
+        {{ form.hidden_tag() }}
+        {{ form.name.label }}
+        {{ form.name(size=50) }} <!-- กำหนดขนาดของช่องอินพุต -->
+        {{ form.submit }}
+    </form>
+    <script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+            const inputField = document.querySelector('input[name="name"]');
+
+            inputField.addEventListener('input', () => {
+                const value = inputField.value;
+                const qIndex = value.indexOf('<q>');
+
+                if (qIndex !== -1 && !value.includes('</q>', qIndex)) {
+                    inputField.value = value + '</q>';
+                    inputField.setSelectionRange(qIndex + 3, qIndex + 3);
+                }
+            });
+        });
+    </script>
 </body>
 </html>

@@ -13,16 +13,19 @@ myclient = MongoClient('localhost', 27017)
 mydb = myclient["mydb"]
 questions_collection = mydb["questions"]
 numbers_collection = mydb["numbers"]
+answers_collection = mydb["answers"]
 
 class NameForm(FlaskForm):
-    name = StringField('Quiz', validators=[DataRequired()])
+    quiz = StringField('Quiz', validators=[DataRequired()])
+    answer = StringField('Answer', validators=[DataRequired()])
     submit = SubmitField('Submit')
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
     form = NameForm()
     if form.validate_on_submit():
-        text = form.name.data
+        text = form.quiz.data
+        answer = form.answer.data
         
         # ตรวจสอบและแยกข้อความที่ครอบด้วย <q></q>
         match_q = re.search(r'<q>(.*?)</q>', text)
@@ -40,7 +43,10 @@ def index():
 
             questions_collection.insert_one({'question': question_text})
 
-        return redirect(url_for('index', name=text))
+        # บันทึกคำตอบลงในคอลเล็กชัน answers
+        answers_collection.insert_one({'answer': answer})
+
+        return redirect(url_for('index'))
     return render_template('index.html', form=form)
 
 @app.route('/greet/<name>')

@@ -14,13 +14,19 @@
     <h1>Welcome to my website</h1>
     <form method="POST" action="{{ url_for('index') }}">
         {{ form.hidden_tag() }}
-        {{ form.name.label }}
-        {{ form.name(size=50) }} <!-- กำหนดขนาดของช่องอินพุต -->
+        <div>
+            {{ form.quiz.label }}<br>            
+            {{ form.quiz(size=50) }} <!-- กำหนดขนาดของช่องอินพุต -->    
+        </div>
+        <div>
+            {{ form.answer.label }}<br> 
+            {{ form.answer(size=50) }} <!-- กำหนดขนาดของช่องอินพุต -->
+        </div><br> 
         {{ form.submit }}
     </form>
     <script>
         document.addEventListener('DOMContentLoaded', (event) => {
-            const inputField = document.querySelector('input[name="name"]');
+            const inputField = document.querySelector('input[name="quiz"]');
 
             inputField.addEventListener('input', () => {
                 const value = inputField.value;

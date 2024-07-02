@@ -4,7 +4,6 @@ from wtforms import StringField, SubmitField
 from wtforms.validators import DataRequired
 from pymongo import MongoClient
 import re
-import random
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'mykey'
@@ -43,22 +42,11 @@ def index():
             num_dict = {}  # Dictionary to store numX values
 
             for num_tag, number in numbers:
-                if "random" in number:
-                    params = number.split(',')
-                    min_val = int(params[1])
-                    max_val = int(params[2])
-                    if len(params) == 4 and params[3] == 'odd':
-                        number = random.choice([x for x in range(min_val, max_val + 1) if x % 2 != 0])
-                    else:
-                        number = random.randint(min_val, max_val)
-                else:
-                    number = int(number)
-                
                 # Replace <numX> with the value of number
-                question_text = question_text.replace(f'<num{num_tag}>{number}</num{num_tag}>', str(number))
+                question_text = question_text.replace(f'<num{num_tag}>{number}</num{num_tag}>', number)
                 
                 # Add number to the dictionary
-                num_dict[f'num{num_tag}'] = number
+                num_dict[f'num{num_tag}'] = int(number)
 
             print(f"Final question_text: {question_text}")
             print(f"Number dictionary: {num_dict}")

@@ -33,6 +33,7 @@ def index():
         match_q = re.search(r'<q>(.*?)</q>', text)
         if match_q:
             question_text = match_q.group(1)
+            question_template = match_q.group(0)
             
             print(f"Extracted question_text: {question_text}")
 
@@ -63,21 +64,28 @@ def index():
             print(f"Final question_text: {question_text}")
             print(f"Number dictionary: {num_dict}")
 
-            # Evaluate the answer expression
-            answer_expr = answer
-            for num_tag, value in num_dict.items():
-                answer_expr = answer_expr.replace(num_tag, str(value))
-            evaluated_answer = eval(answer_expr)
+            try:
+                # Evaluate the answer expression
+                answer_expr = answer
+                for num_tag, value in num_dict.items():
+                    answer_expr = answer_expr.replace(num_tag, str(value))
+                
+                evaluated_answer = eval(answer_expr)
 
-            print(f"Evaluated answer: {evaluated_answer}")
+                print(f"Evaluated answer: {evaluated_answer}")
 
-            # Insert the question, numbers dictionary, answer template, and evaluated answer into the collection
-            questions_collection.insert_one({
-                'question': question_text,
-                'answer_template': answer,
-                'answer': evaluated_answer,
-                **num_dict
-            })
+                # Insert the question, question template, numbers dictionary, answer template, and evaluated answer into the collection
+                questions_collection.insert_one({
+                    'question': question_text,
+                    'answer': evaluated_answer,
+                    'question_template': question_template,
+                    'answer_template': answer,                  
+                    **num_dict
+                })
+                print("Document inserted successfully")
+
+            except Exception as e:
+                print(f"Error during evaluation or insertion: {e}")
 
         return redirect(url_for('index'))
     return render_template('index.html', form=form)

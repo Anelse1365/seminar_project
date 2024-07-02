@@ -26,22 +26,17 @@ def index():
         text = form.quiz.data
         answer = form.answer.data
         
-        print(f"Received quiz: {text}")
-        print(f"Received answer: {answer}")
-
         # ตรวจสอบและแยกข้อความที่ครอบด้วย <q></q>
         match_q = re.search(r'<q>(.*?)</q>', text)
         if match_q:
             question_text = match_q.group(1)
             
-            print(f"Extracted question_text: {question_text}")
-
             # ตรวจสอบและแยกตัวเลขที่ครอบด้วย <numX></numX>
             num_pattern = re.compile(r'<num(\d+)>(.*?)</num\1>')
             numbers = num_pattern.findall(question_text)
             
             num_dict = {}  # Dictionary to store numX values
-
+            
             for num_tag, number in numbers:
                 if "random" in number:
                     params = number.split(',')
@@ -60,24 +55,8 @@ def index():
                 # Add number to the dictionary
                 num_dict[f'num{num_tag}'] = number
 
-            print(f"Final question_text: {question_text}")
-            print(f"Number dictionary: {num_dict}")
-
-            # Evaluate the answer expression
-            answer_expr = answer
-            for num_tag, value in num_dict.items():
-                answer_expr = answer_expr.replace(num_tag, str(value))
-            evaluated_answer = eval(answer_expr)
-
-            print(f"Evaluated answer: {evaluated_answer}")
-
-            # Insert the question, numbers dictionary, answer template, and evaluated answer into the collection
-            questions_collection.insert_one({
-                'question': question_text,
-                'answer_template': answer,
-                'answer': evaluated_answer,
-                **num_dict
-            })
+            # Insert the question and the numbers dictionary into the collection
+            questions_collection.insert_one({'question': question_text, **num_dict})
 
         return redirect(url_for('index'))
     return render_template('index.html', form=form)

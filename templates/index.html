@@ -4,9 +4,9 @@
     <title>Flask-WTF Example</title>
     <style>
         input[type="text"] {
-            width: 80%; /* กำหนดความกว้างให้เต็มพื้นที่ขององค์ประกอบพ่อแม่ */
-            padding: 10px; /* กำหนดระยะห่างภายในช่อง */
-            font-size: 16px; /* กำหนดขนาดตัวอักษร */
+            width: 80%;
+            padding: 10px;
+            font-size: 16px;
         }
     </style>
 </head>
@@ -16,11 +16,11 @@
         {{ form.hidden_tag() }}
         <div>
             {{ form.quiz.label }}<br>            
-            {{ form.quiz(size=50) }} <!-- กำหนดขนาดของช่องอินพุต -->    
+            {{ form.quiz(size=50) }}
         </div>
         <div>
             {{ form.answer.label }}<br> 
-            {{ form.answer(size=50) }} <!-- กำหนดขนาดของช่องอินพุต -->
+            {{ form.answer(size=50) }}
         </div><br> 
         {{ form.submit }}
     </form>
@@ -30,11 +30,20 @@
 
             inputField.addEventListener('input', () => {
                 const value = inputField.value;
-                const qIndex = value.indexOf('<q>');
+                const openTagPattern = /<(\w+)>/g;
+                let match;
 
-                if (qIndex !== -1 && !value.includes('</q>', qIndex)) {
-                    inputField.value = value + '</q>';
-                    inputField.setSelectionRange(qIndex + 3, qIndex + 3);
+                while ((match = openTagPattern.exec(value)) !== null) {
+                    const tag = match[1];
+                    const openTag = `<${tag}>`;
+                    const closeTag = `</${tag}>`;
+                    const openTagIndex = match.index;
+                    const afterOpenTagIndex = openTagIndex + openTag.length;
+
+                    if (!value.includes(closeTag, afterOpenTagIndex)) {
+                        inputField.value = value.substring(0, afterOpenTagIndex) + closeTag + value.substring(afterOpenTagIndex);
+                        inputField.setSelectionRange(afterOpenTagIndex, afterOpenTagIndex);
+                    }
                 }
             });
         });

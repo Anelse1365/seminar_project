@@ -35,18 +35,21 @@ def index():
             
             print(f"Extracted question_text: {question_text}")
 
-            # ตรวจสอบและแยกตัวเลขที่ครอบด้วย <numX></numX>
-            num_pattern = re.compile(r'<num(\d+)>(.*?)</num\1>')
+            # ตรวจสอบและแยกตัวเลขที่ครอบด้วย <numX,type></numX>
+            num_pattern = re.compile(r'<num(\d+),(int|float)>(.*?)</num\1>')
             numbers = num_pattern.findall(question_text)
             
             num_dict = {}  # Dictionary to store numX values
 
-            for num_tag, number in numbers:
-                # Replace <numX> with the value of number
-                question_text = question_text.replace(f'<num{num_tag}>{number}</num{num_tag}>', number)
+            for num_tag, num_type, number in numbers:
+                # Replace <numX,type> with the value of number
+                question_text = question_text.replace(f'<num{num_tag},{num_type}>{number}</num{num_tag}>', number)
                 
-                # Add number to the dictionary
-                num_dict[f'num{num_tag}'] = int(number)
+                # Add number to the dictionary with the correct type
+                if num_type == 'int':
+                    num_dict[f'num{num_tag}'] = int(number)
+                elif num_type == 'float':
+                    num_dict[f'num{num_tag}'] = float(number)
 
             print(f"Final question_text: {question_text}")
             print(f"Number dictionary: {num_dict}")

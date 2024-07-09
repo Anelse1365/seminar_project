@@ -46,14 +46,12 @@ def index():
                 if '<random>' in content:
                     random_expr = re.search(r'<random>(.*?)</random>', content).group(1)
                     if ',' in random_expr:
-                        choices = [int(x) for x in random_expr.split(',') if '-' not in x]
-                        ranges = [x for x in random_expr.split(',') if '-' in x]
-                        for r in ranges:
-                            start, end = map(int, r.split('-'))
-                            choices.extend(range(start, end + 1))
-                    else:
+                        choices = list(map(int, random_expr.split(',')))
+                    elif '-' in random_expr:
                         start, end = map(int, random_expr.split('-'))
                         choices = list(range(start, end + 1))
+                    else:
+                        choices = [int(random_expr)]
                     
                     number = random.choice(choices)
                 else:

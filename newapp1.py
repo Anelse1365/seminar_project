@@ -4,7 +4,6 @@ from wtforms import StringField, SubmitField
 from wtforms.validators import DataRequired
 from pymongo import MongoClient
 import re
-import random
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'mykey'
@@ -36,32 +35,21 @@ def index():
             
             print(f"Extracted question_text: {question_text}")
 
-            # ตรวจสอบและแยกตัวเลขที่ครอบด้วย <numX,int></numX> หรือ <numX,int><random>...</random></numX>
-            num_pattern = re.compile(r'<num(\d+),(\w+)>(.*?)</num\1>')
+            # ตรวจสอบและแยกตัวเลขที่ครอบด้วย <numX,type></numX>
+            num_pattern = re.compile(r'<num(\d+),(int|float)>(.*?)</num\1>')
             numbers = num_pattern.findall(question_text)
             
             num_dict = {}  # Dictionary to store numX values
 
-            for num_tag, num_type, content in numbers:
-                if '<random>' in content:
-                    random_expr = re.search(r'<random>(.*?)</random>', content).group(1)
-                    if ',' in random_expr:
-                        choices = list(map(int, random_expr.split(',')))
-                    elif '-' in random_expr:
-                        start, end = map(int, random_expr.split('-'))
-                        choices = list(range(start, end + 1))
-                    else:
-                        choices = [int(random_expr)]
-                    
-                    number = random.choice(choices)
-                else:
-                    number = int(content)
-
-                # Replace <numX,int> or <numX,int><random>...</random></numX> with the value of number
-                question_text = question_text.replace(f'<num{num_tag},{num_type}>{content}</num{num_tag}>', str(number))
+            for num_tag, num_type, number in numbers:
+                # Replace <numX,type> with the value of number
+                question_text = question_text.replace(f'<num{num_tag},{num_type}>{number}</num{num_tag}>', number)
                 
-                # Add number to the dictionary
-                num_dict[f'num{num_tag}'] = number
+                # Add number to the dictionary with the correct type
+                if num_type == 'int':
+                    num_dict[f'num{num_tag}'] = int(number)
+                elif num_type == 'float':
+                    num_dict[f'num{num_tag}'] = float(number)
 
             print(f"Final question_text: {question_text}")
             print(f"Number dictionary: {num_dict}")
@@ -69,7 +57,7 @@ def index():
             # Evaluate the answer expression
             answer_expr = answer
             for num_tag, value in num_dict.items():
-                answer_expr = answer_expr.replace(f'num{num_tag}', str(value))
+                answer_expr = answer_expr.replace(num_tag, str(value))
             evaluated_answer = eval(answer_expr)
 
             print(f"Evaluated answer: {evaluated_answer}")

@@ -33,18 +33,7 @@
                 const openTagPattern = /<(\w+)>/g;
                 let match;
 
-                while ((match = openTagPattern.exec(value)) !== null) {
-                    const tag = match[1];
-                    const openTag = `<${tag}>`;
-                    const closeTag = `</${tag}>`;
-                    const openTagIndex = match.index;
-                    const afterOpenTagIndex = openTagIndex + openTag.length;
-
-                    if (!value.includes(closeTag, afterOpenTagIndex)) {
-                        inputField.value = value.substring(0, afterOpenTagIndex) + closeTag + value.substring(afterOpenTagIndex);
-                        inputField.setSelectionRange(afterOpenTagIndex, afterOpenTagIndex);
-                    }
-                }
+               
             });
         });
     </script>

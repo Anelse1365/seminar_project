@@ -29,34 +29,31 @@ def index():
         print(f"Received quiz: {text}")
         print(f"Received answer: {answer}")
 
+        # บันทึก template ของคำถาม
+        question_template = text
+
         # ตรวจสอบและแยกข้อความที่ครอบด้วย <q></q>
         match_q = re.search(r'<q>(.*?)</q>', text)
         if match_q:
             question_text = match_q.group(1)
-            question_template = match_q.group(0)
             
             print(f"Extracted question_text: {question_text}")
 
-            # ตรวจสอบและแยกตัวเลขที่ครอบด้วย <numX></numX>
-            num_pattern = re.compile(r'<num(\d+)>(.*?)</num\1>')
+            # ตรวจสอบและแยกตัวเลขที่ครอบด้วย <numX,type></numX>
+            num_pattern = re.compile(r'<num(\d+),(int|float)>(.*?)</num\1>')
             numbers = num_pattern.findall(question_text)
             
             num_dict = {}  # Dictionary to store numX values
 
-            for num_tag, number in numbers:
-                if "random" in number:
-                    params = number.split(',')
-                    min_val = int(params[1])
-                    max_val = int(params[2])
-                    if len(params) == 4 and params[3] == 'odd':
-                        number = random.choice([x for x in range(min_val, max_val + 1) if x % 2 != 0])
-                    else:
-                        number = random.randint(min_val, max_val)
+            for num_tag, num_type, content in numbers:
+                if '<random>' in content:
+                    random_expr = re.search(r'<random>(.*?)</random>', content).group(1)
+                    number = generate_random_number(random_expr, num_type)
                 else:
-                    number = int(number)
-                
-                # Replace <numX> with the value of number
-                question_text = question_text.replace(f'<num{num_tag}>{number}</num{num_tag}>', str(number))
+                    number = convert_to_type(content, num_type)
+
+                # Replace <numX,type> with the value of number
+                question_text = question_text.replace(f'<num{num_tag},{num_type}>{content}</num{num_tag}>', str(number))
                 
                 # Add number to the dictionary
                 num_dict[f'num{num_tag}'] = number
@@ -64,31 +61,56 @@ def index():
             print(f"Final question_text: {question_text}")
             print(f"Number dictionary: {num_dict}")
 
-            try:
-                # Evaluate the answer expression
-                answer_expr = answer
-                for num_tag, value in num_dict.items():
-                    answer_expr = answer_expr.replace(num_tag, str(value))
-                
-                evaluated_answer = eval(answer_expr)
+            # Evaluate the answer expression using the num_dict as local variables
+            evaluated_answer = eval(answer, {}, num_dict)
 
-                print(f"Evaluated answer: {evaluated_answer}")
+            print(f"Evaluated answer: {evaluated_answer}")
 
-                # Insert the question, question template, numbers dictionary, answer template, and evaluated answer into the collection
-                questions_collection.insert_one({
-                    'question': question_text,
-                    'answer': evaluated_answer,
-                    'question_template': question_template,
-                    'answer_template': answer,                  
-                    **num_dict
-                })
-                print("Document inserted successfully")
-
-            except Exception as e:
-                print(f"Error during evaluation or insertion: {e}")
+            # Insert the question, question template, numbers dictionary, answer template, and evaluated answer into the collection
+            questions_collection.insert_one({
+                'question_template': question_template,
+                'question': question_text,
+                'answer_template': answer,
+                'answer': evaluated_answer,
+                **num_dict
+            })
 
         return redirect(url_for('index'))
     return render_template('index.html', form=form)
+
+def generate_random_number(expression, num_type):
+    """
+    Generates a random number based on the expression.
+    """
+    if ',' in expression:
+        # Handle lists of numbers
+        choices = []
+        parts = expression.split(',')
+        for part in parts:
+            if '-' in part:
+                start, end = map(int, part.split('-'))
+                choices.extend(range(start, end + 1))
+            else:
+                choices.append(int(part))
+    elif '-' in expression:
+        # Handle ranges
+        start, end = map(int, expression.split('-'))
+        choices = range(start, end + 1)
+    else:
+        # Single number
+        choices = [int(expression)]
+
+    number = random.choice(choices)
+    return convert_to_type(number, num_type)
+
+def convert_to_type(value, num_type):
+    """
+    Converts the value to the specified type (int or float).
+    """
+    if num_type == 'int':
+        return int(value)
+    elif num_type == 'float':
+        return float(value)
 
 @app.route('/greet/<name>')
 def greet(name):

@@ -34,7 +34,7 @@ def index():
 
         # ตรวจสอบและแยกข้อความที่ครอบด้วย <q></q>
         match_q = re.search(r'<q>(.*?)</q>', text)
-        if match_q:
+        if (match_q):
             question_text = match_q.group(1)
             
             print(f"Extracted question_text: {question_text}")
@@ -58,21 +58,43 @@ def index():
                 # Add number to the dictionary
                 num_dict[f'num{num_tag}'] = number
 
+            # ตรวจสอบและแยก operator ที่ครอบด้วย <opt></opt>
+            opt_pattern = re.compile(r'<opt>(.*?)</opt>')
+            operators = opt_pattern.findall(question_text)
+            
+            opt_dict = {}  # Dictionary to store operators
+
+            for idx, content in enumerate(operators):
+                if '<random>' in content:
+                    random_expr = re.search(r'<random>(.*?)</random>', content).group(1)
+                    operator = random.choice(random_expr.split(','))
+                else:
+                    operator = content
+
+                # Replace <opt> with the value of operator
+                question_text = question_text.replace(f'<opt>{content}</opt>', operator)
+                
+                # Add operator to the dictionary
+                opt_dict[f'opt{idx}'] = operator
+
             print(f"Final question_text: {question_text}")
             print(f"Number dictionary: {num_dict}")
+            print(f"Operator dictionary: {opt_dict}")
 
-            # Evaluate the answer expression using the num_dict as local variables
-            evaluated_answer = eval(answer, {}, num_dict)
+            # Evaluate the answer expression using the num_dict and opt_dict as local variables
+            eval_context = {**num_dict, **opt_dict}
+            evaluated_answer = eval(answer, {}, eval_context)
 
             print(f"Evaluated answer: {evaluated_answer}")
 
-            # Insert the question, question template, numbers dictionary, answer template, and evaluated answer into the collection
+            # Insert the question, question template, numbers dictionary, answer template, evaluated answer, and operator dictionary into the collection
             questions_collection.insert_one({
                 'question_template': question_template,
                 'question': question_text,
                 'answer_template': answer,
                 'answer': evaluated_answer,
-                **num_dict
+                **num_dict,
+                **opt_dict
             })
 
         return redirect(url_for('index'))

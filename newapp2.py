@@ -145,9 +145,9 @@ def safe_eval(expression, eval_context):
     # Evaluate expression in a restricted environment
     return eval(expression, {"__builtins__": None}, eval_context)
 
-@app.route('/greet/<name>')
-def greet(name):
-    return render_template('greet.html', name=name)
+@app.route('/quiz_maker',methods=['GET', 'POST'] )
+def quiz_maker():
+    return render_template('quiz_maker.html')
 
 if __name__ == '__main__':
     app.run(debug=True)

@@ -1,45 +1,28 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Flask-WTF Example</title>
-    <style>
-        input[type="text"] {
-            width: 80%;
-            padding: 10px;
-            font-size: 16px;
-        }
-    </style>
-</head>
-<body>
-    <h1>Welcome to my website</h1>
-    <form method="POST" action="{{ url_for('index') }}">
-        {{ form.hidden_tag() }}
-        <div>
-            {{ form.quiz.label }}<br>            
-            {{ form.quiz(size=50) }}
-        </div>
-        <div>
-            {{ form.answer.label }}<br> 
-            {{ form.answer(size=50) }}
-        </div>
-        <div>
-            {{ form.num_questions.label }}<br>
-            {{ form.num_questions(size=50) }}
-        </div><br> 
-        {{ form.submit }}
-    </form>
-    <script>
-        document.addEventListener('DOMContentLoaded', (event) => {
-            const inputField = document.querySelector('input[name="quiz"]');
+{% extends 'base.html' %}
 
-            inputField.addEventListener('input', () => {
-                const value = inputField.value;
-                const openTagPattern = /<(\w+)>/g;
-                let match;
-
-               
-            });
-        });
-    </script>
-</body>
-</html>
+{% block body %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <h1 class="text-center">Welcome to my website</h1>
+            <form method="POST" action="{{ url_for('index') }}">
+                {{ form.hidden_tag() }}
+                <div class="mb-3">
+                    <label for="quiz" class="form-label">{{ form.quiz.label }}</label>
+                    {{ form.quiz(class="form-control", id="quiz") }}
+                </div>
+                <div class="mb-3">
+                    <label for="answer" class="form-label">{{ form.answer.label }}</label>
+                    {{ form.answer(class="form-control", id="answer") }}
+                </div>
+                <div class="mb-3">
+                    <label for="num_questions" class="form-label">{{ form.num_questions.label }}</label>
+                    {{ form.num_questions(class="form-control", id="num_questions") }}
+                </div>
+                <button type="submit" class="btn btn-primary w-100">{{ form.submit.label }}</button>
+            </form>
+            <a href="/quiz_maker" class="btn btn-secondary w-100 mt-3">Next &raquo;</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

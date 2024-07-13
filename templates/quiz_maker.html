@@ -1,24 +1,53 @@
 {% extends 'base.html' %}
-{% block title %}Home {% endblock %}
+{% block title %}Quiz Maker{% endblock %}
 {% block body %}
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-lg-6">
-            <h1 class="text-center">Hello, Flask Render Template</h1><br>
-            <div class="mb-3">
-                <label for="exampleInputPassword1" class="form-label">เลือก Template</label>
-                <select class="form-select form-select-lg" aria-label=".form-select-lg example">
-                    <option selected>Select</option>
-                    <option value="1">One</option>
-                    <option value="2">Two</option>
-                    <option value="3">Three</option>
-                </select>
-            </div>
-            <div class="mb-3">
-                <label for="disabledTextInput" class="form-label">เฉลย</label>
-                <input type="text" id="disabledTextInput" class="form-control" placeholder="รูปแบบเฉลย">
-              </div>
+            <h1 class="text-center">Create Quizzes</h1><br>
+            <form method="POST" action="{{ url_for('quiz_maker') }}">
+                <div class="mb-3">
+                    <label for="template" class="form-label">เลือก Template</label>
+                    <select name="template" id="template" class="form-select form-select-lg" aria-label="Select Template" onchange="updateAnswerTemplate()">
+                        <option selected>Select</option>
+                        {% for template in templates %}
+                            <option value="{{ template[0] }}" data-answer="{{ template[2] }}">{{ template[1] }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="answer_template" class="form-label">เฉลย</label>
+                    <input type="text" id="answer_template" class="form-control" placeholder="รูปแบบเฉลย" disabled>
+                </div>
+                <div class="mb-3">
+                    <label for="num_sets" class="form-label">จำนวนชุด</label>
+                    <input type="number" name="num_sets" class="form-control" id="num_sets" placeholder="จำนวนชุด">
+                </div>
+                <div class="mb-3">
+                    <label for="collection" class="form-label">เลือก Collection หรือสร้างใหม่</label>
+                    <select name="collection" id="collection" class="form-select form-select-lg" aria-label="Select Collection">
+                        <option selected>Select Collection</option>
+                        {% for collection in collections %}
+                            <option value="{{ collection }}">{{ collection }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="new_collection" class="form-label">หรือสร้าง Collection ใหม่</label>
+                    <input type="text" name="new_collection" class="form-control" id="new_collection" placeholder="ชื่อ Collection ใหม่">
+                </div>
+                <button type="submit" class="btn btn-primary w-100">Generate</button>
+            </form>
         </div>
     </div>
 </div>
+
+<script>
+function updateAnswerTemplate() {
+    var select = document.getElementById('template');
+    var selectedOption = select.options[select.selectedIndex];
+    var answerTemplate = selectedOption.getAttribute('data-answer');
+    document.getElementById('answer_template').value = answerTemplate;
+}
+</script>
 {% endblock %}

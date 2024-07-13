@@ -12,7 +12,7 @@ app.config['SECRET_KEY'] = 'mykey'
 # MongoClient
 myclient = MongoClient('mongodb+srv://admin:1234@cluster0.dvcham8.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0')
 mydb = myclient["mydb"]
-questions_collection = mydb["questions"]
+questions_collection = mydb["questions_template"]
 
 class NameForm(FlaskForm):
     quiz = StringField('Quiz', validators=[DataRequired()])

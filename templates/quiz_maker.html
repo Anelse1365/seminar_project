@@ -24,7 +24,7 @@
                     <input type="number" name="num_sets" class="form-control" id="num_sets" placeholder="จำนวนชุด">
                 </div>
                 <div class="mb-3">
-                    <label for="collection" class="form-label">เลือก Collection หรือสร้างใหม่</label>
+                    <label for="collection" class="form-label">เลือกที่จัดเก็บ</label>
                     <select name="collection" id="collection" class="form-select form-select-lg" aria-label="Select Collection">
                         <option selected>Select Collection</option>
                         {% for collection in collections %}
@@ -33,7 +33,7 @@
                     </select>
                 </div>
                 <div class="mb-3">
-                    <label for="new_collection" class="form-label">หรือสร้าง Collection ใหม่</label>
+                    <label for="new_collection" class="form-label">สร้างที่จัดเก็บใหม่</label>
                     <input type="text" name="new_collection" class="form-control" id="new_collection" placeholder="ชื่อ Collection ใหม่">
                 </div>
                 <button type="submit" class="btn btn-primary w-100">Generate</button>

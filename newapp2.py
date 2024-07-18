@@ -47,9 +47,11 @@ def index():
             num_dict = {}  # Dictionary to store numX values
 
             for num_tag, num_type, content in numbers:
-                if '<random>' in content:
-                    random_expr = re.search(r'<random>(.*?)</random>', content).group(1)
-                    number = generate_random_number(random_expr, num_type)
+                random_match = re.search(r'<random(?:\.(odd|even))?>(.*?)</random>', content)
+                if random_match:
+                    condition = random_match.group(1)
+                    random_expr = random_match.group(2)
+                    number = generate_random_number(random_expr, num_type, condition)
                 else:
                     number = convert_to_type(content, num_type)
 
@@ -107,6 +109,7 @@ def index():
         return redirect(url_for('index'))
     return render_template('index.html', form=form)
 
+
 @app.route('/quiz_maker', methods=['GET', 'POST'])
 def quiz_maker():
     templates = list(questions_template_collection.find({}, {'_id': 1, 'question_template': 1, 'answer_template': 1}))
@@ -129,13 +132,16 @@ def quiz_maker():
         selected_template = questions_template_collection.find_one({'_id': ObjectId(template_id)})
         
         if selected_template:
+            question_template = selected_template['question_template']
+            answer_template = selected_template['answer_template']
+
             for _ in range(num_sets):
-                question_text = selected_template['question']
-                num_dict = {k: v for k, v in selected_template.items() if k.startswith('num')}
-                opt_dict = {k: v for k, v in selected_template.items() if k.startswith('opt')}
+                # Generate new question and answer based on the template
+                question_text, num_dict, opt_dict = process_question_template(question_template)
                 eval_context = {**num_dict, **opt_dict}
-                evaluated_answer = safe_eval(selected_template['answer_template'], eval_context)
+                evaluated_answer = safe_eval(answer_template, eval_context)
                 
+                # Insert the newly generated question and answer into the specified collection
                 collection.insert_one({
                     'question': question_text,
                     'answer': evaluated_answer,
@@ -150,9 +156,70 @@ def quiz_maker():
 
     return render_template('quiz_maker.html', templates=template_options, collections=collections)
 
-def generate_random_number(expression, num_type):
+def process_question_template(template):
     """
-    Generates a random number based on the expression.
+    Process the question template to generate a new question and return the question text, num_dict, and opt_dict.
+    """
+    # ตรวจสอบและแยกข้อความที่ครอบด้วย <q></q>
+    match_q = re.search(r'<q>(.*?)</q>', template)
+    if match_q:
+        question_text = match_q.group(1)
+        
+        print(f"Extracted question_text: {question_text}")
+
+        # ตรวจสอบและแยกตัวเลขที่ครอบด้วย <numX,type></numX>
+        num_pattern = re.compile(r'<num(\d+),(int|float)>(.*?)</num\1>')
+        numbers = num_pattern.findall(question_text)
+        
+        num_dict = {}  # Dictionary to store numX values
+
+        for num_tag, num_type, content in numbers:
+            random_match = re.search(r'<random(?:\.(odd|even))?>(.*?)</random>', content)
+            if random_match:
+                condition = random_match.group(1)
+                random_expr = random_match.group(2)
+                number = generate_random_number(random_expr, num_type, condition)
+            else:
+                number = convert_to_type(content, num_type)
+
+            # Replace <numX,type> with the value of number
+            question_text = question_text.replace(f'<num{num_tag},{num_type}>{content}</num{num_tag}>', str(number))
+            
+            # Add number to the dictionary
+            num_dict[f'num{num_tag}'] = number
+
+        # ตรวจสอบและแยก operator ที่ครอบด้วย <opt></opt>
+        opt_pattern = re.compile(r'<opt>(.*?)</opt>')
+        operators = opt_pattern.findall(question_text)
+        
+        opt_dict = {}  # Dictionary to store operators
+
+        for idx, content in enumerate(operators):
+            if '<random>' in content:
+                random_expr = re.search(r'<random>(.*?)</random>', content).group(1)
+                operator = random.choice(random_expr.split(','))
+            else:
+                operator = content
+
+            # Replace <opt> with the value of operator
+            question_text = question_text.replace(f'<opt>{content}</opt>', operator)
+            
+            # Add operator to the dictionary
+            opt_dict[f'opt{idx}'] = operator
+
+        print(f"Final question_text: {question_text}")
+        print(f"Number dictionary: {num_dict}")
+        print(f"Operator dictionary: {opt_dict}")
+
+        return question_text, num_dict, opt_dict
+
+    return template, {}, {}
+
+
+
+def generate_random_number(expression, num_type, condition=None):
+    """
+    Generates a random number based on the expression and the specified condition.
     """
     choices = []
     if ',' in expression:
@@ -171,6 +238,12 @@ def generate_random_number(expression, num_type):
     else:
         # Single number
         choices = [int(expression)]
+    
+    if condition:
+        if condition == 'even':
+            choices = [num for num in choices if num % 2 == 0]
+        elif condition == 'odd':
+            choices = [num for num in choices if num % 2 != 0]
 
     number = random.choice(choices)
     return convert_to_type(number, num_type)
@@ -190,6 +263,7 @@ def safe_eval(expression, eval_context):
     """
     # Evaluate expression in a restricted environment
     return eval(expression, {"__builtins__": None}, eval_context)
+
 
 if __name__ == '__main__':
     app.run(debug=True)

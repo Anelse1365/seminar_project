@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% block title %}Quiz Maker{% endblock %}
+{% block body %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <h1 class="text-center">Exercise</h1><br>
+            <form method="POST" action="{{ url_for('quiz_maker') }}">
+                <div class="mb-3">
+                    <label for="template" class="form-label">เลือก Question</label>
+                    <select name="template" id="template" class="form-select form-select-lg" aria-label="Select Template" onchange="updateAnswerTemplate()">
+                        <option selected>Select</option>
+                        {% for template in templates %}
+                            <option value="{{ template[0] }}" data-answer="{{ template[2] }}">{{ template[1] }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="answer_template" class="form-label">เฉลย</label>
+                    <input type="text" id="answer_template" class="form-control" placeholder="รูปแบบเฉลย" disabled>
+                </div>
+                <button type="submit" class="btn btn-primary w-100">Generate</button>
+                <a href="/" class="btn btn-secondary w-100 mt-3">Back</a>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+function updateAnswerTemplate() {
+    var select = document.getElementById('template');
+    var selectedOption = select.options[select.selectedIndex];
+    var answerTemplate = selectedOption.getAttribute('data-answer');
+    document.getElementById('answer_template').value = answerTemplate;
+}
+</script>
+{% endblock %}

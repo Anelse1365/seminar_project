@@ -1,7 +1,7 @@
 from bson import ObjectId
 from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField
+from wtforms import StringField, SubmitField, TextAreaField
 from wtforms.validators import DataRequired
 from pymongo import MongoClient
 import re
@@ -17,7 +17,7 @@ questions_template_collection = mydb["questions_template"]
 p_name_collection = mydb["p_name"]
 
 class NameForm(FlaskForm):
-    quiz = StringField('Quiz', validators=[DataRequired()])
+    quiz = TextAreaField('Quiz', validators=[DataRequired()])
     answer = StringField('Answer', validators=[DataRequired()])
     submit = SubmitField('Submit')
 
@@ -94,7 +94,6 @@ def index():
         return redirect(url_for('index'))
     return render_template('index.html', form=form)
 
-
 @app.route('/quiz_maker', methods=['GET', 'POST'])
 def quiz_maker():
     templates = list(questions_template_collection.find({}, {'_id': 1, 'question_template': 1, 'answer_template': 1}))
@@ -167,86 +166,91 @@ def quiz_maker():
 
     return render_template('quiz_maker.html', templates=template_options, collections=collections)
 
+@app.route('/create_exercise', methods=['GET', 'POST'])
+def exercise():
+    templates = list(questions_template_collection.find({}, {'_id': 1, 'question_template': 1, 'answer_template': 1}))
+    template_options = [(str(template['_id']), template['question_template'], template['answer_template']) for template in templates]
+    
+    collections = mydb.list_collection_names()
+    collections.remove('questions_template')  # Exclude the template collection from the options
+    
+    return render_template('create_exercise.html', templates=template_options, collections=collections)
+
+
 def process_question_template(template):
     """
     Process the question template to generate a new question and return the question text, num_dict, opt_dict, and person_dict.
     """
-    # Extract text within <q></q>
-    match_q = re.search(r'<q>(.*?)</q>', template)
-    if match_q:
-        question_text = match_q.group(1)
+    question_text = template
+    
+    print(f"Extracted question_text: {question_text}")
+
+    # Extract and replace <numX,type></numX> tags
+    num_pattern = re.compile(r'<num(\d+),(int|float)>(.*?)</num\1>')
+    numbers = num_pattern.findall(question_text)
+    
+    num_dict = {}  # Dictionary to store numX values
+
+    for num_tag, num_type, content in numbers:
+        random_match = re.search(r'<random(?:\.(odd|even))?>(.*?)</random>', content)
+        if random_match:
+            condition = random_match.group(1)
+            random_expr = random_match.group(2)
+            number = generate_random_number(random_expr, num_type, condition)
+        else:
+            number = convert_to_type(content, num_type)
+
+        # Replace <numX,type> with the value of number
+        question_text = question_text.replace(f'<num{num_tag},{num_type}>{content}</num{num_tag}>', str(number))
         
-        print(f"Extracted question_text: {question_text}")
+        # Add number to the dictionary
+        num_dict[f'num{num_tag}'] = number
 
-        # Extract and replace <numX,type></numX> tags
-        num_pattern = re.compile(r'<num(\d+),(int|float)>(.*?)</num\1>')
-        numbers = num_pattern.findall(question_text)
+    # Extract and replace <opt></opt> tags
+    opt_pattern = re.compile(r'<opt>(.*?)</opt>')
+    operators = opt_pattern.findall(question_text)
+    
+    opt_dict = {}  # Dictionary to store operators
+
+    for idx, content in enumerate(operators):
+        if '<random>' in content:
+            random_expr = re.search(r'<random>(.*?)</random>', content).group(1)
+            operator = random.choice(random_expr.split(','))
+        else:
+            operator = content
+
+        # Replace <opt> with the value of operator
+        question_text = question_text.replace(f'<opt>{content}</opt>', operator)
         
-        num_dict = {}  # Dictionary to store numX values
+        # Add operator to the dictionary
+        opt_dict[f'opt{idx}'] = operator
 
-        for num_tag, num_type, content in numbers:
-            random_match = re.search(r'<random(?:\.(odd|even))?>(.*?)</random>', content)
-            if random_match:
-                condition = random_match.group(1)
-                random_expr = random_match.group(2)
-                number = generate_random_number(random_expr, num_type, condition)
-            else:
-                number = convert_to_type(content, num_type)
+    # Extract and replace <personX> tags
+    person_pattern = re.compile(r'<person(\d+)>')
+    persons = person_pattern.findall(question_text)
+    
+    person_dict = {}  # Dictionary to store personX values
+    used_names = {}  # Dictionary to keep track of assigned names
 
-            # Replace <numX,type> with the value of number
-            question_text = question_text.replace(f'<num{num_tag},{num_type}>{content}</num{num_tag}>', str(number))
-            
-            # Add number to the dictionary
-            num_dict[f'num{num_tag}'] = number
+    for person_tag in persons:
+        if person_tag not in used_names:
+            person_name = get_random_person_name(used_names.values())
+            used_names[person_tag] = person_name
+        else:
+            person_name = used_names[person_tag]
 
-        # Extract and replace <opt></opt> tags
-        opt_pattern = re.compile(r'<opt>(.*?)</opt>')
-        operators = opt_pattern.findall(question_text)
+        # Replace <personX> with the value of person_name
+        question_text = question_text.replace(f'<person{person_tag}>', person_name)
         
-        opt_dict = {}  # Dictionary to store operators
+        # Add person to the dictionary
+        person_dict[f'person{person_tag}'] = person_name
 
-        for idx, content in enumerate(operators):
-            if '<random>' in content:
-                random_expr = re.search(r'<random>(.*?)</random>', content).group(1)
-                operator = random.choice(random_expr.split(','))
-            else:
-                operator = content
+    print(f"Final question_text: {question_text}")
+    print(f"Number dictionary: {num_dict}")
+    print(f"Operator dictionary: {opt_dict}")
+    print(f"Person dictionary: {person_dict}")
 
-            # Replace <opt> with the value of operator
-            question_text = question_text.replace(f'<opt>{content}</opt>', operator)
-            
-            # Add operator to the dictionary
-            opt_dict[f'opt{idx}'] = operator
-
-        # Extract and replace <personX> tags
-        person_pattern = re.compile(r'<person(\d+)>')
-        persons = person_pattern.findall(question_text)
-        
-        person_dict = {}  # Dictionary to store personX values
-        used_names = {}  # Dictionary to keep track of assigned names
-
-        for person_tag in persons:
-            if person_tag not in used_names:
-                person_name = get_random_person_name(used_names.values())
-                used_names[person_tag] = person_name
-            else:
-                person_name = used_names[person_tag]
-
-            # Replace <personX> with the value of person_name
-            question_text = question_text.replace(f'<person{person_tag}>', person_name)
-            
-            # Add person to the dictionary
-            person_dict[f'person{person_tag}'] = person_name
-
-        print(f"Final question_text: {question_text}")
-        print(f"Number dictionary: {num_dict}")
-        print(f"Operator dictionary: {opt_dict}")
-        print(f"Person dictionary: {person_dict}")
-
-        return question_text, num_dict, opt_dict, person_dict, numbers
-
-    return template, {}, {}, {}, []
-
+    return question_text, num_dict, opt_dict, person_dict, numbers
 
 def generate_random_number(expression, num_type, condition=None):
     """

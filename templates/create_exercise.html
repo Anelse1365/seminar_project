@@ -4,8 +4,8 @@
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-lg-6">
-            <h1 class="text-center">Exercise</h1><br>
-            <form method="POST" action="{{ url_for('quiz_maker') }}">
+            <h1 class="text-center">Create Exercise</h1><br>
+            <form id="create-exercise-form" method="POST" action="{{ url_for('create_exercise') }}" target="_blank">
                 <div class="mb-3">
                     <label for="template" class="form-label">เลือก Question</label>
                     <select name="template" id="template" class="form-select form-select-lg" aria-label="Select Template" onchange="updateAnswerTemplate()">

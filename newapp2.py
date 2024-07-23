@@ -167,14 +167,96 @@ def quiz_maker():
     return render_template('quiz_maker.html', templates=template_options, collections=collections)
 
 @app.route('/create_exercise', methods=['GET', 'POST'])
-def exercise():
+def create_exercise():
     templates = list(questions_template_collection.find({}, {'_id': 1, 'question_template': 1, 'answer_template': 1}))
     template_options = [(str(template['_id']), template['question_template'], template['answer_template']) for template in templates]
     
-    collections = mydb.list_collection_names()
-    collections.remove('questions_template')  # Exclude the template collection from the options
+    if request.method == 'POST':
+        template_id = request.form['template']
+        selected_template = questions_template_collection.find_one({'_id': ObjectId(template_id)})
+
+        if selected_template:
+            question_template = selected_template['question_template']
+            answer_template = selected_template['answer_template']
+
+            # Generate new question and answer based on the template
+            question_text, num_dict, opt_dict, person_dict, numbers = process_question_template(question_template)
+            rule_no_minus = '<rule.noMinus>' in answer_template
+            if rule_no_minus:
+                answer_template = answer_template.replace('<rule.noMinus>', '')
+
+            eval_context = {**num_dict, **opt_dict, **person_dict}
+            evaluated_answer = safe_eval(answer_template, eval_context)
+
+            # ถ้า answer ยังติดลบอยู่ ให้สุ่มตัวเลขใหม่จนกว่า answer จะไม่ติดลบ
+            while rule_no_minus and evaluated_answer < 0:
+                for num_tag, num_type, content in numbers:
+                    random_match = re.search(r'<random(?:\.(odd|even))?>(.*?)</random>', content)
+                    if random_match:
+                        condition = random_match.group(1)
+                        random_expr = random_match.group(2)
+                        number = generate_random_number(random_expr, num_type, condition)
+                    else:
+                        number = convert_to_type(content, num_type)
+
+                    # Replace <numX,type> with the value of number
+                    question_text = question_text.replace(f'<num{num_tag},{num_type}>{content}</num{num_tag}>', str(number))
+                    
+                    # Add number to the dictionary
+                    num_dict[f'num{num_tag}'] = number
+
+                # Re-evaluate the answer expression using the updated num_dict
+                eval_context = {**num_dict, **opt_dict, **person_dict}
+                evaluated_answer = safe_eval(answer_template, eval_context)
+
+            # Insert the newly generated question and answer into a temporary collection
+            generated_question = {
+                'question': question_text,
+                'answer': evaluated_answer,
+                **num_dict,
+                **opt_dict,
+                **person_dict
+            }
+
+            # Store the generated question in the session or a temporary collection
+            result = mydb['generated_questions'].insert_one(generated_question)
+
+            # Redirect to the exercise page with the new question
+            return redirect(url_for('exercise', question_id=str(result.inserted_id)), code=303)
+        
+        flash('Selected template not found.', 'error')
+        return redirect(url_for('create_exercise'))
     
-    return render_template('create_exercise.html', templates=template_options, collections=collections)
+    return render_template('create_exercise.html', templates=template_options)
+
+
+
+@app.route('/exercise/<question_id>', methods=['GET', 'POST'])
+def exercise(question_id):
+    question = mydb['generated_questions'].find_one({'_id': ObjectId(question_id)})
+    if not question:
+        flash('Question not found.', 'error')
+        return redirect(url_for('index'))
+
+    submitted = False
+    user_answer = None
+    correct_answer = None
+    is_correct = False
+
+    if request.method == 'POST':
+        user_answer = request.form['answer']
+        correct_answer = question['answer']
+        is_correct = str(user_answer) == str(correct_answer)
+        submitted = True
+
+    return render_template('exercise.html', question=question, submitted=submitted, user_answer=user_answer, correct_answer=correct_answer, is_correct=is_correct)
+
+
+@app.route('/submit_answer/<question_id>', methods=['POST'])
+def submit_answer(question_id):
+    user_answer = request.form['answer']
+    return redirect(url_for('exercise', question_id=question_id, user_answer=user_answer))
+
 
 
 def process_question_template(template):

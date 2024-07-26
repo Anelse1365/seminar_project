@@ -27,31 +27,25 @@ def index():
     if form.validate_on_submit():
         text = form.quiz.data
         answer = form.answer.data
-        
+
         print(f"Received quiz: {text}")
         print(f"Received answer: {answer}")
 
-        # บันทึก template ของคำถาม
         question_template = text
-
-        # Process the template to extract and replace dynamic content
-        question_text, num_dict, opt_dict, person_dict, numbers = process_question_template(question_template)
+        question_text, num_dict, opt_dict, person_dict, obj_dict, numbers = process_question_template(question_template)
 
         print(f"Final question_text: {question_text}")
         print(f"Number dictionary: {num_dict}")
         print(f"Operator dictionary: {opt_dict}")
         print(f"Person dictionary: {person_dict}")
 
-        # ตรวจสอบและแยก <rule.noMinus>
         rule_no_minus = '<rule.noMinus>' in answer
         if rule_no_minus:
             answer = answer.replace('<rule.noMinus>', '')
 
-        # Evaluate the answer expression using the num_dict and opt_dict as local variables
-        eval_context = {**num_dict, **opt_dict, **person_dict}
+        eval_context = {**num_dict, **opt_dict, **person_dict, **obj_dict}
         evaluated_answer = safe_eval(answer, eval_context)
 
-        # ถ้า answer ยังติดลบอยู่ ให้สุ่มตัวเลขใหม่จนกว่า answer จะไม่ติดลบ
         while rule_no_minus and evaluated_answer < 0:
             for num_tag, num_type, content in numbers:
                 random_match = re.search(r'<random(?:\.(odd|even))?>(.*?)</random>', content)
@@ -61,20 +55,14 @@ def index():
                     number = generate_random_number(random_expr, num_type, condition)
                 else:
                     number = convert_to_type(content, num_type)
-
-                # Replace <numX,type> with the value of number
                 question_text = question_text.replace(f'<num{num_tag},{num_type}>{content}</num{num_tag}>', str(number))
-                
-                # Add number to the dictionary
                 num_dict[f'num{num_tag}'] = number
 
-            # Re-evaluate the answer expression using the updated num_dict
-            eval_context = {**num_dict, **opt_dict, **person_dict}
+            eval_context = {**num_dict, **opt_dict, **person_dict, **obj_dict}
             evaluated_answer = safe_eval(answer, eval_context)
 
         print(f"Evaluated answer: {evaluated_answer}")
 
-        # Insert the question, question template, numbers dictionary, answer template, evaluated answer, and operator dictionary into the collection
         try:
             questions_template_collection.insert_one({
                 'question_template': question_template,
@@ -83,7 +71,8 @@ def index():
                 'answer': evaluated_answer,
                 **num_dict,
                 **opt_dict,
-                **person_dict
+                **person_dict,
+                **obj_dict
             })
             print("Document inserted successfully")
             flash('Template saved successfully!', 'success')
@@ -94,13 +83,14 @@ def index():
         return redirect(url_for('index'))
     return render_template('index.html', form=form)
 
+
 @app.route('/quiz_maker', methods=['GET', 'POST'])
 def quiz_maker():
     templates = list(questions_template_collection.find({}, {'_id': 1, 'question_template': 1, 'answer_template': 1}))
     template_options = [(str(template['_id']), template['question_template'], template['answer_template']) for template in templates]
     
     collections = mydb.list_collection_names()
-    collections.remove('questions_template')  # Exclude the template collection from the options
+    collections.remove('questions_template')
 
     if request.method == 'POST':
         template_id = request.form['template']
@@ -120,16 +110,14 @@ def quiz_maker():
             answer_template = selected_template['answer_template']
 
             for _ in range(num_sets):
-                # Generate new question and answer based on the template
-                question_text, num_dict, opt_dict, person_dict, numbers = process_question_template(question_template)
+                question_text, num_dict, opt_dict, person_dict, obj_dict, numbers = process_question_template(question_template)
                 rule_no_minus = '<rule.noMinus>' in answer_template
                 if rule_no_minus:
                     answer_template = answer_template.replace('<rule.noMinus>', '')
 
-                eval_context = {**num_dict, **opt_dict, **person_dict}
+                eval_context = {**num_dict, **opt_dict, **person_dict, **obj_dict}
                 evaluated_answer = safe_eval(answer_template, eval_context)
                 
-                # ถ้า answer ยังติดลบอยู่ ให้สุ่มตัวเลขใหม่จนกว่า answer จะไม่ติดลบ
                 while rule_no_minus and evaluated_answer < 0:
                     for num_tag, num_type, content in numbers:
                         random_match = re.search(r'<random(?:\.(odd|even))?>(.*?)</random>', content)
@@ -139,24 +127,19 @@ def quiz_maker():
                             number = generate_random_number(random_expr, num_type, condition)
                         else:
                             number = convert_to_type(content, num_type)
-
-                        # Replace <numX,type> with the value of number
                         question_text = question_text.replace(f'<num{num_tag},{num_type}>{content}</num{num_tag}>', str(number))
-                        
-                        # Add number to the dictionary
                         num_dict[f'num{num_tag}'] = number
 
-                    # Re-evaluate the answer expression using the updated num_dict
-                    eval_context = {**num_dict, **opt_dict, **person_dict}
+                    eval_context = {**num_dict, **opt_dict, **person_dict, **obj_dict}
                     evaluated_answer = safe_eval(answer_template, eval_context)
 
-                # Insert the newly generated question and answer into the specified collection
                 collection.insert_one({
                     'question': question_text,
                     'answer': evaluated_answer,
                     **num_dict,
                     **opt_dict,
-                    **person_dict
+                    **person_dict,
+                    **obj_dict
                 })
             flash('Quizzes generated successfully!', 'success')
         else:
@@ -165,6 +148,7 @@ def quiz_maker():
         return redirect(url_for('quiz_maker'))
 
     return render_template('quiz_maker.html', templates=template_options, collections=collections)
+
 
 @app.route('/create_exercise', methods=['GET', 'POST'])
 def create_exercise():
@@ -179,16 +163,14 @@ def create_exercise():
             question_template = selected_template['question_template']
             answer_template = selected_template['answer_template']
 
-            # Generate new question and answer based on the template
-            question_text, num_dict, opt_dict, person_dict, numbers = process_question_template(question_template)
+            question_text, num_dict, opt_dict, person_dict, obj_dict, numbers = process_question_template(question_template)
             rule_no_minus = '<rule.noMinus>' in answer_template
             if rule_no_minus:
                 answer_template = answer_template.replace('<rule.noMinus>', '')
 
-            eval_context = {**num_dict, **opt_dict, **person_dict}
+            eval_context = {**num_dict, **opt_dict, **person_dict, **obj_dict}
             evaluated_answer = safe_eval(answer_template, eval_context)
 
-            # ถ้า answer ยังติดลบอยู่ ให้สุ่มตัวเลขใหม่จนกว่า answer จะไม่ติดลบ
             while rule_no_minus and evaluated_answer < 0:
                 for num_tag, num_type, content in numbers:
                     random_match = re.search(r'<random(?:\.(odd|even))?>(.*?)</random>', content)
@@ -198,36 +180,30 @@ def create_exercise():
                         number = generate_random_number(random_expr, num_type, condition)
                     else:
                         number = convert_to_type(content, num_type)
-
-                    # Replace <numX,type> with the value of number
                     question_text = question_text.replace(f'<num{num_tag},{num_type}>{content}</num{num_tag}>', str(number))
-                    
-                    # Add number to the dictionary
                     num_dict[f'num{num_tag}'] = number
 
-                # Re-evaluate the answer expression using the updated num_dict
-                eval_context = {**num_dict, **opt_dict, **person_dict}
+                eval_context = {**num_dict, **opt_dict, **person_dict, **obj_dict}
                 evaluated_answer = safe_eval(answer_template, eval_context)
 
-            # Insert the newly generated question and answer into a temporary collection
             generated_question = {
                 'question': question_text,
                 'answer': evaluated_answer,
                 **num_dict,
                 **opt_dict,
-                **person_dict
+                **person_dict,
+                **obj_dict
             }
 
-            # Store the generated question in the session or a temporary collection
             result = mydb['generated_questions'].insert_one(generated_question)
 
-            # Redirect to the exercise page with the new question
             return redirect(url_for('exercise', question_id=str(result.inserted_id)), code=303)
         
         flash('Selected template not found.', 'error')
         return redirect(url_for('create_exercise'))
     
     return render_template('create_exercise.html', templates=template_options)
+
 
 
 
@@ -260,19 +236,22 @@ def submit_answer(question_id):
 
 
 def process_question_template(template):
-    """
-    Process the question template to generate a new question and return the question text, num_dict, opt_dict, and person_dict.
-    """
     question_text = template
     
-    print(f"Extracted question_text: {question_text}")
-
-    # Extract and replace <numX,type></numX> tags
+    # Patterns for numbers, operators, and persons
     num_pattern = re.compile(r'<num(\d+),(int|float)>(.*?)</num\1>')
-    numbers = num_pattern.findall(question_text)
-    
-    num_dict = {}  # Dictionary to store numX values
+    opt_pattern = re.compile(r'<opt>(.*?)</opt>')
+    person_pattern = re.compile(r'<person(\d+)>')
+    obj_pattern = re.compile(r'<obj(\d+),(.*?)>')
 
+    # Dictionaries to store extracted values
+    num_dict = {}
+    opt_dict = {}
+    person_dict = {}
+    obj_dict = {}
+
+    # Process numbers
+    numbers = num_pattern.findall(question_text)
     for num_tag, num_type, content in numbers:
         random_match = re.search(r'<random(?:\.(odd|even))?>(.*?)</random>', content)
         if random_match:
@@ -281,58 +260,56 @@ def process_question_template(template):
             number = generate_random_number(random_expr, num_type, condition)
         else:
             number = convert_to_type(content, num_type)
-
-        # Replace <numX,type> with the value of number
         question_text = question_text.replace(f'<num{num_tag},{num_type}>{content}</num{num_tag}>', str(number))
-        
-        # Add number to the dictionary
         num_dict[f'num{num_tag}'] = number
 
-    # Extract and replace <opt></opt> tags
-    opt_pattern = re.compile(r'<opt>(.*?)</opt>')
+    # Process operators
     operators = opt_pattern.findall(question_text)
-    
-    opt_dict = {}  # Dictionary to store operators
-
     for idx, content in enumerate(operators):
         if '<random>' in content:
             random_expr = re.search(r'<random>(.*?)</random>', content).group(1)
             operator = random.choice(random_expr.split(','))
         else:
             operator = content
-
-        # Replace <opt> with the value of operator
         question_text = question_text.replace(f'<opt>{content}</opt>', operator)
-        
-        # Add operator to the dictionary
         opt_dict[f'opt{idx}'] = operator
 
-    # Extract and replace <personX> tags
-    person_pattern = re.compile(r'<person(\d+)>')
+    # Process persons
     persons = person_pattern.findall(question_text)
-    
-    person_dict = {}  # Dictionary to store personX values
-    used_names = {}  # Dictionary to keep track of assigned names
-
+    used_names = {}
     for person_tag in persons:
         if person_tag not in used_names:
             person_name = get_random_person_name(used_names.values())
             used_names[person_tag] = person_name
         else:
             person_name = used_names[person_tag]
-
-        # Replace <personX> with the value of person_name
         question_text = question_text.replace(f'<person{person_tag}>', person_name)
-        
-        # Add person to the dictionary
         person_dict[f'person{person_tag}'] = person_name
 
-    print(f"Final question_text: {question_text}")
-    print(f"Number dictionary: {num_dict}")
-    print(f"Operator dictionary: {opt_dict}")
-    print(f"Person dictionary: {person_dict}")
+    # Process objects
+    objs = obj_pattern.findall(question_text)
+    for obj_tag, obj_type in objs:
+        # Fetch a random document from the collection "obj" where type == obj_type
+        obj_doc = get_random_object_from_collection(obj_type)
+        obj_name = obj_doc['name']
+        obj_unit = obj_doc['unit']
+        question_text = question_text.replace(f'<obj{obj_tag},{obj_type}>', obj_name)
+        question_text = question_text.replace(f'<obj{obj_tag}.last>', obj_unit)
+        obj_dict[f'obj{obj_tag}'] = obj_doc
 
-    return question_text, num_dict, opt_dict, person_dict, numbers
+    return question_text, num_dict, opt_dict, person_dict, obj_dict, numbers
+
+def get_random_object_from_collection(obj_type):
+    """
+    Fetches a random document from the 'obj' collection where type == obj_type.
+    """
+    query = {"type": obj_type}
+    docs = list(mydb['obj'].find(query))
+    if not docs:
+        return {"name": "Unknown", "unit": "Unknown"}
+    return random.choice(docs)
+
+
 
 def generate_random_number(expression, num_type, condition=None):
     """

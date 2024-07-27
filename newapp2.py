@@ -28,16 +28,8 @@ def index():
         text = form.quiz.data
         answer = form.answer.data
 
-        print(f"Received quiz: {text}")
-        print(f"Received answer: {answer}")
-
         question_template = text
         question_text, num_dict, opt_dict, person_dict, obj_dict, numbers = process_question_template(question_template)
-
-        print(f"Final question_text: {question_text}")
-        print(f"Number dictionary: {num_dict}")
-        print(f"Operator dictionary: {opt_dict}")
-        print(f"Person dictionary: {person_dict}")
 
         rule_no_minus = '<rule.noMinus>' in answer
         if rule_no_minus:
@@ -61,8 +53,6 @@ def index():
             eval_context = {**num_dict, **opt_dict, **person_dict, **obj_dict}
             evaluated_answer = safe_eval(answer, eval_context)
 
-        print(f"Evaluated answer: {evaluated_answer}")
-
         try:
             questions_template_collection.insert_one({
                 'question_template': question_template,
@@ -74,10 +64,8 @@ def index():
                 **person_dict,
                 **obj_dict
             })
-            print("Document inserted successfully")
             flash('Template saved successfully!', 'success')
         except Exception as e:
-            print(f"An error occurred: {e}")
             flash('An error occurred while saving the template. Please try again.', 'error')
 
         return redirect(url_for('index'))
@@ -238,7 +226,7 @@ def submit_answer(question_id):
 def process_question_template(template):
     question_text = template
     
-    # Patterns for numbers, operators, and persons
+    # Patterns for numbers, operators, persons, and objects
     num_pattern = re.compile(r'<num(\d+),(int|float)>(.*?)</num\1>')
     opt_pattern = re.compile(r'<opt>(.*?)</opt>')
     person_pattern = re.compile(r'<person(\d+)>')
@@ -288,26 +276,38 @@ def process_question_template(template):
 
     # Process objects
     objs = obj_pattern.findall(question_text)
+    obj_names = {}  # Keep track of used object names to ensure unique selection
     for obj_tag, obj_type in objs:
-        # Fetch a random document from the collection "obj" where type == obj_type
-        obj_doc = get_random_object_from_collection(obj_type)
+        if obj_tag not in obj_dict:
+            obj_doc = get_random_object_from_collection(obj_type, obj_names)
+            obj_dict[obj_tag] = obj_doc
+        else:
+            obj_doc = obj_dict[obj_tag]
+        
         obj_name = obj_doc['name']
         obj_unit = obj_doc['unit']
         question_text = question_text.replace(f'<obj{obj_tag},{obj_type}>', obj_name)
         question_text = question_text.replace(f'<obj{obj_tag}.last>', obj_unit)
-        obj_dict[f'obj{obj_tag}'] = obj_doc
 
     return question_text, num_dict, opt_dict, person_dict, obj_dict, numbers
 
-def get_random_object_from_collection(obj_type):
+def get_random_object_from_collection(obj_type, used_names):
     """
-    Fetches a random document from the 'obj' collection where type == obj_type.
+    Fetches a random document from the 'obj' collection where type == obj_type
+    and the name has not been used yet.
     """
     query = {"type": obj_type}
     docs = list(mydb['obj'].find(query))
     if not docs:
         return {"name": "Unknown", "unit": "Unknown"}
-    return random.choice(docs)
+    
+    available_docs = [doc for doc in docs if doc['name'] not in used_names]
+    if not available_docs:
+        return {"name": "Unknown", "unit": "Unknown"}
+    
+    selected_doc = random.choice(available_docs)
+    used_names[selected_doc['name']] = True  # Mark this object name as used
+    return selected_doc
 
 
 

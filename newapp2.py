@@ -1,10 +1,10 @@
+import re
 from bson import ObjectId
 from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, TextAreaField
 from wtforms.validators import DataRequired
 from pymongo import MongoClient
-import re
 import random
 
 app = Flask(__name__)
@@ -36,7 +36,7 @@ def index():
             answer = answer.replace('<rule.noMinus>', '')
 
         eval_context = {**num_dict, **opt_dict, **person_dict, **obj_dict}
-        evaluated_answer = safe_eval(answer, eval_context)
+        evaluated_answer = evaluate_expression(answer, eval_context)
 
         while rule_no_minus and evaluated_answer < 0:
             for num_tag, num_type, content in numbers:
@@ -51,7 +51,7 @@ def index():
                 num_dict[f'num{num_tag}'] = number
 
             eval_context = {**num_dict, **opt_dict, **person_dict, **obj_dict}
-            evaluated_answer = safe_eval(answer, eval_context)
+            evaluated_answer = evaluate_expression(answer, eval_context)
 
         try:
             questions_template_collection.insert_one({
@@ -104,7 +104,7 @@ def quiz_maker():
                     answer_template = answer_template.replace('<rule.noMinus>', '')
 
                 eval_context = {**num_dict, **opt_dict, **person_dict, **obj_dict}
-                evaluated_answer = safe_eval(answer_template, eval_context)
+                evaluated_answer = evaluate_expression(answer_template, eval_context)
                 
                 while rule_no_minus and evaluated_answer < 0:
                     for num_tag, num_type, content in numbers:
@@ -119,7 +119,7 @@ def quiz_maker():
                         num_dict[f'num{num_tag}'] = number
 
                     eval_context = {**num_dict, **opt_dict, **person_dict, **obj_dict}
-                    evaluated_answer = safe_eval(answer_template, eval_context)
+                    evaluated_answer = evaluate_expression(answer_template, eval_context)
 
                 collection.insert_one({
                     'question': question_text,
@@ -157,7 +157,7 @@ def create_exercise():
                 answer_template = answer_template.replace('<rule.noMinus>', '')
 
             eval_context = {**num_dict, **opt_dict, **person_dict, **obj_dict}
-            evaluated_answer = safe_eval(answer_template, eval_context)
+            evaluated_answer = evaluate_expression(answer_template, eval_context)
 
             while rule_no_minus and evaluated_answer < 0:
                 for num_tag, num_type, content in numbers:
@@ -172,7 +172,7 @@ def create_exercise():
                     num_dict[f'num{num_tag}'] = number
 
                 eval_context = {**num_dict, **opt_dict, **person_dict, **obj_dict}
-                evaluated_answer = safe_eval(answer_template, eval_context)
+                evaluated_answer = evaluate_expression(answer_template, eval_context)
 
             generated_question = {
                 'question': question_text,
@@ -191,8 +191,6 @@ def create_exercise():
         return redirect(url_for('create_exercise'))
     
     return render_template('create_exercise.html', templates=template_options)
-
-
 
 
 @app.route('/exercise/<question_id>', methods=['GET', 'POST'])
@@ -220,7 +218,6 @@ def exercise(question_id):
 def submit_answer(question_id):
     user_answer = request.form['answer']
     return redirect(url_for('exercise', question_id=question_id, user_answer=user_answer))
-
 
 
 def process_question_template(template):
@@ -290,7 +287,7 @@ def process_question_template(template):
         question_text = question_text.replace(f'<obj{obj_tag}.last>', obj_unit)
 
     return question_text, num_dict, opt_dict, person_dict, obj_dict, numbers
-
+    
 def get_random_object_from_collection(obj_type, used_names):
     """
     Fetches a random document from the 'obj' collection where type == obj_type
@@ -308,7 +305,6 @@ def get_random_object_from_collection(obj_type, used_names):
     selected_doc = random.choice(available_docs)
     used_names[selected_doc['name']] = True  # Mark this object name as used
     return selected_doc
-
 
 
 def generate_random_number(expression, num_type, condition=None):
@@ -362,11 +358,30 @@ def get_random_person_name(used_names):
         return random.choice(available_names)
     return "Unknown"
 
+def evaluate_expression(expression, eval_context):
+    """
+    Evaluates the expression using the provided eval_context in a safe manner,
+    processing any nested expressions like <num1+num2>.
+    """
+    def eval_nested_expr(match):
+        nested_expr = match.group(1)
+        return str(safe_eval(nested_expr, eval_context))
+
+    # Check for number formatting
+    nf_match = re.search(r'<nf\((\d+)\)>(.*?)</nf>', expression)
+    if nf_match:
+        decimal_places = int(nf_match.group(1))
+        inner_expr = nf_match.group(2)
+        evaluated_inner_expr = evaluate_expression(inner_expr, eval_context)
+        formatted_number = f"{float(evaluated_inner_expr):.{decimal_places}f}"
+        expression = expression.replace(nf_match.group(0), formatted_number)
+    
+    return re.sub(r'<(.+?)>', eval_nested_expr, expression)
+
 def safe_eval(expression, eval_context):
     """
     Evaluates the expression using the provided eval_context in a safe manner.
     """
-    # Evaluate expression in a restricted environment
     return eval(expression, {"__builtins__": None}, eval_context)
 
 

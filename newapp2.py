@@ -40,7 +40,7 @@ def index():
 
         while rule_no_minus and evaluated_answer < 0:
             for num_tag, num_type, content in numbers:
-                random_match = re.search(r'<random(?:\.(odd|even))?>(.*?)</random>', content)
+                random_match = re.search(r'<r(?:\.(odd|even))?>(.*?)</r>', content)
                 if random_match:
                     condition = random_match.group(1)
                     random_expr = random_match.group(2)
@@ -108,7 +108,7 @@ def quiz_maker():
                 
                 while rule_no_minus and evaluated_answer < 0:
                     for num_tag, num_type, content in numbers:
-                        random_match = re.search(r'<random(?:\.(odd|even))?>(.*?)</random>', content)
+                        random_match = re.search(r'<r(?:\.(odd|even))?>(.*?)</r>', content)
                         if random_match:
                             condition = random_match.group(1)
                             random_expr = random_match.group(2)
@@ -161,7 +161,7 @@ def create_exercise():
 
             while rule_no_minus and evaluated_answer < 0:
                 for num_tag, num_type, content in numbers:
-                    random_match = re.search(r'<random(?:\.(odd|even))?>(.*?)</random>', content)
+                    random_match = re.search(r'<r(?:\.(odd|even))?>(.*?)</r>', content)
                     if random_match:
                         condition = random_match.group(1)
                         random_expr = random_match.group(2)
@@ -238,7 +238,7 @@ def process_question_template(template):
     # Process numbers
     numbers = num_pattern.findall(question_text)
     for num_tag, num_type, content in numbers:
-        random_match = re.search(r'<random(?:\.(odd|even))?>(.*?)</random>', content)
+        random_match = re.search(r'<r(?:\.(odd|even))?>(.*?)</r>', content)
         if random_match:
             condition = random_match.group(1)
             random_expr = random_match.group(2)
@@ -251,8 +251,8 @@ def process_question_template(template):
     # Process operators
     operators = opt_pattern.findall(question_text)
     for idx, content in enumerate(operators):
-        if '<random>' in content:
-            random_expr = re.search(r'<random>(.*?)</random>', content).group(1)
+        if '<r>' in content:
+            random_expr = re.search(r'<r>(.*?)</r>', content).group(1)
             operator = random.choice(random_expr.split(','))
         else:
             operator = content
@@ -317,23 +317,31 @@ def generate_random_number(expression, num_type, condition=None):
         parts = expression.split(',')
         for part in parts:
             if '-' in part:
-                start, end = map(int, part.split('-'))
-                choices.extend(range(start, end + 1))
+                start, end = map(float, part.split('-'))
+                if num_type == 'int':
+                    start, end = int(start), int(end)
+                    choices.extend(range(start, end + 1))
+                else:
+                    choices.extend([start, end])  # For float, we just use start and end directly
             else:
-                choices.append(int(part))
+                choices.append(float(part) if num_type == 'float' else int(part))
     elif '-' in expression:
         # Handle ranges
-        start, end = map(int, expression.split('-'))
-        choices = range(start, end + 1)
+        start, end = map(float, expression.split('-'))
+        if num_type == 'int':
+            start, end = int(start), int(end)
+            choices = range(start, end + 1)
+        else:
+            choices = [start, end]  # For float, we just use start and end directly
     else:
         # Single number
-        choices = [int(expression)]
+        choices = [float(expression) if num_type == 'float' else int(expression)]
     
     if condition:
         if condition == 'even':
-            choices = [num for num in choices if num % 2 == 0]
+            choices = [num for num in choices if int(num) % 2 == 0]
         elif condition == 'odd':
-            choices = [num for num in choices if num % 2 != 0]
+            choices = [num for num in choices if int(num) % 2 != 0]
 
     number = random.choice(choices)
     return convert_to_type(number, num_type)
@@ -343,9 +351,10 @@ def convert_to_type(value, num_type):
     Converts the value to the specified type (int or float).
     """
     if num_type == 'int':
-        return int(value)
+        return int(float(value))  # Ensure conversion to float first to handle cases like '1.5'
     elif num_type == 'float':
         return float(value)
+
 
 def get_random_person_name(used_names):
     """
@@ -369,7 +378,7 @@ def evaluate_expression(expression, eval_context):
 
     # Check for number formatting
     nf_match = re.search(r'<nf\((\d+)\)>(.*?)</nf>', expression)
-    if nf_match:
+    if (nf_match):
         decimal_places = int(nf_match.group(1))
         inner_expr = nf_match.group(2)
         evaluated_inner_expr = evaluate_expression(inner_expr, eval_context)

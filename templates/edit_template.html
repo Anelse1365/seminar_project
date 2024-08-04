@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block title %}Edit Template{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <h1 class="mb-4">Edit Template</h1>
+            <div class="card">
+                <div class="card-body">
+                    <form action="{{ url_for('edit_template', template_id=template._id) }}" method="post">
+                        <div class="mb-3">
+                            <label for="question_template" class="form-label">Question Template:</label>
+                            <textarea class="form-control" name="question_template" id="question_template" rows="4">{{ template.question_template }}</textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="answer_template" class="form-label">Answer Template:</label>
+                            <textarea class="form-control" name="answer_template" id="answer_template" rows="2">{{ template.answer_template }}</textarea>
+                        </div>
+                        <button class="btn btn-success" type="submit">Update</button>
+                        <a class="btn btn-secondary" href="{{ url_for('view_templates') }}">Back to Templates</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

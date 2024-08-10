@@ -5,23 +5,34 @@
     <div class="row justify-content-center">
         <div class="col-lg-6">
             <h1 class="text-center">Create Quizzes</h1><br>
-            <form method="POST" action="{{ url_for('quiz_maker') }}">
-                <div class="mb-3">
-                    <label for="template" class="form-label">เลือก Template</label>
-                    <select name="template" id="template" class="form-select form-select-lg" aria-label="Select Template" onchange="updateAnswerTemplate()">
-                        <option selected>Select</option>
-                        {% for template in templates %}
-                            <option value="{{ template[0] }}" data-answer="{{ template[2] }}">{{ template[1] }}</option>
-                        {% endfor %}
-                    </select>
+            <form method="POST" action="{{ url_for('quiz_maker') }}" id="quiz-form">
+              
+                <div id="questions-container">
+                    <div class="question-set mb-4" data-index="0">
+                        <div class="mb-3">
+                            <span class="question-number">1.</span>
+                            <label for="template_0" class="form-label">เลือก Template</label>
+                            <select name="template_0" id="template_0" class="form-select form-select-lg template-select" aria-label="Select Template" onchange="updateAnswerTemplate(0)">
+                                <option selected>Select</option>
+                                {% for template in templates %}
+                                    <option value="{{ template[0] }}" data-answer="{{ template[2] }}">{{ template[1] }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="answer_template_0" class="form-label">เฉลย</label>
+                            <input type="text" id="answer_template_0" class="form-control" placeholder="รูปแบบเฉลย" disabled>
+                        </div>
+                        
+                    </div>
                 </div>
-                <div class="mb-3">
-                    <label for="answer_template" class="form-label">เฉลย</label>
-                    <input type="text" id="answer_template" class="form-control" placeholder="รูปแบบเฉลย" disabled>
-                </div>
+                
+                <button type="button" class="btn btn-success" id="add-question">เพิ่มโจทย์</button><br><br>
+                
+                <!-- Move these fields outside of questions-container -->
                 <div class="mb-3">
                     <label for="num_sets" class="form-label">จำนวนชุด</label>
-                    <input type="number" name="num_sets" class="form-control" id="num_sets" placeholder="จำนวนชุด">
+                    <input type="number" name="num_sets" class="form-control" id="num_sets" placeholder="จำนวนชุด" required>
                 </div>
                 <div class="mb-3">
                     <label for="collection" class="form-label">เลือกที่จัดเก็บ</label>
@@ -36,6 +47,7 @@
                     <label for="new_collection" class="form-label">สร้างที่จัดเก็บใหม่</label>
                     <input type="text" name="new_collection" class="form-control" id="new_collection" placeholder="ชื่อ Collection ใหม่">
                 </div>
+
                 <button type="submit" class="btn btn-primary w-100">Generate</button>
                 <a href="/create_exercise" class="btn btn-secondary w-100 mt-3">Next</a>
                 <a href="/" class="btn btn-secondary w-100 mt-3">Back</a>
@@ -45,11 +57,54 @@
 </div>
 
 <script>
-function updateAnswerTemplate() {
-    var select = document.getElementById('template');
+let questionIndex = 1;
+
+function updateAnswerTemplate(index) {
+    var select = document.getElementById(`template_${index}`);
     var selectedOption = select.options[select.selectedIndex];
     var answerTemplate = selectedOption.getAttribute('data-answer');
-    document.getElementById('answer_template').value = answerTemplate;
+    document.getElementById(`answer_template_${index}`).value = answerTemplate;
 }
+
+document.getElementById('add-question').addEventListener('click', function() {
+    const container = document.getElementById('questions-container');
+    const newQuestionSet = document.createElement('div');
+    newQuestionSet.className = 'question-set mb-4';
+    newQuestionSet.dataset.index = questionIndex;
+    newQuestionSet.innerHTML = `
+        <div class="mb-3">
+            <span class="question-number">${questionIndex + 1}.</span>
+            <label for="template_${questionIndex}" class="form-label">เลือก Template</label>
+            <select name="template_${questionIndex}" id="template_${questionIndex}" class="form-select form-select-lg template-select" aria-label="Select Template" onchange="updateAnswerTemplate(${questionIndex})">
+                <option selected>Select</option>
+                {% for template in templates %}
+                    <option value="{{ template[0] }}" data-answer="{{ template[2] }}">{{ template[1] }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="mb-3">
+            <label for="answer_template_${questionIndex}" class="form-label">เฉลย</label>
+            <input type="text" id="answer_template_${questionIndex}" class="form-control" placeholder="รูปแบบเฉลย" disabled>
+        </div>
+        <button type="button" class="btn btn-danger remove-question">ลบ</button>
+    `;
+    container.appendChild(newQuestionSet);
+
+    questionIndex++;
+});
+
+document.getElementById('questions-container').addEventListener('click', function(e) {
+    if (e.target.classList.contains('remove-question')) {
+        e.target.closest('.question-set').remove();
+
+        // Update all question numbers after removing a question
+        const questionSets = document.querySelectorAll('.question-set');
+        questionSets.forEach((set, index) => {
+            set.querySelector('.question-number').textContent = (index + 1) + '.';
+        });
+
+        questionIndex = questionSets.length;  // Update the global index
+    }
+});
 </script>
 {% endblock %}

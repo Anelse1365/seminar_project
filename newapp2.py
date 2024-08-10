@@ -71,7 +71,6 @@ def index():
         return redirect(url_for('index'))
     return render_template('index.html', form=form)
 
-
 @app.route('/quiz_maker', methods=['GET', 'POST'])
 def quiz_maker():
     templates = list(questions_template_collection.find({}, {'_id': 1, 'question_template': 1, 'answer_template': 1}))
@@ -81,7 +80,6 @@ def quiz_maker():
     collections.remove('questions_template')
 
     if request.method == 'POST':
-        template_id = request.form['template']
         num_sets = int(request.form['num_sets'])
         collection_name = request.form.get('collection')
         new_collection_name = request.form.get('new_collection')
@@ -91,51 +89,52 @@ def quiz_maker():
         
         collection = mydb[collection_name]
 
-        selected_template = questions_template_collection.find_one({'_id': ObjectId(template_id)})
-        
-        if selected_template:
-            question_template = selected_template['question_template']
-            answer_template = selected_template['answer_template']
+        quiz_set = []  # List to hold all questions for this quiz set
 
-            for _ in range(num_sets):
-                question_text, num_dict, opt_dict, person_dict, obj_dict, numbers = process_question_template(question_template)
-                rule_no_minus = '<rule.noMinus>' in answer_template
-                if rule_no_minus:
-                    answer_template = answer_template.replace('<rule.noMinus>', '')
+        question_index = 0
+        while True:
+            template_id = request.form.get(f'template_{question_index}')
+            if template_id is None:
+                break
 
-                eval_context = {**num_dict, **opt_dict, **person_dict, **obj_dict}
-                evaluated_answer = evaluate_expression(answer_template, eval_context)
-                
-                while rule_no_minus and evaluated_answer < 0:
-                    for num_tag, num_type, content in numbers:
-                        random_match = re.search(r'<r(?:\.(odd|even))?>(.*?)</r>', content)
-                        if random_match:
-                            condition = random_match.group(1)
-                            random_expr = random_match.group(2)
-                            number = generate_random_number(random_expr, num_type, condition)
-                        else:
-                            number = convert_to_type(content, num_type)
-                        question_text = question_text.replace(f'<num{num_tag},{num_type}>{content}</num{num_tag}>', str(number))
-                        num_dict[f'num{num_tag}'] = number
+            selected_template = questions_template_collection.find_one({'_id': ObjectId(template_id)})
+            if selected_template:
+                question_template = selected_template['question_template']
+                answer_template = selected_template['answer_template']
 
+                for _ in range(num_sets):
+                    question_text, num_dict, opt_dict, person_dict, obj_dict, numbers = process_question_template(question_template)
                     eval_context = {**num_dict, **opt_dict, **person_dict, **obj_dict}
                     evaluated_answer = evaluate_expression(answer_template, eval_context)
 
-                collection.insert_one({
-                    'question': question_text,
-                    'answer': evaluated_answer,
-                    **num_dict,
-                    **opt_dict,
-                    **person_dict,
-                    **obj_dict
-                })
-            flash('Quizzes generated successfully!', 'success')
-        else:
-            flash('Selected template not found.', 'error')
+                    # Append the generated question to the quiz set list
+                    quiz_set.append({
+                        'question': question_text,
+                        'answer': evaluated_answer,
+                        **num_dict,
+                        **opt_dict,
+                        **person_dict,
+                        **obj_dict
+                    })
+            else:
+                flash('Please select a template for each question.', 'error')
+                return redirect(url_for('quiz_maker'))
 
+            question_index += 1
+
+        # Save the quiz set as a single document in the specified collection
+        collection.insert_one({
+            'questions': quiz_set,  # Store all questions as an array
+            'num_sets': num_sets,
+   
+        })
+
+        flash('Quizzes generated successfully!', 'success')
         return redirect(url_for('quiz_maker'))
 
     return render_template('quiz_maker.html', templates=template_options, collections=collections)
+
+
 
 
 @app.route('/create_exercise', methods=['GET', 'POST'])

@@ -2,7 +2,7 @@ import re
 from bson import ObjectId
 from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, TextAreaField
+from wtforms import TextAreaField, StringField, SubmitField, FieldList, FormField
 from wtforms.validators import DataRequired
 from pymongo import MongoClient
 import random
@@ -26,50 +26,52 @@ def index():
     form = NameForm()
     if form.validate_on_submit():
         text = form.quiz.data
-        answer = form.answer.data
-
-        question_template = text
-        question_text, num_dict, opt_dict, person_dict, obj_dict, numbers = process_question_template(question_template)
-
-        rule_no_minus = '<rule.noMinus>' in answer
-        if rule_no_minus:
-            answer = answer.replace('<rule.noMinus>', '')
-
-        eval_context = {**num_dict, **opt_dict, **person_dict, **obj_dict}
-        evaluated_answer = evaluate_expression(answer, eval_context)
-
-        while rule_no_minus and evaluated_answer < 0:
-            for num_tag, num_type, content in numbers:
-                random_match = re.search(r'<r(?:\.(odd|even))?>(.*?)</r>', content)
-                if random_match:
-                    condition = random_match.group(1)
-                    random_expr = random_match.group(2)
-                    number = generate_random_number(random_expr, num_type, condition)
-                else:
-                    number = convert_to_type(content, num_type)
-                question_text = question_text.replace(f'<num{num_tag},{num_type}>{content}</num{num_tag}>', str(number))
-                num_dict[f'num{num_tag}'] = number
+        
+        if 'correct_choice' in request.form:
+            # Handle multiple-choice question
+            choices = request.form.getlist('choices[]')
+            correct_choice_index = int(request.form.get('correct_choice'))
+            correct_answer = choices[correct_choice_index]
+            
+            try:
+                questions_template_collection.insert_one({
+                    'question_template': text,
+                    'question_type': 'multiple_choice',
+                    'choices': choices,
+                    'correct_answer': correct_answer
+                })
+                flash('Multiple-choice question saved successfully!', 'success')
+            except Exception as e:
+                flash('An error occurred while saving the question. Please try again.', 'error')
+        else:
+            # Handle written question
+            answer = form.answer.data
+            question_template = text
+            question_text, num_dict, opt_dict, person_dict, obj_dict, numbers = process_question_template(question_template)
 
             eval_context = {**num_dict, **opt_dict, **person_dict, **obj_dict}
             evaluated_answer = evaluate_expression(answer, eval_context)
 
-        try:
-            questions_template_collection.insert_one({
-                'question_template': question_template,
-                'question': question_text,
-                'answer_template': answer + ('<rule.noMinus>' if rule_no_minus else ''),
-                'answer': evaluated_answer,
-                **num_dict,
-                **opt_dict,
-                **person_dict,
-                **obj_dict
-            })
-            flash('Template saved successfully!', 'success')
-        except Exception as e:
-            flash('An error occurred while saving the template. Please try again.', 'error')
+            try:
+                questions_template_collection.insert_one({
+                    'question_template': question_template,
+                    'question_type': 'written',
+                    'question': question_text,
+                    'answer_template': answer,
+                    'answer': evaluated_answer,
+                    **num_dict,
+                    **opt_dict,
+                    **person_dict,
+                    **obj_dict
+                })
+                flash('Written question saved successfully!', 'success')
+            except Exception as e:
+                flash('An error occurred while saving the question. Please try again.', 'error')
 
         return redirect(url_for('index'))
+
     return render_template('index.html', form=form)
+
 
 @app.route('/quiz_maker', methods=['GET', 'POST'])
 def quiz_maker():

@@ -1,3 +1,4 @@
+<!-- index.html -->
 {% extends 'base.html' %}
 
 {% block body %}
@@ -12,30 +13,85 @@
                 <li class="nav-item" role="presentation">
                   <button class="nav-link" id="pills-profile-tab" data-bs-toggle="pill" data-bs-target="#pills-profile" type="button" role="tab" aria-controls="pills-profile" aria-selected="false">ตัวเลือก</button>
                 </li>
+            </ul>
 
-              </ul>
-              <div class="tab-content" id="pills-tabContent">
-                <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">...</div>
-                <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">...</div>
-                
-              </div>
-            <form method="POST" action="{{ url_for('index') }}">
-                {{ form.hidden_tag() }}
-                <div class="mb-3">
-                    <label for="quiz" class="form-label">{{ form.quiz.label }}</label>
-                    {{ form.quiz(class="form-control", id="quiz", rows="3") }}
+            <div class="tab-content" id="pills-tabContent">
+                <!-- Tab for written questions -->
+                <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
+                    <form method="POST" action="{{ url_for('index') }}">
+                        {{ form.hidden_tag() }}
+                        <div class="mb-3">
+                            <label for="quiz" class="form-label">{{ form.quiz.label }}</label>
+                            {{ form.quiz(class="form-control", id="quiz", rows="3") }}
+                        </div>
+                        <div class="mb-3">
+                            <label for="answer" class="form-label">{{ form.answer.label }}</label>
+                            {{ form.answer(class="form-control", id="answer") }}
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">{{ form.submit.label }}</button>
+                    </form>
                 </div>
-                <div class="mb-3">
-                    <label for="answer" class="form-label">{{ form.answer.label }}</label>
-                    {{ form.answer(class="form-control", id="answer") }}
+
+                <!-- Tab for multiple-choice questions -->
+                <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
+                    <form method="POST" action="{{ url_for('index') }}">
+                        {{ form.hidden_tag() }}
+                        <div class="mb-3">
+                            <label for="quiz" class="form-label">{{ form.quiz.label }}</label>
+                            {{ form.quiz(class="form-control", id="quiz", rows="3") }}
+                        </div>
+
+                        <div id="choices-container">
+                            <div class="mb-3">
+                                <label for="choice-1" class="form-label">Choice 1</label>
+                                <input type="text" name="choices[]" class="form-control" id="choice-1">
+                                <input type="radio" name="correct_choice" value="0"> Correct
+                            </div>
+                        </div>
+
+                        <button type="button" class="btn btn-secondary w-100 mb-3" id="add-choice-btn">เพิ่มช้อยส์</button>
+
+                        <button type="submit" class="btn btn-primary w-100">{{ form.submit.label }}</button>
+                    </form>
                 </div>
-                <button type="submit" class="btn btn-primary w-100">{{ form.submit.label }}</button>
-            </form>
+            </div>
+
             <a href="/quiz_maker" class="btn btn-secondary w-100 mt-3">Next</a>
             <a href="{{ url_for('view_templates') }}" class="btn btn-secondary w-100 mt-3">ดู Templates</a>
-
-
         </div>
     </div>
 </div>
+
+<script>
+    document.getElementById('add-choice-btn').addEventListener('click', function() {
+        const choicesContainer = document.getElementById('choices-container');
+        const choiceCount = choicesContainer.children.length + 1;
+        
+        const newChoiceDiv = document.createElement('div');
+        newChoiceDiv.className = 'mb-3';
+        
+        const newLabel = document.createElement('label');
+        newLabel.htmlFor = `choice-${choiceCount}`;
+        newLabel.className = 'form-label';
+        newLabel.textContent = `Choice ${choiceCount}`;
+        
+        const newInput = document.createElement('input');
+        newInput.type = 'text';
+        newInput.name = 'choices[]';
+        newInput.className = 'form-control';
+        newInput.id = `choice-${choiceCount}`;
+        
+        const newRadio = document.createElement('input');
+        newRadio.type = 'radio';
+        newRadio.name = 'correct_choice';
+        newRadio.value = choiceCount - 1;
+        newRadio.textContent = 'Correct';
+        
+        newChoiceDiv.appendChild(newLabel);
+        newChoiceDiv.appendChild(newInput);
+        newChoiceDiv.appendChild(newRadio);
+        
+        choicesContainer.appendChild(newChoiceDiv);
+    });
+</script>
 {% endblock %}

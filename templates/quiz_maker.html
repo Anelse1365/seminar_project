@@ -6,7 +6,25 @@
         <div class="col-lg-6">
             <h1 class="text-center">Create Quizzes</h1><br>
             <form method="POST" action="{{ url_for('quiz_maker') }}" id="quiz-form">
-              
+                <div class="mb-3">
+                    <label for="quiz_name" class="form-label">ชื่อชุดข้อสอบ</label>
+                    <input type="text" name="quiz_name" class="form-control" id="quiz_name" placeholder="ระบุชื่อชุดข้อสอบ" required>
+                </div>
+                <!-- Add category selection or creation -->
+                <div class="mb-3">
+                    <label for="category" class="form-label">เลือกหมวดหมู่</label>
+                    <select name="category" id="category" class="form-select form-select-lg" aria-label="Select Category">
+                        <option selected>Select Category</option>
+                        {% for category in categories %}
+                            <option value="{{ category }}">{{ category }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="new_category" class="form-label">สร้างหมวดหมู่ใหม่</label>
+                    <input type="text" name="new_category" class="form-control" id="new_category" placeholder="ระบุชื่อหมวดหมู่ใหม่">
+                </div>
+ 
                 <div id="questions-container">
                     <div class="question-set mb-4" data-index="0">
                         <div class="mb-3">

@@ -79,17 +79,28 @@ def quiz_maker():
     collections = mydb.list_collection_names()
     collections.remove('questions_template')
 
+    # Query distinct categories from the "ชุดข้อสอบ" collection
+    category_collection = mydb["ชุดข้อสอบ"]
+    categories = category_collection.distinct('category')
+
     if request.method == 'POST':
+        quiz_name = request.form.get('quiz_name')
         num_sets = int(request.form['num_sets'])
         collection_name = request.form.get('collection')
         new_collection_name = request.form.get('new_collection')
         
+        category = request.form.get('category')
+        new_category_name = request.form.get('new_category')
+        
         if new_collection_name:
             collection_name = new_collection_name
         
+        if new_category_name:
+            category = new_category_name
+        
         collection = mydb[collection_name]
 
-        quiz_set = []  # List to hold all questions for this quiz set
+        quiz_set = []
 
         question_index = 0
         while True:
@@ -107,7 +118,6 @@ def quiz_maker():
                     eval_context = {**num_dict, **opt_dict, **person_dict, **obj_dict}
                     evaluated_answer = evaluate_expression(answer_template, eval_context)
 
-                    # Append the generated question to the quiz set list
                     quiz_set.append({
                         'question': question_text,
                         'answer': evaluated_answer,
@@ -122,17 +132,18 @@ def quiz_maker():
 
             question_index += 1
 
-        # Save the quiz set as a single document in the specified collection
         collection.insert_one({
-            'questions': quiz_set,  # Store all questions as an array
+            'quiz_name': quiz_name,
+            'category': category,  # Store the selected or created category
+            'questions': quiz_set,
             'num_sets': num_sets,
-   
         })
 
         flash('Quizzes generated successfully!', 'success')
         return redirect(url_for('quiz_maker'))
 
-    return render_template('quiz_maker.html', templates=template_options, collections=collections)
+    return render_template('quiz_maker.html', templates=template_options, collections=collections, categories=categories)
+
 
 
 

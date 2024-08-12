@@ -18,34 +18,67 @@ p_name_collection = mydb["p_name"]
 
 class NameForm(FlaskForm):
     quiz = TextAreaField('Quiz', validators=[DataRequired()])
-    answer = StringField('Answer', validators=[DataRequired()])
+    answer = StringField('Answer')
     submit = SubmitField('Submit')
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
     form = NameForm()
+
     if form.validate_on_submit():
         text = form.quiz.data
-        
+
         if 'correct_choice' in request.form:
-            # Handle multiple-choice question
+            # คำถามแบบตัวเลือก
             choices = request.form.getlist('choices[]')
             correct_choice_index = int(request.form.get('correct_choice'))
-            correct_answer = choices[correct_choice_index]
-            
+
+            # บันทึก template ของ choices โดยไม่ประมวลผล
+            choices_template = choices[:]
+
+            # บันทึก template ของ choices โดยประมวลผล
+            question_template = text
+            question_text, num_dict, opt_dict, person_dict, obj_dict, numbers = process_question_template(question_template)
+
+
+            eval_context = {**num_dict, **opt_dict, **person_dict, **obj_dict}
+            evaluated_choices = [evaluate_expression(choice, eval_context) for choice in choices]
+
+            # คำนวณคำตอบที่ถูกต้อง
+            correct_answer = evaluated_choices[correct_choice_index]
+
             try:
                 questions_template_collection.insert_one({
+                    'question': question_text,
                     'question_template': text,
                     'question_type': 'multiple_choice',
-                    'choices': choices,
+                    'choices_template': choices_template,  # บันทึก template ของ choices
+                    'choices': evaluated_choices,  # บันทึก choices ที่ถูกประมวลผล
                     'correct_answer': correct_answer
                 })
                 flash('Multiple-choice question saved successfully!', 'success')
             except Exception as e:
                 flash('An error occurred while saving the question. Please try again.', 'error')
+
+
+            try:
+                questions_template_collection.insert_one({
+                    'question_template': text,
+                    'question_type': 'multiple_choice',
+                    'choices': choices,
+                    'correct_answer': evaluated_answer
+                })
+                flash('Multiple-choice question saved successfully!', 'success')
+            except Exception as e:
+                flash('An error occurred while saving the question. Please try again.', 'error')
+
         else:
-            # Handle written question
+            # คำถามแบบเขียน
             answer = form.answer.data
+            if not answer:
+                flash('Answer is required for written questions.', 'error')
+                return render_template('index.html', form=form)
+
             question_template = text
             question_text, num_dict, opt_dict, person_dict, obj_dict, numbers = process_question_template(question_template)
 
@@ -71,6 +104,9 @@ def index():
         return redirect(url_for('index'))
 
     return render_template('index.html', form=form)
+
+
+
 
 
 @app.route('/quiz_maker', methods=['GET', 'POST'])

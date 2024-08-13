@@ -29,7 +29,7 @@ def index():
         text = form.quiz.data
 
         if 'correct_choice' in request.form:
-            # คำถามแบบตัวเลือก
+    # คำถามแบบตัวเลือก
             choices = request.form.getlist('choices[]')
             correct_choice_index = int(request.form.get('correct_choice'))
 
@@ -39,7 +39,6 @@ def index():
             # บันทึก template ของ choices โดยประมวลผล
             question_template = text
             question_text, num_dict, opt_dict, person_dict, obj_dict, numbers = process_question_template(question_template)
-
 
             eval_context = {**num_dict, **opt_dict, **person_dict, **obj_dict}
             evaluated_choices = [evaluate_expression(choice, eval_context) for choice in choices]
@@ -60,17 +59,6 @@ def index():
             except Exception as e:
                 flash('An error occurred while saving the question. Please try again.', 'error')
 
-
-            try:
-                questions_template_collection.insert_one({
-                    'question_template': text,
-                    'question_type': 'multiple_choice',
-                    'choices': choices,
-                    'correct_answer': evaluated_answer
-                })
-                flash('Multiple-choice question saved successfully!', 'success')
-            except Exception as e:
-                flash('An error occurred while saving the question. Please try again.', 'error')
 
         else:
             # คำถามแบบเขียน
@@ -112,7 +100,10 @@ def index():
 @app.route('/quiz_maker', methods=['GET', 'POST'])
 def quiz_maker():
     templates = list(questions_template_collection.find({}, {'_id': 1, 'question_template': 1, 'answer_template': 1}))
-    template_options = [(str(template['_id']), template['question_template'], template['answer_template']) for template in templates]
+    template_options = [
+        (str(template['_id']), template['question_template'], template.get('answer_template', ''))  # ใช้ .get() เพื่อหลีกเลี่ยง KeyError
+        for template in templates
+    ]
     
     collections = mydb.list_collection_names()
     collections.remove('questions_template')
@@ -149,7 +140,7 @@ def quiz_maker():
             selected_template = questions_template_collection.find_one({'_id': ObjectId(template_id)})
             if selected_template:
                 question_template = selected_template['question_template']
-                answer_template = selected_template['answer_template']
+                answer_template = selected_template.get('answer_template', '')  # ใช้ .get() เพื่อป้องกัน KeyError
 
                 for _ in range(num_sets):
                     question_text, num_dict, opt_dict, person_dict, obj_dict, numbers = process_question_template(question_template)
@@ -181,6 +172,7 @@ def quiz_maker():
         return redirect(url_for('quiz_maker'))
 
     return render_template('quiz_maker.html', templates=template_options, collections=collections, categories=categories)
+
 
 
 

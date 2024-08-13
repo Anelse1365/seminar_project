@@ -6,6 +6,34 @@
         <div class="col-lg-6">
             <h1 class="text-center">Create Quizzes</h1><br>
             <form method="POST" action="{{ url_for('quiz_maker') }}" id="quiz-form">
+                <div class="card">
+                    <div class="card-body">
+                      <h5 class="question-number">สร้างชุดคำถาม</h5>
+                      <div id="questions-container">
+                        <div class="question-set mb-4" data-index="0">
+                            <div class="mb-3">
+                                <span class="question-number">1.</span>
+                                <label for="template_0" class="form-label">เลือก Template</label>
+                                <select name="template_0" id="template_0" class="form-select form-select-lg template-select" aria-label="Select Template" onchange="updateAnswerTemplate(0)">
+                                    <option selected>Select</option>
+                                    {% for template in templates %}
+                                        <option value="{{ template[0] }}" data-answer="{{ template[2] }}">{{ template[1] }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="answer_template_0" class="form-label">เฉลย</label>
+                                <input type="text" id="answer_template_0" class="form-control" placeholder="รูปแบบเฉลย" disabled>
+                            </div>
+                            
+                        </div>
+                    </div>
+                      
+                    </div>
+                  </div>
+                  <br>
+                  <button type="button" class="btn btn-success" id="add-question">เพิ่มโจทย์</button><br><br>
+
                 <div class="mb-3">
                     <label for="quiz_name" class="form-label">ชื่อชุดข้อสอบ</label>
                     <input type="text" name="quiz_name" class="form-control" id="quiz_name" placeholder="ระบุชื่อชุดข้อสอบ" required>
@@ -24,28 +52,9 @@
                     <label for="new_category" class="form-label">สร้างหมวดหมู่ใหม่</label>
                     <input type="text" name="new_category" class="form-control" id="new_category" placeholder="ระบุชื่อหมวดหมู่ใหม่">
                 </div>
- 
-                <div id="questions-container">
-                    <div class="question-set mb-4" data-index="0">
-                        <div class="mb-3">
-                            <span class="question-number">1.</span>
-                            <label for="template_0" class="form-label">เลือก Template</label>
-                            <select name="template_0" id="template_0" class="form-select form-select-lg template-select" aria-label="Select Template" onchange="updateAnswerTemplate(0)">
-                                <option selected>Select</option>
-                                {% for template in templates %}
-                                    <option value="{{ template[0] }}" data-answer="{{ template[2] }}">{{ template[1] }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label for="answer_template_0" class="form-label">เฉลย</label>
-                            <input type="text" id="answer_template_0" class="form-control" placeholder="รูปแบบเฉลย" disabled>
-                        </div>
-                        
-                    </div>
-                </div>
+
                 
-                <button type="button" class="btn btn-success" id="add-question">เพิ่มโจทย์</button><br><br>
+                
                 
                 <!-- Move these fields outside of questions-container -->
                 <div class="mb-3">

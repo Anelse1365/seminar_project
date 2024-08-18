@@ -1,11 +1,12 @@
 import re
 from bson import ObjectId
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, render_template, request, redirect, url_for, flash ,session
 from flask_wtf import FlaskForm
 from wtforms import TextAreaField, StringField, SubmitField, FieldList, FormField
 from wtforms.validators import DataRequired
 from pymongo import MongoClient
 import random
+import bcrypt
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'mykey'
@@ -15,11 +16,56 @@ myclient = MongoClient('mongodb+srv://admin:1234@cluster0.dvcham8.mongodb.net/?r
 mydb = myclient["mydb"]
 questions_template_collection = mydb["questions_template"]
 p_name_collection = mydb["p_name"]
+users = mydb["users"]
 
 class NameForm(FlaskForm):
     quiz = TextAreaField('Quiz', validators=[DataRequired()])
     answer = StringField('Answer')
     submit = SubmitField('Submit')
+
+@app.route('/login', methods=['POST', 'GET'])
+def login():
+    if request.method == 'POST':
+        login_user = users.find_one({'username': request.form['username']})
+        
+        if login_user:
+            if bcrypt.checkpw(request.form['password'].encode('utf-8'), login_user['password']):
+                session['username'] = request.form['username']
+                session['role'] = login_user.get('role', 'user')
+                return redirect(url_for('home'))
+        return 'Invalid username/password'
+    return render_template('login.html')
+
+@app.route('/register', methods=['POST', 'GET'])
+def register():
+    if request.method == 'POST':
+        existing_user = users.find_one({'username': request.form['username']})
+
+        if existing_user is None:
+            hashpass = bcrypt.hashpw(request.form['password'].encode('utf-8'), bcrypt.gensalt())
+            users.insert_one({
+                'username': request.form['username'],
+                'password': hashpass,
+                'role': 'admin' if request.form.get('is_admin') else 'user'
+            })
+            session['username'] = request.form['username']
+            session['role'] = 'admin' if request.form.get('is_admin') else 'user'
+            return redirect(url_for('home'))
+
+        return 'That username already exists!'
+    return render_template('register.html')
+
+@app.route('/admin')
+def admin():
+    if 'username' in session and session['role'] == 'admin':
+        return render_template('admin.html')
+    return redirect(url_for('login'))
+
+@app.route('/logout')
+def logout():
+    session.pop('username', None)
+    session.pop('role', None)
+    return redirect(url_for('home'))
 
 @app.route('/', methods=['GET', 'POST'])
 def index():

@@ -46,6 +46,7 @@ def index():
             # คำนวณคำตอบที่ถูกต้อง
             correct_answer = evaluated_choices[correct_choice_index]
 
+
             try:
                 questions_template_collection.insert_one({
                     'question': question_text,
@@ -53,7 +54,8 @@ def index():
                     'question_type': 'multiple_choice',
                     'choices_template': choices_template,  # บันทึก template ของ choices
                     'choices': evaluated_choices,  # บันทึก choices ที่ถูกประมวลผล
-                    'correct_answer': correct_answer
+                    'correct_answer': correct_answer,
+                    'answer_template': choices_template[correct_choice_index]
                 })
                 flash('Multiple-choice question saved successfully!', 'success')
             except Exception as e:
@@ -99,9 +101,9 @@ def index():
 
 @app.route('/quiz_maker', methods=['GET', 'POST'])
 def quiz_maker():
-    templates = list(questions_template_collection.find({}, {'_id': 1, 'question_template': 1, 'answer_template': 1}))
+    templates = list(questions_template_collection.find({}, {'_id': 1, 'question_template': 1, 'answer_template': 1, 'choices_template': 1}))
     template_options = [
-        (str(template['_id']), template['question_template'], template.get('answer_template', ''))  # ใช้ .get() เพื่อหลีกเลี่ยง KeyError
+        (str(template['_id']), template['question_template'], template.get('answer_template', ''), template.get('choices_template', []))
         for template in templates
     ]
     
@@ -141,15 +143,24 @@ def quiz_maker():
             if selected_template:
                 question_template = selected_template['question_template']
                 answer_template = selected_template.get('answer_template', '')  # ใช้ .get() เพื่อป้องกัน KeyError
+                choices_template = selected_template.get('choices_template', [])  # ดึงข้อมูล choices_template ถ้ามี
 
                 for _ in range(num_sets):
                     question_text, num_dict, opt_dict, person_dict, obj_dict, numbers = process_question_template(question_template)
                     eval_context = {**num_dict, **opt_dict, **person_dict, **obj_dict}
                     evaluated_answer = evaluate_expression(answer_template, eval_context)
 
+                    # สร้างข้อมูลของ choices พร้อมแทนค่า
+                    evaluated_choices = []
+                    choice_labels = ['a', 'b', 'c', 'd', 'e']  # ป้ายกำกับตัวเลือก (ขึ้นอยู่กับจำนวน)
+                    for i, choice_template in enumerate(choices_template):
+                        evaluated_choice = evaluate_expression(choice_template, eval_context)
+                        evaluated_choices.append(f"{choice_labels[i]}. {evaluated_choice}")
+
                     quiz_set.append({
                         'question': question_text,
                         'answer': evaluated_answer,
+                        'choices': evaluated_choices,  # เพิ่ม choices ที่ประเมินแล้วเข้าไป
                         **num_dict,
                         **opt_dict,
                         **person_dict,

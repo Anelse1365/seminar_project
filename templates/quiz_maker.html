@@ -17,7 +17,7 @@
                                 <select name="template_0" id="template_0" class="form-select form-select-lg template-select" aria-label="Select Template" onchange="updateAnswerTemplate(0)">
                                     <option selected>Select</option>
                                     {% for template in templates %}
-                                        <option value="{{ template[0] }}" data-answer="{{ template[2] }}">{{ template[1] }}</option>
+                                        <option value="{{ template[0] }}" data-answer="{{ template[2] }}" data-choices="{{ template[3] | join(',') }}">{{ template[1] }}</option>
                                     {% endfor %}
                                 </select>
                             </div>
@@ -25,9 +25,9 @@
                                 <label for="answer_template_0" class="form-label">เฉลย</label>
                                 <input type="text" id="answer_template_0" class="form-control" placeholder="รูปแบบเฉลย" disabled>
                             </div>
-                            
+                            <div id="choices_container_0" class="mb-3"></div>
                         </div>
-                    </div>
+                      </div>
                       
                     </div>
                   </div>
@@ -38,7 +38,7 @@
                     <label for="quiz_name" class="form-label">ชื่อชุดข้อสอบ</label>
                     <input type="text" name="quiz_name" class="form-control" id="quiz_name" placeholder="ระบุชื่อชุดข้อสอบ" required>
                 </div>
-                <!-- Add category selection or creation -->
+
                 <div class="mb-3">
                     <label for="category" class="form-label">เลือกหมวดหมู่</label>
                     <select name="category" id="category" class="form-select form-select-lg" aria-label="Select Category">
@@ -53,10 +53,6 @@
                     <input type="text" name="new_category" class="form-control" id="new_category" placeholder="ระบุชื่อหมวดหมู่ใหม่">
                 </div>
 
-                
-                
-                
-                <!-- Move these fields outside of questions-container -->
                 <div class="mb-3">
                     <label for="num_sets" class="form-label">จำนวนชุด</label>
                     <input type="number" name="num_sets" class="form-control" id="num_sets" placeholder="จำนวนชุด" required>
@@ -84,54 +80,96 @@
 </div>
 
 <script>
-let questionIndex = 1;
-
-function updateAnswerTemplate(index) {
+    let questionIndex = 1;
+    
+    function updateAnswerTemplate(index) {
     var select = document.getElementById(`template_${index}`);
     var selectedOption = select.options[select.selectedIndex];
     var answerTemplate = selectedOption.getAttribute('data-answer');
-    document.getElementById(`answer_template_${index}`).value = answerTemplate;
+    var choices = selectedOption.getAttribute('data-choices').split(',').map(choice => choice.trim());
+
+    // ตรวจสอบว่ามี choices หรือไม่
+    var isMultipleChoice = choices.length > 1 || choices[0] !== "";
+
+    // อัปเดตฟิลด์เฉลย
+    var answerField = document.getElementById(`answer_template_${index}`);
+    if (isMultipleChoice) {
+        answerField.style.display = 'none';  // ซ่อนฟิลด์เฉลย
+    } else {
+        answerField.value = answerTemplate;
+        answerField.style.display = 'block';  // แสดงฟิลด์เฉลย
+    }
+
+    // อัปเดต container สำหรับ choices
+    var choicesContainer = document.getElementById(`choices_container_${index}`);
+    choicesContainer.innerHTML = '';  // ล้างข้อมูลก่อนหน้า
+
+    if (isMultipleChoice) {
+        choices.forEach((choice, i) => {
+            // เปลี่ยน < และ > เพื่อแสดงผลในแบบดิบ ๆ
+            let escapedChoice = choice
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;');
+
+            let choiceLabel = String.fromCharCode(97 + i) + '.'; // a., b., c., ...
+            let radioHtml = `
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="choices_${index}" id="choice_${index}_${i}" value="${escapedChoice}" ${choice === answerTemplate ? 'checked' : ''}>
+                    <label class="form-check-label" for="choice_${index}_${i}">
+                        ${choiceLabel} ${escapedChoice}
+                    </label>
+                </div>
+            `;
+            choicesContainer.innerHTML += radioHtml;
+        });
+    }
 }
 
-document.getElementById('add-question').addEventListener('click', function() {
-    const container = document.getElementById('questions-container');
-    const newQuestionSet = document.createElement('div');
-    newQuestionSet.className = 'question-set mb-4';
-    newQuestionSet.dataset.index = questionIndex;
-    newQuestionSet.innerHTML = `
-        <div class="mb-3">
-            <span class="question-number">${questionIndex + 1}.</span>
-            <label for="template_${questionIndex}" class="form-label">เลือก Template</label>
-            <select name="template_${questionIndex}" id="template_${questionIndex}" class="form-select form-select-lg template-select" aria-label="Select Template" onchange="updateAnswerTemplate(${questionIndex})">
-                <option selected>Select</option>
-                {% for template in templates %}
-                    <option value="{{ template[0] }}" data-answer="{{ template[2] }}">{{ template[1] }}</option>
-                {% endfor %}
-            </select>
-        </div>
-        <div class="mb-3">
-            <label for="answer_template_${questionIndex}" class="form-label">เฉลย</label>
-            <input type="text" id="answer_template_${questionIndex}" class="form-control" placeholder="รูปแบบเฉลย" disabled>
-        </div>
-        <button type="button" class="btn btn-danger remove-question">ลบ</button>
-    `;
-    container.appendChild(newQuestionSet);
 
-    questionIndex++;
-});
 
-document.getElementById('questions-container').addEventListener('click', function(e) {
-    if (e.target.classList.contains('remove-question')) {
-        e.target.closest('.question-set').remove();
 
-        // Update all question numbers after removing a question
-        const questionSets = document.querySelectorAll('.question-set');
-        questionSets.forEach((set, index) => {
-            set.querySelector('.question-number').textContent = (index + 1) + '.';
-        });
-
-        questionIndex = questionSets.length;  // Update the global index
-    }
-});
-</script>
+    
+    document.getElementById('add-question').addEventListener('click', function() {
+        const container = document.getElementById('questions-container');
+        const newQuestionSet = document.createElement('div');
+        newQuestionSet.className = 'question-set mb-4';
+        newQuestionSet.dataset.index = questionIndex;
+        newQuestionSet.innerHTML = `
+            <div class="mb-3">
+                <span class="question-number">${questionIndex + 1}.</span>
+                <label for="template_${questionIndex}" class="form-label">เลือก Template</label>
+                <select name="template_${questionIndex}" id="template_${questionIndex}" class="form-select form-select-lg template-select" aria-label="Select Template" onchange="updateAnswerTemplate(${questionIndex})">
+                    <option selected>Select</option>
+                    {% for template in templates %}
+                        <option value="{{ template[0] }}" data-answer="{{ template[2] }}" data-choices="{{ template[3] | join(',') }}">{{ template[1] }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="answer_template_${questionIndex}" class="form-label">เฉลย</label>
+                <input type="text" id="answer_template_${questionIndex}" class="form-control" placeholder="รูปแบบเฉลย" disabled>
+            </div>
+            <div id="choices_container_${questionIndex}" class="mb-3"></div>
+            <button type="button" class="btn btn-danger remove-question">ลบ</button>
+        `;
+        container.appendChild(newQuestionSet);
+    
+        questionIndex++;
+    });
+    
+    document.getElementById('questions-container').addEventListener('click', function(e) {
+        if (e.target.classList.contains('remove-question')) {
+            e.target.closest('.question-set').remove();
+    
+            // Update all question numbers after removing a question
+            const questionSets = document.querySelectorAll('.question-set');
+            questionSets.forEach((set, index) => {
+                set.querySelector('.question-number').textContent = (index + 1) + '.';
+            });
+    
+            questionIndex = questionSets.length;  // Update the global index
+        }
+    });
+    </script>
+    
 {% endblock %}

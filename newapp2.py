@@ -10,6 +10,8 @@ import bcrypt
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'mykey'
+app.secret_key = 'secretkey'
+
 
 # MongoClient
 myclient = MongoClient('mongodb+srv://admin:1234@cluster0.dvcham8.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0')
@@ -23,6 +25,16 @@ class NameForm(FlaskForm):
     answer = StringField('Answer')
     submit = SubmitField('Submit')
 
+@app.route('/')
+def home():
+    if 'username' in session:
+        if session['role'] == 'user':
+            return render_template('home.html')
+        elif session['role'] == 'admin':
+            return render_template('home.html')
+    else:
+        return redirect(url_for('login'))
+
 @app.route('/login', methods=['POST', 'GET'])
 def login():
     if request.method == 'POST':
@@ -32,7 +44,11 @@ def login():
             if bcrypt.checkpw(request.form['password'].encode('utf-8'), login_user['password']):
                 session['username'] = request.form['username']
                 session['role'] = login_user.get('role', 'user')
-                return redirect(url_for('home'))
+                
+                if session['role'] == 'admin':
+                    return redirect(url_for('admin'))  # เปลี่ยนเส้นทางไปยังหน้า admin
+                else:
+                    return redirect(url_for('home'))  # เปลี่ยนเส้นทางไปยังหน้า home
         return 'Invalid username/password'
     return render_template('login.html')
 
@@ -65,9 +81,9 @@ def admin():
 def logout():
     session.pop('username', None)
     session.pop('role', None)
-    return redirect(url_for('home'))
+    return redirect(url_for('login'))
 
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/index', methods=['GET', 'POST'])
 def index():
     form = NameForm()
 
@@ -238,7 +254,10 @@ def quiz_maker():
 @app.route('/create_exercise', methods=['GET', 'POST'])
 def create_exercise():
     templates = list(questions_template_collection.find({}, {'_id': 1, 'question_template': 1, 'answer_template': 1}))
-    template_options = [(str(template['_id']), template['question_template'], template['answer_template']) for template in templates]
+    template_options = [
+    (str(template['_id']), template.get('question_template', ''), template.get('answer_template', ''))
+    for template in templates if template
+]
     
     if request.method == 'POST':
         template_id = request.form['template']

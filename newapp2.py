@@ -7,6 +7,7 @@ from wtforms.validators import DataRequired
 from pymongo import MongoClient
 import random
 import bcrypt
+from functools import wraps
 
 
 app = Flask(__name__)
@@ -26,18 +27,37 @@ class NameForm(FlaskForm):
     answer = StringField('Answer')
     submit = SubmitField('Submit')
 
+def admin_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'username' not in session or session.get('role') != 'admin':
+            flash('You do not have permission to access this page.', 'error')
+            return redirect(url_for('home'))
+        return f(*args, **kwargs)
+    return decorated_function
+
+@app.after_request
+def add_header(response):
+    response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+    response.headers['Pragma'] = 'no-cache'
+    response.headers['Expires'] = '0'
+    return response
+
+
+
 @app.route('/')
 def home():
     if 'username' in session:
         if session['role'] == 'user':
             return render_template('home.html')
         elif session['role'] == 'admin':
-            return render_template('home.html')
+            return render_template('admin.html')
     else:
         return redirect(url_for('login'))
 
 @app.route('/login', methods=['POST', 'GET'])
 def login():
+    error = None
     if request.method == 'POST':
         login_user = users.find_one({'username': request.form['username']})
         
@@ -47,11 +67,12 @@ def login():
                 session['role'] = login_user.get('role', 'user')
                 
                 if session['role'] == 'admin':
-                    return redirect(url_for('admin'))  # เปลี่ยนเส้นทางไปยังหน้า admin
+                    return redirect(url_for('admin'))
                 else:
-                    return redirect(url_for('home'))  # เปลี่ยนเส้นทางไปยังหน้า home
-        return 'Invalid username/password'
-    return render_template('login.html')
+                    return redirect(url_for('home'))
+        error = 'Invalid username/password'
+    return render_template('login.html', error=error)
+
 
 @app.route('/register', methods=['POST', 'GET'])
 def register():
@@ -82,41 +103,49 @@ def admin():
 def logout():
     session.pop('username', None)
     session.pop('role', None)
-    return redirect(url_for('login'))
+    
+    response = redirect(url_for('login'))
+    response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+    response.headers['Pragma'] = 'no-cache'
+    response.headers['Expires'] = '0'
+    return response
+
 
 @app.route('/index', methods=['GET', 'POST'])
+@admin_required
 def index():
+    
+
     form = NameForm()
 
     if form.validate_on_submit():
         text = form.quiz.data
 
         if 'correct_choice' in request.form:
-    # คำถามแบบตัวเลือก
+            # Multiple-choice question
             choices = request.form.getlist('choices[]')
             correct_choice_index = int(request.form.get('correct_choice'))
 
-            # บันทึก template ของ choices โดยไม่ประมวลผล
+            # Save the template of choices without processing
             choices_template = choices[:]
 
-            # บันทึก template ของ choices โดยประมวลผล
+            # Process and save the choices
             question_template = text
             question_text, num_dict, opt_dict, person_dict, obj_dict, numbers = process_question_template(question_template)
 
             eval_context = {**num_dict, **opt_dict, **person_dict, **obj_dict}
             evaluated_choices = [evaluate_expression(choice, eval_context) for choice in choices]
 
-            # คำนวณคำตอบที่ถูกต้อง
+            # Calculate the correct answer
             correct_answer = evaluated_choices[correct_choice_index]
-
 
             try:
                 questions_template_collection.insert_one({
                     'question': question_text,
                     'question_template': text,
                     'question_type': 'multiple_choice',
-                    'choices_template': choices_template,  # บันทึก template ของ choices
-                    'choices': evaluated_choices,  # บันทึก choices ที่ถูกประมวลผล
+                    'choices_template': choices_template,  # Save the template of choices
+                    'choices': evaluated_choices,  # Save the processed choices
                     'correct_answer': correct_answer,
                     'answer_template': choices_template[correct_choice_index]
                 })
@@ -124,9 +153,8 @@ def index():
             except Exception as e:
                 flash('An error occurred while saving the question. Please try again.', 'error')
 
-
         else:
-            # คำถามแบบเขียน
+            # Written question
             answer = form.answer.data
             if not answer:
                 flash('Answer is required for written questions.', 'error')
@@ -158,7 +186,9 @@ def index():
 
     return render_template('index.html', form=form)
 
+
 @app.route('/quiz_maker', methods=['GET', 'POST'])
+@admin_required
 def quiz_maker():
     templates = list(questions_template_collection.find({}, {'_id': 1, 'question_template': 1, 'answer_template': 1, 'choices_template': 1}))
     template_options = [

@@ -2,14 +2,33 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
     <title>Login</title>
 </head>
 <body>
-    <h1>Login</h1>
-    <form method="POST">
-        <input type="text" name="username" placeholder="Username">
-        <input type="password" name="password" placeholder="Password">
-        <input type="submit" value="Login">
-    </form>
+    <div class="login-container">
+        <p class="title">Login</p>
+
+        {% if error %}
+            <p class="error-message" style="color: red;">{{ error }}</p>
+            <br>
+        {% endif %}
+
+        <form class="login-form" method="POST">
+            <div class="form-control">
+                <input type="text" name="username" placeholder="Username">
+                <i class="fas fa-user"></i>
+            </div>
+            <div class="form-control">
+                <input type="password" name="password" placeholder="Password">
+                <i class="fas fa-lock"></i>
+                <p class="forgot-password">Forgot Password?</p>
+            </div>
+
+            <button class="submit">Login</button>
+        </form>
+    </div>
 </body>
 </html>

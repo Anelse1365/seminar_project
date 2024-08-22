@@ -8,6 +8,7 @@ from pymongo import MongoClient
 import random
 import bcrypt
 
+
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'mykey'
 app.secret_key = 'secretkey'
@@ -220,13 +221,6 @@ def quiz_maker():
                         evaluated_choices.append(f"{choice_labels[i]}. {evaluated_choice}")
 
                     quiz_set.append({
-                        'question': question_text,
-                        'answer': evaluated_answer,
-                        'choices': evaluated_choices,  # เพิ่ม choices ที่ประเมินแล้วเข้าไป
-                        **num_dict,
-                        **opt_dict,
-                        **person_dict,
-                        **obj_dict
                     })
             else:
                 flash('Please select a template for each question.', 'error')
@@ -238,7 +232,6 @@ def quiz_maker():
             'quiz_name': quiz_name,
             'category': category,  # Store the selected or created category
             'questions': quiz_set,
-            'num_sets': num_sets,
         })
 
         flash('Quizzes generated successfully!', 'success')
@@ -257,49 +250,10 @@ def create_exercise():
     template_options = [
     (str(template['_id']), template.get('question_template', ''), template.get('answer_template', ''))
     for template in templates if template
-]
-    
-    if request.method == 'POST':
-        template_id = request.form['template']
-        selected_template = questions_template_collection.find_one({'_id': ObjectId(template_id)})
 
-        if selected_template:
-            question_template = selected_template['question_template']
-            answer_template = selected_template['answer_template']
 
-            question_text, num_dict, opt_dict, person_dict, obj_dict, numbers = process_question_template(question_template)
-            rule_no_minus = '<rule.noMinus>' in answer_template
-            if rule_no_minus:
-                answer_template = answer_template.replace('<rule.noMinus>', '')
 
-            eval_context = {**num_dict, **opt_dict, **person_dict, **obj_dict}
-            evaluated_answer = evaluate_expression(answer_template, eval_context)
 
-            while rule_no_minus and evaluated_answer < 0:
-                for num_tag, num_type, content in numbers:
-                    random_match = re.search(r'<r(?:\.(odd|even))?>(.*?)</r>', content)
-                    if random_match:
-                        condition = random_match.group(1)
-                        random_expr = random_match.group(2)
-                        number = generate_random_number(random_expr, num_type, condition)
-                    else:
-                        number = convert_to_type(content, num_type)
-                    question_text = question_text.replace(f'<num{num_tag},{num_type}>{content}</num{num_tag}>', str(number))
-                    num_dict[f'num{num_tag}'] = number
-
-                eval_context = {**num_dict, **opt_dict, **person_dict, **obj_dict}
-                evaluated_answer = evaluate_expression(answer_template, eval_context)
-
-            generated_question = {
-                'question': question_text,
-                'answer': evaluated_answer,
-                **num_dict,
-                **opt_dict,
-                **person_dict,
-                **obj_dict
-            }
-
-            result = mydb['generated_questions'].insert_one(generated_question)
 
             return redirect(url_for('exercise', question_id=str(result.inserted_id)), code=303)
         
@@ -322,12 +276,7 @@ def exercise(question_id):
     is_correct = False
 
     if request.method == 'POST':
-        user_answer = request.form['answer']
-        correct_answer = question['answer']
-        is_correct = str(user_answer) == str(correct_answer)
-        submitted = True
 
-    return render_template('exercise.html', question=question, submitted=submitted, user_answer=user_answer, correct_answer=correct_answer, is_correct=is_correct)
 
 
 @app.route('/submit_answer/<question_id>', methods=['POST'])

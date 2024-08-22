@@ -158,10 +158,6 @@ def index():
 
     return render_template('index.html', form=form)
 
-
-
-
-
 @app.route('/quiz_maker', methods=['GET', 'POST'])
 def quiz_maker():
     templates = list(questions_template_collection.find({}, {'_id': 1, 'question_template': 1, 'answer_template': 1, 'choices_template': 1}))
@@ -221,6 +217,10 @@ def quiz_maker():
                         evaluated_choices.append(f"{choice_labels[i]}. {evaluated_choice}")
 
                     quiz_set.append({
+                        'question': question_template,
+                        'answer': answer_template,
+                        'choices': choices_template,  # เพิ่ม choices ที่ประเมินแล้วเข้าไป
+
                     })
             else:
                 flash('Please select a template for each question.', 'error')
@@ -232,6 +232,7 @@ def quiz_maker():
             'quiz_name': quiz_name,
             'category': category,  # Store the selected or created category
             'questions': quiz_set,
+            
         })
 
         flash('Quizzes generated successfully!', 'success')
@@ -239,43 +240,132 @@ def quiz_maker():
 
     return render_template('quiz_maker.html', templates=template_options, collections=collections, categories=categories)
 
-
-
-
-
-
 @app.route('/create_exercise', methods=['GET', 'POST'])
 def create_exercise():
-    templates = list(questions_template_collection.find({}, {'_id': 1, 'question_template': 1, 'answer_template': 1}))
-    template_options = [
-    (str(template['_id']), template.get('question_template', ''), template.get('answer_template', ''))
-    for template in templates if template
+    # ดึงข้อมูลชุดข้อสอบทั้งหมดจากคอลเลคชัน "ชุดข้อสอบ"
+    quiz_sets = list(mydb['ชุดข้อสอบ'].find({}, {'_id': 1, 'quiz_name': 1, 'category': 1}))
+    quiz_set_options = [
+        (
+            str(quiz_set['_id']),
+            quiz_set.get('quiz_name', 'Unknown Quiz Name'),
+            quiz_set.get('category', 'Unknown Category')
+        )
+        for quiz_set in quiz_sets
+    ]
 
-
-
-
-
-            return redirect(url_for('exercise', question_id=str(result.inserted_id)), code=303)
-        
-        flash('Selected template not found.', 'error')
-        return redirect(url_for('create_exercise'))
-    
-    return render_template('create_exercise.html', templates=template_options)
-
-
-@app.route('/exercise/<question_id>', methods=['GET', 'POST'])
-def exercise(question_id):
-    question = mydb['generated_questions'].find_one({'_id': ObjectId(question_id)})
-    if not question:
-        flash('Question not found.', 'error')
-        return redirect(url_for('index'))
-
-    submitted = False
-    user_answer = None
-    correct_answer = None
-    is_correct = False
+    selected_quiz_set = None
+    preview_questions = []
+    shuffle_choices = False
+    view_mode = 'template'  # Default mode
 
     if request.method == 'POST':
+        quiz_set_id = request.form['quiz_set']
+        shuffle_choices = 'shuffle_choices' in request.form
+        view_mode = request.form.get('view_mode', 'template')
+
+        # ดึงข้อมูลชุดข้อสอบที่ถูกเลือกจาก MongoDB
+        selected_quiz_set = mydb['ชุดข้อสอบ'].find_one({'_id': ObjectId(quiz_set_id)})
+
+        if selected_quiz_set:
+            questions = selected_quiz_set.get('questions', [])
+            for question in questions:
+                if view_mode == 'template':
+                    # แสดงโจทย์แบบ template
+                    question_text = question['question']
+                    answer = question['answer']
+                    choices = question.get('choices', [])
+                else:
+                    # ประมวลผล template เป็นโจทย์จริง
+                    question_template = question['question']
+                    answer_template = question['answer']
+                    choices_template = question.get('choices', [])
+
+                    question_text, num_dict, opt_dict, person_dict, obj_dict, numbers = process_question_template(question_template)
+                    eval_context = {**num_dict, **opt_dict, **person_dict, **obj_dict}
+                    answer = evaluate_expression(answer_template, eval_context)
+
+                    choices = []
+                    if choices_template:
+                        for choice_template in choices_template:
+                            choices.append(evaluate_expression(choice_template, eval_context))
+
+                # สลับตำแหน่งของ choices ถ้า checkbox ถูกติ๊ก
+                if shuffle_choices and choices:
+                    random.shuffle(choices)
+
+                preview_questions.append({
+                    'question': question_text,
+                    'choices': choices,
+                    'answer': answer
+                })
+
+            # ส่งข้อมูลโจทย์จริงไปยัง exercise.html
+            if 'create_exercise' in request.form:
+                return redirect(url_for('exercise', quiz_id=quiz_set_id))
+
+    return render_template('create_exercise.html', 
+                           quiz_sets=quiz_set_options, 
+                           preview_questions=preview_questions, 
+                           selected_quiz_set=selected_quiz_set,
+                           shuffle_choices=shuffle_choices,
+                           view_mode=view_mode)
+
+
+
+@app.route('/exercise/<quiz_id>', methods=['GET', 'POST'])
+def exercise(quiz_id):
+    # Fetch the selected quiz set
+    selected_quiz_set = mydb['ชุดข้อสอบ'].find_one({'_id': ObjectId(quiz_id)})
+
+    questions = []
+    results = []
+    submitted = False
+
+    if selected_quiz_set:
+        raw_questions = selected_quiz_set.get('questions', [])
+        
+        for question in raw_questions:
+            question_template = question['question']
+            answer_template = question['answer']
+            choices_template = question.get('choices', [])
+
+            # Process the template to generate real questions
+            question_text, num_dict, opt_dict, person_dict, obj_dict, numbers = process_question_template(question_template)
+            eval_context = {**num_dict, **opt_dict, **person_dict, **obj_dict}
+            answer = evaluate_expression(answer_template, eval_context)
+
+            choices = []
+            if choices_template:
+                for choice_template in choices_template:
+                    choices.append(evaluate_expression(choice_template, eval_context))
+
+            questions.append({
+                'question': question_text,
+                'choices': choices,
+                'answer': answer
+            })
+
+    if request.method == 'POST':
+        submitted = False
+        for i, question in enumerate(questions):
+            correct_answer = question['answer']
+            user_answer = request.form.get(f'answer_{i+1}')
+            is_correct = user_answer == correct_answer
+            results.append({
+                'question': question['question'],
+                'user_answer': user_answer,
+                'correct_answer': correct_answer,
+                'is_correct': is_correct
+            })
+        else:
+            submitted = False  # หากไม่มีคำตอบ ส่งค่า submitted กลับไปเป็น False เพื่อไม่ให้แสดงผลลัพธ์
+
+
+    return render_template('exercise.html',
+                           quiz_id=quiz_id,
+                           questions=questions,
+                           submitted=submitted,
+                           results=results)
 
 
 

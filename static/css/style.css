@@ -1,0 +1,17 @@
+  /* ทำให้ radio button ที่ disabled และ label ที่เกี่ยวข้องไม่จาง */
+  input[type="radio"]:disabled + label {
+    color: #000 !important;
+    opacity: 1 !important;
+
+}
+
+/* ปรับให้ background และสีฟอนต์ไม่เปลี่ยนแปลงเมื่อ disable */
+input[type="radio"]:disabled + label {
+    background-color: transparent !important;
+    cursor: not-allowed;
+}
+
+/* ปรับแต่งให้ radio button ที่ disabled สว่างขึ้น */
+input[type="radio"]:disabled {
+    opacity: 1 !important;
+}

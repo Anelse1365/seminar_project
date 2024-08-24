@@ -45,7 +45,17 @@ def add_header(response):
     return response
 
 
+@app.route('/home')
+def home():
+    if 'username' in session:
+        if session['role'] == 'user':
+            return render_template('home.html')
+        elif session['role'] == 'admin':
+            return render_template('admin.html')
+    else:
+        return redirect(url_for('login'))
 
+@app.route('/login', methods=['POST', 'GET'])
 
 @app.route('/', methods=['POST', 'GET'])
 def login():

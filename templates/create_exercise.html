@@ -56,25 +56,25 @@
                             <span class="question-number">{{ loop.index }}.</span>
                             <p><strong>Question:</strong> {{ question['question'] }}</p>
                             {% set question_index = loop.index %}
-{% if question['choices'] %}
-    {% for choice in question['choices'] %}
-        <div class="form-check">
-            <input class="form-check-input" type="radio" 
-                   name="question{{ question_index }}" 
-                   id="choice_{{ question_index }}_{{ loop.index }}" 
-                   value="{{ choice }}" 
-                   {% if choice == question['answer'] %}checked{% endif %} disabled>
-            <label class="form-check-label" for="choice_{{ question_index }}_{{ loop.index }}">
-                {{ choice }}
-            </label>
-        </div>
-    {% endfor %}
-{% else %}
-    <div class="mb-3">
-        <label for="answer_template_{{ loop.index0 }}" class="form-label">Answer</label>
-        <input type="text" id="answer_template_{{ loop.index0 }}" class="form-control" value="{{ question['answer'] }}" disabled>
-    </div>
-{% endif %}
+                    {% if question['choices'] %}
+                        {% for choice in question['choices'] %}
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" 
+                                    name="question{{ question_index }}" 
+                                    id="choice_{{ question_index }}_{{ loop.index }}" 
+                                    value="{{ choice }}" 
+                                    {% if choice == question['answer'] %}checked{% endif %} disabled>
+                                <label class="form-check-label" for="choice_{{ question_index }}_{{ loop.index }}">
+                                    {{ choice }}
+                                </label>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="mb-3">
+                            <label for="answer_template_{{ loop.index0 }}" class="form-label">Answer</label>
+                            <input type="text" id="answer_template_{{ loop.index0 }}" class="form-control" value="{{ question['answer'] }}" disabled>
+                        </div>
+                    {% endif %}
 
                         </div>
                     </div>

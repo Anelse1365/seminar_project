@@ -55,7 +55,6 @@ def home():
     else:
         return redirect(url_for('login'))
 
-@app.route('/login', methods=['POST', 'GET'])
 
 @app.route('/', methods=['POST', 'GET'])
 def login():

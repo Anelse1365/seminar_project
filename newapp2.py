@@ -383,7 +383,11 @@ def exercise(quiz_id):
 
     if request.method == 'POST':
         for i, question in enumerate(questions, start=1):
-            user_answer = request.form.get(f'question{i}')
+            if question['choices']:  # For multiple choice questions
+                user_answer = request.form.get(f'question{i}')
+            else:  # For open-ended questions
+                user_answer = request.form.get(f'answer_{i}')
+
             if user_answer is not None:  # ตรวจสอบว่าคำตอบถูกส่งมาหรือไม่
                 correct_answer = question['answer']
                 is_correct = user_answer == correct_answer
@@ -402,13 +406,20 @@ def exercise(quiz_id):
                            results=results)
 
 
+
 @app.route('/submit_answer/<question_id>', methods=['POST'])
 def submit_answer(question_id):
     user_answer = request.form['answer']
     return redirect(url_for('exercise', question_id=question_id, user_answer=user_answer))
 @app.route('/view_templates', methods=['GET'])
 def view_templates():
-    templates = list(questions_template_collection.find({}, {'_id': 1, 'question_template': 1, 'answer_template': 1}))
+    templates = list(questions_template_collection.find({}, {
+        '_id': 1,
+        'question_template': 1,
+        'answer_template': 1,
+        'choices_template': 1,
+        'choices': 1
+    }))
     return render_template('view_templates.html', templates=templates)
 
 @app.route('/edit_template/<template_id>', methods=['GET', 'POST'])
@@ -418,15 +429,23 @@ def edit_template(template_id):
     if request.method == 'POST':
         question_template = request.form['question_template']
         answer_template = request.form['answer_template']
-        
+        choices_template = request.form.getlist('choices_template')
+        choices = request.form.getlist('choices')
+
         questions_template_collection.update_one(
             {'_id': ObjectId(template_id)},
-            {'$set': {'question_template': question_template, 'answer_template': answer_template}}
+            {'$set': {
+                'question_template': question_template,
+                'answer_template': answer_template,
+                'choices_template': choices_template,
+                'choices': choices
+            }}
         )
         flash('Template updated successfully!', 'success')
         return redirect(url_for('view_templates'))
 
     return render_template('edit_template.html', template=template)
+
 
 @app.route('/delete_template/<template_id>', methods=['POST'])
 def delete_template(template_id):

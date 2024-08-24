@@ -1,29 +1,84 @@
+<!-- templates/edit_template.html -->
 {% extends 'base.html' %}
 
 {% block title %}Edit Template{% endblock %}
 
 {% block body %}
 <div class="container mt-5">
-    <div class="row">
-        <div class="col-md-8 offset-md-2">
-            <h1 class="mb-4">Edit Template</h1>
-            <div class="card">
-                <div class="card-body">
-                    <form action="{{ url_for('edit_template', template_id=template._id) }}" method="post">
-                        <div class="mb-3">
-                            <label for="question_template" class="form-label">Question Template:</label>
-                            <textarea class="form-control" name="question_template" id="question_template" rows="4">{{ template.question_template }}</textarea>
-                        </div>
-                        <div class="mb-3">
-                            <label for="answer_template" class="form-label">Answer Template:</label>
-                            <textarea class="form-control" name="answer_template" id="answer_template" rows="2">{{ template.answer_template }}</textarea>
-                        </div>
-                        <button class="btn btn-success" type="submit">Update</button>
-                        <a class="btn btn-secondary" href="{{ url_for('view_templates') }}">Back to Templates</a>
-                    </form>
-                </div>
-            </div>
+    <h1 class="mb-4">Edit Template</h1>
+    <form method="POST" action="{{ url_for('edit_template', template_id=template['_id']) }}">
+        <div class="mb-3">
+            <label for="question_template" class="form-label">Question Template</label>
+            <textarea class="form-control" id="question_template" name="question_template" rows="3" required>{{ template.question_template }}</textarea>
         </div>
-    </div>
+        <div class="mb-3">
+            <label for="answer_template" class="form-label">Answer Template</label>
+            <textarea class="form-control" id="answer_template" name="answer_template" rows="2" required>{{ template.answer_template }}</textarea>
+        </div>
+        <div class="mb-3">
+            <label for="choices_template" class="form-label">Choices Template</label>
+            <div id="choices_template_container">
+                {% for choice_template in template.choices_template %}
+                <div class="input-group mb-2 choice-template-item">
+                    <input type="text" class="form-control" name="choices_template" value="{{ choice_template }}" required>
+                    <button type="button" class="btn btn-danger remove-choice-template">Remove</button>
+                </div>
+                {% endfor %}
+            </div>
+            <button type="button" class="btn btn-secondary" id="add_choice_template">Add Choice Template</button>
+        </div>
+        <div class="mb-3">
+            <label for="choices" class="form-label">Choices</label>
+            <div id="choices_container">
+                {% for choice in template.choices %}
+                <div class="input-group mb-2 choice-item">
+                    <input type="text" class="form-control" name="choices" value="{{ choice }}" required>
+                    <button type="button" class="btn btn-danger remove-choice">Remove</button>
+                </div>
+                {% endfor %}
+            </div>
+            <button type="button" class="btn btn-secondary" id="add_choice">Add Choice</button>
+        </div>
+        <button type="submit" class="btn btn-primary">Save Changes</button>
+        <a href="{{ url_for('view_templates') }}" class="btn btn-secondary">Cancel</a>
+    </form>
 </div>
+
+{% block scripts %}
+<script>
+    document.getElementById('add_choice_template').addEventListener('click', function() {
+        const choicesTemplateContainer = document.getElementById('choices_template_container');
+        const choiceTemplateItem = document.createElement('div');
+        choiceTemplateItem.classList.add('input-group', 'mb-2', 'choice-template-item');
+        choiceTemplateItem.innerHTML = `
+            <input type="text" class="form-control" name="choices_template" required>
+            <button type="button" class="btn btn-danger remove-choice-template">Remove</button>
+        `;
+        choicesTemplateContainer.appendChild(choiceTemplateItem);
+    });
+
+    document.getElementById('choices_template_container').addEventListener('click', function(e) {
+        if (e.target.classList.contains('remove-choice-template')) {
+            e.target.parentElement.remove();
+        }
+    });
+
+    document.getElementById('add_choice').addEventListener('click', function() {
+        const choicesContainer = document.getElementById('choices_container');
+        const choiceItem = document.createElement('div');
+        choiceItem.classList.add('input-group', 'mb-2', 'choice-item');
+        choiceItem.innerHTML = `
+            <input type="text" class="form-control" name="choices" required>
+            <button type="button" class="btn btn-danger remove-choice">Remove</button>
+        `;
+        choicesContainer.appendChild(choiceItem);
+    });
+
+    document.getElementById('choices_container').addEventListener('click', function(e) {
+        if (e.target.classList.contains('remove-choice')) {
+            e.target.parentElement.remove();
+        }
+    });
+</script>
+{% endblock %}
 {% endblock %}

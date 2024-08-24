@@ -1,41 +1,57 @@
+<!-- templates/view_templates.html -->
 {% extends 'base.html' %}
 
 {% block title %}Question Templates{% endblock %}
 
 {% block body %}
 <div class="container mt-5">
-    <div class="row">
-        <div class="col-md-12">
-            <h1 class="mb-4">Question Templates</h1>
-            <a class="btn btn-secondary mb-3" href="{{ url_for('index') }}">Back to Index</a>
-            <div class="card">
-                <div class="card-body">
-                    <table class="table table-bordered">
-                        <thead class="thead-light">
-                            <tr>
-                                <th>Question Template</th>
-                                <th>Answer Template</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for template in templates %}
-                            <tr>
-                                <td>{{ template.question_template }}</td>
-                                <td>{{ template.answer_template }}</td>
-                                <td>
-                                    <a class="btn btn-primary btn-sm" href="{{ url_for('edit_template', template_id=template._id) }}">Edit</a>
-                                    <form action="{{ url_for('delete_template', template_id=template._id) }}" method="post" style="display:inline;">
-                                        <button class="btn btn-danger btn-sm" type="submit">Delete</button>
-                                    </form>
-                                </td>
-                            </tr>
+    <h1 class="mb-4">Question Templates</h1>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Question Template</th>
+                <th>Answer Template</th>
+                <th>Choices Template</th>
+                <th>Choices</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for template in templates %}
+            <tr>
+                <td>{{ template.question_template }}</td>
+                <td>{{ template.answer_template }}</td>
+                <td>
+                    {% if template.choices_template %}
+                        <ul>
+                            {% for choice_template in template.choices_template %}
+                                <li>{{ choice_template }}</li>
                             {% endfor %}
-                        </tbody>
-                       
-                    </table>
-                </div>
-            
-    </div>
+                        </ul>
+                    {% else %}
+                        <em>No choices template available</em>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if template.choices %}
+                        <ul>
+                            {% for choice in template.choices %}
+                                <li>{{ choice }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <em>No choices available</em>
+                    {% endif %}
+                </td>
+                <td>
+                    <a href="{{ url_for('edit_template', template_id=template['_id']) }}" class="btn btn-primary btn-sm">Edit</a>
+                    <form action="{{ url_for('delete_template', template_id=template['_id']) }}" method="POST" style="display:inline;">
+                        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 </div>
 {% endblock %}

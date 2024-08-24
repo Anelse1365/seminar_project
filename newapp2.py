@@ -10,6 +10,7 @@ import bcrypt
 from functools import wraps
 
 
+
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'mykey'
 app.secret_key = 'secretkey'
@@ -45,17 +46,8 @@ def add_header(response):
 
 
 
-@app.route('/')
-def home():
-    if 'username' in session:
-        if session['role'] == 'user':
-            return render_template('home.html')
-        elif session['role'] == 'admin':
-            return render_template('admin.html')
-    else:
-        return redirect(url_for('login'))
 
-@app.route('/login', methods=['POST', 'GET'])
+@app.route('/', methods=['POST', 'GET'])
 def login():
     error = None
     if request.method == 'POST':
@@ -190,7 +182,7 @@ def index():
 @app.route('/quiz_maker', methods=['GET', 'POST'])
 @admin_required
 def quiz_maker():
-    templates = list(questions_template_collection.find({}, {'_id': 1, 'question_template': 1, 'answer_template': 1, 'choices_template': 1}))
+    templates = list(questions_template_collection.find({}, {'_id': 1, 'question_template': 1, 'answer_template': 1, 'choices_template': 1, 'question_type': 1}))
     template_options = [
         (str(template['_id']), template['question_template'], template.get('answer_template', ''), template.get('choices_template', []))
         for template in templates
@@ -246,12 +238,17 @@ def quiz_maker():
                         evaluated_choice = evaluate_expression(choice_template, eval_context)
                         evaluated_choices.append(f"{choice_labels[i]}. {evaluated_choice}")
 
-                    quiz_set.append({
+                    # สร้าง item ของ quiz
+                    quiz_item = {
                         'question': question_template,
                         'answer': answer_template,
-                        'choices': choices_template,  # เพิ่ม choices ที่ประเมินแล้วเข้าไป
+                    }
 
-                    })
+                    # ตรวจสอบว่า question_type ไม่ใช่ 'written'
+                    if selected_template.get('question_type') != 'written':
+                        quiz_item['choices'] = choices_template  # บันทึก choices ถ้าไม่ใช่ 'written'
+
+                    quiz_set.append(quiz_item)
             else:
                 flash('Please select a template for each question.', 'error')
                 return redirect(url_for('quiz_maker'))
@@ -372,31 +369,28 @@ def exercise(quiz_id):
             questions.append({
                 'question': question_text,
                 'choices': choices,
-                'answer': answer
+                'answer': str(answer)  # Convert answer to string for comparison later
             })
 
     if request.method == 'POST':
-        submitted = False
-        for i, question in enumerate(questions):
-            correct_answer = question['answer']
-            user_answer = request.form.get(f'answer_{i+1}')
-            is_correct = user_answer == correct_answer
-            results.append({
-                'question': question['question'],
-                'user_answer': user_answer,
-                'correct_answer': correct_answer,
-                'is_correct': is_correct
-            })
-        else:
-            submitted = False  # หากไม่มีคำตอบ ส่งค่า submitted กลับไปเป็น False เพื่อไม่ให้แสดงผลลัพธ์
-
+        for i, question in enumerate(questions, start=1):
+            user_answer = request.form.get(f'question{i}')
+            if user_answer is not None:  # ตรวจสอบว่าคำตอบถูกส่งมาหรือไม่
+                correct_answer = question['answer']
+                is_correct = user_answer == correct_answer
+                results.append({
+                    'question': question['question'],
+                    'user_answer': user_answer,
+                    'correct_answer': correct_answer,
+                    'is_correct': is_correct
+                })
+        submitted = len(results) > 0  # กำหนดว่า submitted เป็น True หากมีการตอบคำถาม
 
     return render_template('exercise.html',
                            quiz_id=quiz_id,
                            questions=questions,
                            submitted=submitted,
                            results=results)
-
 
 
 @app.route('/submit_answer/<question_id>', methods=['POST'])

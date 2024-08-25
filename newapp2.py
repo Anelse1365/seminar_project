@@ -453,6 +453,44 @@ def delete_template(template_id):
     flash('Template deleted successfully!', 'success')
     return redirect(url_for('view_templates'))
 
+@app.route('/view_user', methods=['GET', 'POST'])
+def view_user():
+    all_users = users.find({"role": {"$ne": "admin"}})  # Exclude admins
+
+    if request.method == 'POST':
+        if 'edit_user' in request.form:
+            user_id = request.form['user_id']
+            users.update_one(
+                {'_id': ObjectId(user_id)},
+                {'$set': {
+                    'username': request.form['username'],
+                    'first_name': request.form['first_name'],
+                    'last_name': request.form['last_name'],
+                    'grade_level': request.form['grade_level']
+                }}
+            )
+        elif 'delete_user' in request.form:
+            user_id = request.form['user_id']
+            users.delete_one({'_id': ObjectId(user_id)})
+        else:
+            existing_user = users.find_one({'username': request.form['username']})
+            if existing_user is None:
+                hashpass = bcrypt.hashpw(request.form['password'].encode('utf-8'), bcrypt.gensalt())
+                users.insert_one({
+                    'username': request.form['username'],
+                    'password': hashpass,
+                    'first_name': request.form['first_name'],
+                    'last_name': request.form['last_name'],
+                    'grade_level': request.form['grade_level'],
+                    'role': 'user'
+                })
+            else:
+                return 'That username already exists!'
+        
+        return redirect(url_for('view_user'))
+
+    return render_template('view_user.html', users=all_users)
+
 
 
 

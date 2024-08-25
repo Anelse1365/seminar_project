@@ -1,9 +1,38 @@
 {% extends "base.html" %}
 
-
 {% block body %}
-    <h1>Admin Dashboard</h1>
-    <p>สวัสดี, {{ session.username }}. นี่คือหน้า admin.</p>
-    <a href="{{ url_for('register') }}">Register</a>
-    <a href="{{ url_for('logout') }}">Logout</a>
+    <div style="text-align: center; margin-top: 50px;">
+        <h1>Admin Dashboard</h1>
+        <p>สวัสดี, {{ session.username }}. นี่คือหน้า admin.</p>
+        <a href="{{ url_for('register') }}">Register</a>
+        <a href="{{ url_for('logout') }}">Logout</a>
+    </div>
+
+    <div style="display: flex; justify-content: center; flex-wrap: wrap; gap: 50px; margin-top: 50px;">
+        <div>
+            <a href="{{ url_for('view_templates') }}">
+                <img src="{{ url_for('static', filename='img/1.jpg') }}" alt="สร้าง Template" style="width: 150px; height: 150px; border-radius: 20px;">
+            </a>
+            
+            <p style="text-align: center; margin-top: 10px;">สร้าง Template</p>
+        </div>
+        <div>
+            <a href="{{ url_for('view_templates') }}">
+                <img src="{{ url_for('static', filename='img/1.jpg') }}" alt="ดูชุดข้อสอบ" style="width: 150px; height: 150px; border-radius: 20px;">
+            </a>
+            <p style="text-align: center; margin-top: 10px;">ดูชุดข้อสอบ</p>
+        </div>
+        <div>
+            <a href="{{ url_for('view_templates') }}">
+                <img src="{{ url_for('static', filename='img/1.jpg') }}" alt="นักเรียนในระบบ" style="width: 150px; height: 150px; border-radius: 20px;">
+            </a>
+            <p style="text-align: center; margin-top: 10px;">นักเรียนในระบบ</p>
+        </div>
+        <div>
+            <a href="{{ url_for('view_templates') }}">
+                <img src="{{ url_for('static', filename='img/1.jpg') }}" alt="ออกข้อสอบ" style="width: 150px; height: 150px; border-radius: 20px;">
+            </a>
+            <p style="text-align: center; margin-top: 10px;">ออกข้อสอบ</p>
+        </div>
+    </div>
 {% endblock %}

@@ -196,9 +196,6 @@ def quiz_maker():
         (str(template['_id']), template['question_template'], template.get('answer_template', ''), template.get('choices_template', []))
         for template in templates
     ]
-    
-    collections = mydb.list_collection_names()
-    collections.remove('questions_template')
 
     # Query distinct categories from the "ชุดข้อสอบ" collection
     category_collection = mydb["ชุดข้อสอบ"]
@@ -206,20 +203,14 @@ def quiz_maker():
 
     if request.method == 'POST':
         quiz_name = request.form.get('quiz_name')
-        num_sets = int(request.form['num_sets'])
-        collection_name = request.form.get('collection')
-        new_collection_name = request.form.get('new_collection')
-        
         category = request.form.get('category')
         new_category_name = request.form.get('new_category')
-        
-        if new_collection_name:
-            collection_name = new_collection_name
-        
+
         if new_category_name:
             category = new_category_name
-        
-        collection = mydb[collection_name]
+
+        # Use the "ชุดข้อสอบ" collection directly
+        collection = mydb["ชุดข้อสอบ"]
 
         quiz_set = []
 
@@ -235,29 +226,28 @@ def quiz_maker():
                 answer_template = selected_template.get('answer_template', '')  # ใช้ .get() เพื่อป้องกัน KeyError
                 choices_template = selected_template.get('choices_template', [])  # ดึงข้อมูล choices_template ถ้ามี
 
-                for _ in range(num_sets):
-                    question_text, num_dict, opt_dict, person_dict, obj_dict, numbers = process_question_template(question_template)
-                    eval_context = {**num_dict, **opt_dict, **person_dict, **obj_dict}
-                    evaluated_answer = evaluate_expression(answer_template, eval_context)
+                question_text, num_dict, opt_dict, person_dict, obj_dict, numbers = process_question_template(question_template)
+                eval_context = {**num_dict, **opt_dict, **person_dict, **obj_dict}
+                evaluated_answer = evaluate_expression(answer_template, eval_context)
 
-                    # สร้างข้อมูลของ choices พร้อมแทนค่า
-                    evaluated_choices = []
-                    choice_labels = ['a', 'b', 'c', 'd', 'e']  # ป้ายกำกับตัวเลือก (ขึ้นอยู่กับจำนวน)
-                    for i, choice_template in enumerate(choices_template):
-                        evaluated_choice = evaluate_expression(choice_template, eval_context)
-                        evaluated_choices.append(f"{choice_labels[i]}. {evaluated_choice}")
+                # สร้างข้อมูลของ choices พร้อมแทนค่า
+                evaluated_choices = []
+                choice_labels = ['a', 'b', 'c', 'd', 'e']  # ป้ายกำกับตัวเลือก (ขึ้นอยู่กับจำนวน)
+                for i, choice_template in enumerate(choices_template):
+                    evaluated_choice = evaluate_expression(choice_template, eval_context)
+                    evaluated_choices.append(f"{choice_labels[i]}. {evaluated_choice}")
 
-                    # สร้าง item ของ quiz
-                    quiz_item = {
-                        'question': question_template,
-                        'answer': answer_template,
-                    }
+                # สร้าง item ของ quiz
+                quiz_item = {
+                    'question': question_template,
+                    'answer': answer_template,
+                }
 
-                    # ตรวจสอบว่า question_type ไม่ใช่ 'written'
-                    if selected_template.get('question_type') != 'written':
-                        quiz_item['choices'] = choices_template  # บันทึก choices ถ้าไม่ใช่ 'written'
+                # ตรวจสอบว่า question_type ไม่ใช่ 'written'
+                if selected_template.get('question_type') != 'written':
+                    quiz_item['choices'] = choices_template  # บันทึก choices ถ้าไม่ใช่ 'written'
 
-                    quiz_set.append(quiz_item)
+                quiz_set.append(quiz_item)
             else:
                 flash('Please select a template for each question.', 'error')
                 return redirect(url_for('quiz_maker'))
@@ -268,13 +258,12 @@ def quiz_maker():
             'quiz_name': quiz_name,
             'category': category,  # Store the selected or created category
             'questions': quiz_set,
-            
         })
 
         flash('Quizzes generated successfully!', 'success')
         return redirect(url_for('quiz_maker'))
 
-    return render_template('quiz_maker.html', templates=template_options, collections=collections, categories=categories)
+    return render_template('quiz_maker.html', templates=template_options, categories=categories)
 
 @app.route('/create_exercise', methods=['GET', 'POST'])
 def create_exercise():

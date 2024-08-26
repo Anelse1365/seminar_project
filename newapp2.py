@@ -502,10 +502,11 @@ def view_user():
 
 @app.route('/quiz_storage', methods=['GET'])
 def quiz_storage():
-    quizzes = list(category_collection.find({}, {
+    quizzes = list(mydb["ชุดข้อสอบ"].find({}, {
         '_id': 1,
         'quiz_name': 1,
-        'category': 1
+        'category': 1,
+        'created_at': 1
     }))
     
     return render_template('quiz_storage.html', quizzes=quizzes)

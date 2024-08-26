@@ -11,6 +11,7 @@
             <tr>
                 <th>Quiz Name</th>
                 <th>Category</th>
+                <th>Created At</th>  
                 <th>Actions</th>
             </tr>
         </thead>
@@ -24,6 +25,7 @@
                     </form>
                 </td>
                 <td>{{ quiz.category }}</td>
+                <td>{{ quiz.created_at }}</td>  <!-- แสดงเวลาที่สร้าง -->
                 <td>
                     <a href="{{ url_for('view_quiz', quiz_id=quiz['_id']) }}" class="btn btn-primary btn-sm">ดู</a>
                     <button type="button" class="btn btn-danger btn-sm" onclick="confirmDelete(`{{ quiz['_id'] }}`)">ลบ</button>

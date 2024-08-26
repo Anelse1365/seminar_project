@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block title %}Quiz Storage{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <h1 class="mb-4">Quiz Storage</h1>
+    
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Quiz Name</th>
+                <th>Category</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for quiz in quizzes %}
+            <tr>
+                <td>
+                    <form action="{{ url_for('edit_quiz_name', quiz_id=quiz['_id']) }}" method="POST" class="d-inline">
+                        <input type="text" name="quiz_name" value="{{ quiz.quiz_name }}" class="form-control d-inline-block w-75" required>
+                        <button type="submit" class="btn btn-primary btn-sm">Save</button>
+                    </form>
+                </td>
+                <td>{{ quiz.category }}</td>
+                <td>
+                    <a href="{{ url_for('view_quiz', quiz_id=quiz['_id']) }}" class="btn btn-primary btn-sm">ดู</a>
+                    <button type="button" class="btn btn-danger btn-sm" onclick="confirmDelete(`{{ quiz['_id'] }}`)">ลบ</button>
+
+                    <form id="delete-form-{{ quiz['_id'] }}" action="{{ url_for('delete_quiz', quiz_id=quiz['_id']) }}" method="POST" style="display: none;">
+                        <!-- Hidden CSRF token field for security (if applicable) -->
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<script>
+    function confirmDelete(quizId) {
+        if (confirm('คุณแน่ใจหรือว่าต้องการลบชุดข้อสอบนี้?')) {
+            document.getElementById('delete-form-' + quizId).submit();
+        }
+    }
+</script>
+{% endblock %}

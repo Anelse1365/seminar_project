@@ -25,20 +25,9 @@
                 </div>
                 {% endfor %}
             </div>
-            <button type="button" class="btn btn-secondary" id="add_choice_template">Add Choice Template</button>
+            <button type="button" class="btn btn-outline-primary" id="add_choice_template">Add Choice Template</button>
         </div>
-        <div class="mb-3">
-            <label for="choices" class="form-label">Choices</label>
-            <div id="choices_container">
-                {% for choice in template.choices %}
-                <div class="input-group mb-2 choice-item">
-                    <input type="text" class="form-control" name="choices" value="{{ choice }}" required>
-                    <button type="button" class="btn btn-danger remove-choice">Remove</button>
-                </div>
-                {% endfor %}
-            </div>
-            <button type="button" class="btn btn-secondary" id="add_choice">Add Choice</button>
-        </div>
+
         <button type="submit" class="btn btn-primary">Save Changes</button>
         <a href="{{ url_for('view_templates') }}" class="btn btn-secondary">Cancel</a>
     </form>

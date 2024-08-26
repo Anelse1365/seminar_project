@@ -28,6 +28,18 @@
                             <label for="answer" class="form-label">{{ form.answer.label }}</label>
                             {{ form.answer(class="form-control", id="answer") }}
                         </div>
+                        <!-- Add this within each form block where you want to include the category -->
+                        <div class="mb-3">
+                            <label for="category" class="form-label">Category</label>
+                            <select name="existing_category" class="form-select" id="existing-category">
+                                <option value="" selected>-- เลือกหมวดหมู่ --</option>
+                                {% for category in existing_categories %}
+                                <option value="{{ category }}">{{ category }}</option>
+                                {% endfor %}
+                                <option value="new">-- สร้างหมวดหมู่ใหม่ --</option>
+                            </select>
+                        </div>
+
                         <button type="submit" class="btn btn-primary w-100">{{ form.submit.label }}</button>
                     </form>
                 </div>
@@ -48,8 +60,24 @@
                                 <input type="radio" name="correct_choice" value="0"> Correct
                             </div>
                         </div>
+                        <button type="button" class="btn btn-outline-primary" id="add-choice-btn">เพิ่มช้อยส์</button><br><br>
+                        <!-- Add this within each form block where you want to include the category -->
+                        <div class="mb-3">
+                            <label for="category" class="form-label">Category</label>
+                            <select name="existing_category" class="form-select" id="existing-category">
+                                <option value="" selected>-- เลือกหมวดหมู่ --</option>
+                                {% for category in existing_categories %}
+                                <option value="{{ category }}">{{ category }}</option>
+                                {% endfor %}
+                                <option value="new">-- สร้างหมวดหมู่ใหม่ --</option>
+                            </select>
+                        </div>
 
-                        <button type="button" class="btn btn-secondary w-100 mb-3" id="add-choice-btn">เพิ่มช้อยส์</button>
+                        <div class="mb-3" id="new-category-container" style="display: none;">
+                            <label for="new-category" class="form-label">New Category</label>
+                            <input type="text" name="new_category" class="form-control" id="new-category">
+                        </div>
+
 
                         <button type="submit" class="btn btn-primary w-100">{{ form.submit.label }}</button>
                     </form>
@@ -93,5 +121,16 @@
         
         choicesContainer.appendChild(newChoiceDiv);
     });
+
+    document.getElementById('existing-category').addEventListener('change', function() {
+    const newCategoryContainer = document.getElementById('new-category-container');
+    
+    if (this.value === 'new') {
+        newCategoryContainer.style.display = 'block';
+    } else {
+        newCategoryContainer.style.display = 'none';
+    }
+});
+
 </script>
 {% endblock %}

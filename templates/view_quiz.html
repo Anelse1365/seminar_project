@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block title %}Quiz Details{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <h1 class="mb-4">Quiz: {{ quiz.quiz_name }}</h1>
+    <h2 class="mb-4">Category: {{ quiz.category }}</h2>
+
+    <form method="POST">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Question</th>
+                    <th>Answer</th>
+                    <th>Choices</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for question in quiz.questions %}
+                <tr>
+                    <td>
+                        <input type="text" name="question_{{ loop.index0 }}" class="form-control" value="{{ question.question }}">
+                    </td>
+                    <td>
+                        <input type="text" name="answer_{{ loop.index0 }}" class="form-control" value="{{ question.answer }}">
+                    </td>
+                    <td>
+                        {% if question.choices %}
+                            {% for choice in question.choices %}
+                            <input type="text" name="choices_{{ loop.index0 }}" class="form-control mb-2" value="{{ choice }}">
+                            {% endfor %}
+                        {% else %}
+                            <em>Written question (no choices)</em>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <button type="submit" class="btn btn-success">Save Changes</button>
+    </form>
+</div>
+{% endblock %}

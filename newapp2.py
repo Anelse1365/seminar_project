@@ -5,6 +5,7 @@ from flask_wtf import FlaskForm
 from wtforms import TextAreaField, StringField, SubmitField, FieldList, FormField
 from wtforms.validators import DataRequired
 from pymongo import MongoClient
+from datetime import datetime
 import random
 import bcrypt
 from functools import wraps
@@ -22,6 +23,7 @@ mydb = myclient["mydb"]
 questions_template_collection = mydb["questions_template"]
 p_name_collection = mydb["p_name"]
 users = mydb["users"]
+category_collection = mydb["ชุดข้อสอบ"]
 
 class NameForm(FlaskForm):
     quiz = TextAreaField('Quiz', validators=[DataRequired()])
@@ -115,40 +117,45 @@ def logout():
 @app.route('/index', methods=['GET', 'POST'])
 @admin_required
 def index():
-    
-
     form = NameForm()
+
+    # ดึงหมวดหมู่ทั้งหมดจาก MongoDB
+    existing_categories = questions_template_collection.distinct('category')
 
     if form.validate_on_submit():
         text = form.quiz.data
+        # ตรวจสอบว่าหมวดหมู่ที่เลือกคือ 'new' หรือไม่
+        selected_category = request.form.get('existing_category')
+        new_category = request.form.get('new_category')
 
+        if selected_category == 'new' and new_category:
+            category = new_category
+        else:
+            category = selected_category
+
+        # ตรวจสอบว่าเป็น Multiple-choice หรือ Written question
         if 'correct_choice' in request.form:
             # Multiple-choice question
             choices = request.form.getlist('choices[]')
             correct_choice_index = int(request.form.get('correct_choice'))
 
-            # Save the template of choices without processing
-            choices_template = choices[:]
-
             # Process and save the choices
             question_template = text
             question_text, num_dict, opt_dict, person_dict, obj_dict, numbers = process_question_template(question_template)
-
             eval_context = {**num_dict, **opt_dict, **person_dict, **obj_dict}
             evaluated_choices = [evaluate_expression(choice, eval_context) for choice in choices]
-
-            # Calculate the correct answer
             correct_answer = evaluated_choices[correct_choice_index]
 
             try:
                 questions_template_collection.insert_one({
+                    'category': category,  # Save the category
                     'question': question_text,
                     'question_template': text,
                     'question_type': 'multiple_choice',
-                    'choices_template': choices_template,  # Save the template of choices
-                    'choices': evaluated_choices,  # Save the processed choices
+                    'choices_template': choices[:],
+                    'choices': evaluated_choices,
                     'correct_answer': correct_answer,
-                    'answer_template': choices_template[correct_choice_index]
+                    'answer_template': choices[correct_choice_index]
                 })
                 flash('Multiple-choice question saved successfully!', 'success')
             except Exception as e:
@@ -159,16 +166,16 @@ def index():
             answer = form.answer.data
             if not answer:
                 flash('Answer is required for written questions.', 'error')
-                return render_template('index.html', form=form)
+                return render_template('index.html', form=form, existing_categories=existing_categories)
 
             question_template = text
             question_text, num_dict, opt_dict, person_dict, obj_dict, numbers = process_question_template(question_template)
-
             eval_context = {**num_dict, **opt_dict, **person_dict, **obj_dict}
             evaluated_answer = evaluate_expression(answer, eval_context)
 
             try:
                 questions_template_collection.insert_one({
+                    'category': category,  # Save the category
                     'question_template': question_template,
                     'question_type': 'written',
                     'question': question_text,
@@ -185,8 +192,11 @@ def index():
 
         return redirect(url_for('index'))
 
-    return render_template('index.html', form=form)
+    return render_template('index.html', form=form, existing_categories=existing_categories)
 
+
+
+from datetime import datetime
 
 @app.route('/quiz_maker', methods=['GET', 'POST'])
 @admin_required
@@ -254,16 +264,21 @@ def quiz_maker():
 
             question_index += 1
 
+        # Generate timestamp
+        timestamp = datetime.now().strftime('%d/%m/%Y %H:%M')
+
         collection.insert_one({
             'quiz_name': quiz_name,
             'category': category,  # Store the selected or created category
             'questions': quiz_set,
+            'created_at': timestamp  # Add the timestamp here
         })
 
         flash('Quizzes generated successfully!', 'success')
         return redirect(url_for('quiz_maker'))
 
     return render_template('quiz_maker.html', templates=template_options, categories=categories)
+
 
 @app.route('/create_exercise', methods=['GET', 'POST'])
 def create_exercise():
@@ -407,9 +422,14 @@ def view_templates():
         'question_template': 1,
         'answer_template': 1,
         'choices_template': 1,
-        'choices': 1
+        'choices': 1,
+        'category': 1  # Add category field
     }))
-    return render_template('view_templates.html', templates=templates)
+    
+    categories = questions_template_collection.distinct('category')  # Fetch distinct categories
+
+    return render_template('view_templates.html', templates=templates, categories=categories)
+
 
 @app.route('/edit_template/<template_id>', methods=['GET', 'POST'])
 def edit_template(template_id):
@@ -479,6 +499,56 @@ def view_user():
         return redirect(url_for('view_user'))
 
     return render_template('view_user.html', users=all_users)
+
+@app.route('/quiz_storage', methods=['GET'])
+def quiz_storage():
+    quizzes = list(category_collection.find({}, {
+        '_id': 1,
+        'quiz_name': 1,
+        'category': 1
+    }))
+    
+    return render_template('quiz_storage.html', quizzes=quizzes)
+
+
+
+@app.route('/quiz/<quiz_id>', methods=['GET', 'POST'])
+def view_quiz(quiz_id):
+    quiz = category_collection.find_one({'_id': ObjectId(quiz_id)})
+    
+    if request.method == 'POST':
+        # Handle form submission to update quiz questions
+        for i, question in enumerate(quiz['questions']):
+            updated_question = request.form.get(f'question_{i}')
+            updated_answer = request.form.get(f'answer_{i}')
+            quiz['questions'][i]['question'] = updated_question
+            quiz['questions'][i]['answer'] = updated_answer
+            
+            if 'choices' in question:
+                updated_choices = request.form.getlist(f'choices_{i}')
+                quiz['questions'][i]['choices'] = updated_choices
+        
+        category_collection.update_one({'_id': ObjectId(quiz_id)}, {'$set': quiz})
+        return redirect(url_for('quiz_storage'))
+
+    return render_template('view_quiz.html', quiz=quiz)
+
+@app.route('/edit_quiz_name/<quiz_id>', methods=['POST'])
+def edit_quiz_name(quiz_id):
+    new_name = request.form['quiz_name']
+    category_collection.update_one(
+        {'_id': ObjectId(quiz_id)},
+        {'$set': {'quiz_name': new_name}}
+    )
+    flash('Quiz name updated successfully!', 'success')
+    return redirect(url_for('quiz_storage'))
+@app.route('/delete_quiz/<quiz_id>', methods=['POST'])
+def delete_quiz(quiz_id):
+    category_collection.delete_one({'_id': ObjectId(quiz_id)})
+    flash('Quiz deleted successfully!', 'success')
+    return redirect(url_for('quiz_storage'))
+
+
 
 
 

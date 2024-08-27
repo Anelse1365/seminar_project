@@ -1,7 +1,6 @@
 {% extends 'base.html' %}
 {% block title %}Create Exercise{% endblock %}
 {% block body %}
-
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-lg-8">
@@ -31,65 +30,68 @@
                     <input class="form-check-input" type="radio" name="view_mode" id="view_mode_processed" value="processed" {% if view_mode == 'processed' %}checked{% endif %}>
                     <label class="form-check-label" for="view_mode_processed">View as Processed Questions</label>
                 </div>
+                <div class="mb-3 mt-3">
+                    <label for="default_score" class="form-label">Default Score for All Questions</label>
+                    <input type="number" id="default_score" name="default_score" class="form-control" value="1">
+                </div>
             </form>
-            
 
             {% if selected_quiz_set %}
-                <h3 class="text-center mt-4">{{ selected_quiz_set['name'] }}</h3>
+                <h4 class="text-center mt-4">
+                    {{ selected_quiz_set['quiz_name'] }} - {{ selected_quiz_set['category'] }}
+                </h4>
+            {% else %}
+                <h4 class="text-center mt-4">
+                    No Quiz Set Selected
+                </h4>
             {% endif %}
-            {% if selected_quiz_set %}
-    <h4 class="text-center mt-4">
-        {{ selected_quiz_set['quiz_name'] }} - {{ selected_quiz_set['category'] }}
-    </h4>
-{% else %}
-    <h4 class="text-center mt-4">
-        No Quiz Set Selected
-    </h4>
-{% endif %}
-
 
             {% if preview_questions %}
                 <div id="questions-container" class="my-4">
                     {% for question in preview_questions %}
-                    <div class="card mb-3">
-                        <div class="card-body">
-                            <span class="question-number">{{ loop.index }}.</span>
-                            <p><strong>Question:</strong> {{ question['question'] }}</p>
-                            {% set question_index = loop.index %}
-                    {% if question['choices'] %}
-                        {% for choice in question['choices'] %}
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" 
-                                    name="question{{ question_index }}" 
-                                    id="choice_{{ question_index }}_{{ loop.index }}" 
-                                    value="{{ choice }}" 
-                                    {% if choice == question['answer'] %}checked{% endif %} disabled>
-                                <label class="form-check-label" for="choice_{{ question_index }}_{{ loop.index }}">
-                                    {{ choice }}
-                                </label>
+                        <div class="card mb-3">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between">
+                                    <span class="question-number">{{ loop.index }}.</span>
+                                    <input type="number" name="score_{{ loop.index }}" class="form-control w-25" placeholder="Score" value="{{ request.form.get('score_' ~ loop.index, 1) }}">
+                                </div>
+                                <p><strong>Question:</strong> {{ question['question'] }}</p>
+                                {% set question_index = loop.index %}
+                                {% if question['choices'] %}
+                                    {% for choice in question['choices'] %}
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" 
+                                                name="question{{ question_index }}" 
+                                                id="choice_{{ question_index }}_{{ loop.index }}" 
+                                                value="{{ choice }}" 
+                                                {% if choice == question['answer'] %}checked{% endif %} disabled>
+                                            <label class="form-check-label" for="choice_{{ question_index }}_{{ loop.index }}">
+                                                {{ choice }}
+                                            </label>
+                                        </div>
+                                    {% endfor %}
+                                {% else %}
+                                    <div class="mb-3">
+                                        <label for="answer_template_{{ loop.index0 }}" class="form-label">Answer</label>
+                                        <input type="text" id="answer_template_{{ loop.index0 }}" class="form-control" value="{{ question['answer'] }}" disabled>
+                                    </div>
+                                {% endif %}
                             </div>
-                        {% endfor %}
-                    {% else %}
-                        <div class="mb-3">
-                            <label for="answer_template_{{ loop.index0 }}" class="form-label">Answer</label>
-                            <input type="text" id="answer_template_{{ loop.index0 }}" class="form-control" value="{{ question['answer'] }}" disabled>
                         </div>
-                    {% endif %}
-
-                        </div>
-                    </div>
                     {% endfor %}
                     {% if selected_quiz_set %}
-                    <form method="POST" action="{{ url_for('exercise', quiz_id=selected_quiz_set['_id']) }}" class="text-center">
-                        <input type="hidden" name="quiz_set" value="{{ selected_quiz_set['_id'] }}">
-                        <input type="hidden" name="shuffle_choices" value="{{ shuffle_choices }}">
-                        <button type="submit" class="btn btn-primary mt-3">Generate Exercise</button>
-                    </form>
-                {% endif %}
+                        <form method="POST" action="{{ url_for('exercise', quiz_id=selected_quiz_set['_id']) }}" class="text-center">
+                            <input type="hidden" name="quiz_set" value="{{ selected_quiz_set['_id'] }}">
+                            <input type="hidden" name="shuffle_choices" value="{{ shuffle_choices }}">
+                            <input type="hidden" name="default_score" value="{{ request.form.get('default_score', 1) }}">
+                            {% for i in range(1, preview_questions|length + 1) %}
+                                <input type="hidden" name="score_{{ i }}" value="{{ request.form.get('score_' ~ i, 1) }}">
+                            {% endfor %}
+                            <button type="submit" class="btn btn-primary mt-3">Generate Exercise</button>
+                        </form>
+                    {% endif %}
                 </div>
             {% endif %}
-
-
         </div>
     </div>
 </div>

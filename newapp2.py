@@ -35,7 +35,7 @@ def admin_required(f):
     def decorated_function(*args, **kwargs):
         if 'username' not in session or session.get('role') != 'admin':
             flash('You do not have permission to access this page.', 'error')
-            return redirect(url_for('home'))
+            return redirect(url_for('student_home'))
         return f(*args, **kwargs)
     return decorated_function
 
@@ -47,11 +47,11 @@ def add_header(response):
     return response
 
 
-@app.route('/home')
-def home():
+@app.route('/student_home')
+def student_home():
     if 'username' in session:
         if session['role'] == 'user':
-            return render_template('home.html')
+            return render_template('student_home.html')
         elif session['role'] == 'admin':
             return render_template('admin.html')
     else:
@@ -72,7 +72,7 @@ def login():
                 if session['role'] == 'admin':
                     return redirect(url_for('admin'))
                 else:
-                    return redirect(url_for('home'))
+                    return redirect(url_for('student_home'))
         error = 'Invalid username/password'
     return render_template('login.html', error=error)
 
@@ -91,7 +91,7 @@ def register():
             })
             session['username'] = request.form['username']
             session['role'] = 'admin' if request.form.get('is_admin') else 'user'
-            return redirect(url_for('home'))
+            return redirect(url_for('student_home'))
 
         return 'That username already exists!'
     return render_template('register.html')
@@ -297,14 +297,26 @@ def create_exercise():
     preview_questions = []
     shuffle_choices = False
     view_mode = 'template'  # Default mode
+    default_score = request.form.get('default_score', 1)
+    scores = []
+    
+    
 
     if request.method == 'POST':
         quiz_set_id = request.form['quiz_set']
         shuffle_choices = 'shuffle_choices' in request.form
         view_mode = request.form.get('view_mode', 'template')
+        quiz_set_id = request.form['quiz_set'] 
+        
 
         # ดึงข้อมูลชุดข้อสอบที่ถูกเลือกจาก MongoDB
         selected_quiz_set = mydb['ชุดข้อสอบ'].find_one({'_id': ObjectId(quiz_set_id)})
+
+        if selected_quiz_set:
+            questions = selected_quiz_set.get('questions', [])
+            for index, question in enumerate(questions, start=1):
+                score = request.form.get(f'score_{index}', default_score)
+                scores.append(score)
 
         if selected_quiz_set:
             questions = selected_quiz_set.get('questions', [])
@@ -336,12 +348,12 @@ def create_exercise():
                 preview_questions.append({
                     'question': question_text,
                     'choices': choices,
-                    'answer': answer
+                    'answer': answer,
+                    'score': score
                 })
-
-            # ส่งข้อมูลโจทย์จริงไปยัง exercise.html
+                
             if 'create_exercise' in request.form:
-                return redirect(url_for('exercise', quiz_id=quiz_set_id))
+                return redirect(url_for('exercise', quiz_id=quiz_set_id, scores=scores))
 
     return render_template('create_exercise.html', 
                            quiz_sets=quiz_set_options, 
@@ -356,10 +368,13 @@ def create_exercise():
 def exercise(quiz_id):
     # Fetch the selected quiz set
     selected_quiz_set = mydb['ชุดข้อสอบ'].find_one({'_id': ObjectId(quiz_id)})
+    
 
     questions = []
     results = []
     submitted = False
+    total_score = 0
+    max_score = 0
 
     if selected_quiz_set:
         raw_questions = selected_quiz_set.get('questions', [])
@@ -368,6 +383,7 @@ def exercise(quiz_id):
             question_template = question['question']
             answer_template = question['answer']
             choices_template = question.get('choices', [])
+            score = question.get('score', 1)  # Default score is 1 if not provided
 
             # Process the template to generate real questions
             question_text, num_dict, opt_dict, person_dict, obj_dict, numbers = process_question_template(question_template)
@@ -382,8 +398,10 @@ def exercise(quiz_id):
             questions.append({
                 'question': question_text,
                 'choices': choices,
-                'answer': str(answer)  # Convert answer to string for comparison later
+                'answer': str(answer),  # Convert answer to string for comparison later
+                'score': score
             })
+            max_score += score
 
     if request.method == 'POST':
         for i, question in enumerate(questions, start=1):
@@ -395,11 +413,14 @@ def exercise(quiz_id):
             if user_answer is not None:  # ตรวจสอบว่าคำตอบถูกส่งมาหรือไม่
                 correct_answer = question['answer']
                 is_correct = user_answer == correct_answer
+                result_score = question['score'] if is_correct else 0
+                total_score += result_score
                 results.append({
                     'question': question['question'],
                     'user_answer': user_answer,
                     'correct_answer': correct_answer,
-                    'is_correct': is_correct
+                    'is_correct': is_correct,
+                    'score': result_score
                 })
         submitted = len(results) > 0  # กำหนดว่า submitted เป็น True หากมีการตอบคำถาม
 
@@ -407,7 +428,9 @@ def exercise(quiz_id):
                            quiz_id=quiz_id,
                            questions=questions,
                            submitted=submitted,
-                           results=results)
+                           results=results,
+                           total_score=total_score,
+                           max_score=max_score)
 
 
 

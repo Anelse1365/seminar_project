@@ -22,6 +22,18 @@
                 </a>
                 <p style="text-align: center; margin-top: 10px;">ดูชุดข้อสอบ</p>
             </div>
+            <div class="container">
+                <h1>Welcome to Student Home</h1>
+                <h3>Available Exercises:</h3>
+                <ul>
+                    {% for exercise in active_exercises %}
+                        <li>
+                            {{ exercise['quiz_name'] }} - {{ exercise['category'] }}
+                            <a href="{{ url_for('exercise', quiz_id=exercise['quiz_set']) }}">Start Exercise</a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
  
 
 {% endblock %}

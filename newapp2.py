@@ -51,11 +51,16 @@ def add_header(response):
 def student_home():
     if 'username' in session:
         if session['role'] == 'user':
-            return render_template('student_home.html')
+            # ดึงข้อมูลชุดข้อสอบที่ active จาก MongoDB
+            active_exercises = list(mydb['active_questions'].find({'status': 'active'}))
+
+            # ส่งข้อมูลไปยัง student_home.html
+            return render_template('student_home.html', active_exercises=active_exercises)
         elif session['role'] == 'admin':
             return render_template('admin.html')
     else:
         return redirect(url_for('login'))
+
 
 
 @app.route('/', methods=['POST', 'GET'])
@@ -196,7 +201,6 @@ def index():
 
 
 
-from datetime import datetime
 
 @app.route('/quiz_maker', methods=['GET', 'POST'])
 @admin_required
@@ -282,85 +286,70 @@ def quiz_maker():
 
 @app.route('/create_exercise', methods=['GET', 'POST'])
 def create_exercise():
-    # ดึงข้อมูลชุดข้อสอบทั้งหมดจากคอลเลคชัน "ชุดข้อสอบ"
+    # Fetch all quiz sets
     quiz_sets = list(mydb['ชุดข้อสอบ'].find({}, {'_id': 1, 'quiz_name': 1, 'category': 1}))
-    quiz_set_options = [
-        (
-            str(quiz_set['_id']),
-            quiz_set.get('quiz_name', 'Unknown Quiz Name'),
-            quiz_set.get('category', 'Unknown Category')
-        )
-        for quiz_set in quiz_sets
-    ]
+    quiz_set_options = [(str(quiz_set['_id']), quiz_set.get('quiz_name', 'Unknown Quiz Name'), quiz_set.get('category', 'Unknown Category')) for quiz_set in quiz_sets]
 
     selected_quiz_set = None
     preview_questions = []
     shuffle_choices = False
-    view_mode = 'template'  # Default mode
-    default_score = request.form.get('default_score', 1)
+    view_mode = 'template'
+    default_score = int(request.form.get('default_score', 1))
     scores = []
-    
-    
 
     if request.method == 'POST':
-        quiz_set_id = request.form['quiz_set']
+        quiz_set_id = request.form.get('quiz_set')
         shuffle_choices = 'shuffle_choices' in request.form
         view_mode = request.form.get('view_mode', 'template')
-        quiz_set_id = request.form['quiz_set'] 
-        
 
-        # ดึงข้อมูลชุดข้อสอบที่ถูกเลือกจาก MongoDB
+        # Ensure a quiz set is selected
+        if not quiz_set_id:
+            flash('Please select a quiz set before proceeding.', 'error')
+            return render_template('create_exercise.html', quiz_sets=quiz_set_options, preview_questions=preview_questions, selected_quiz_set=selected_quiz_set, shuffle_choices=shuffle_choices, view_mode=view_mode)
+
+        # Fetch the selected quiz set
         selected_quiz_set = mydb['ชุดข้อสอบ'].find_one({'_id': ObjectId(quiz_set_id)})
 
         if selected_quiz_set:
             questions = selected_quiz_set.get('questions', [])
             for index, question in enumerate(questions, start=1):
-                score = request.form.get(f'score_{index}', default_score)
+                # Get individual question score or use the default
+                score = int(request.form.get(f'score_{index}', default_score))
                 scores.append(score)
 
-        if selected_quiz_set:
-            questions = selected_quiz_set.get('questions', [])
-            for question in questions:
-                if view_mode == 'template':
-                    # แสดงโจทย์แบบ template
-                    question_text = question['question']
-                    answer = question['answer']
-                    choices = question.get('choices', [])
-                else:
-                    # ประมวลผล template เป็นโจทย์จริง
-                    question_template = question['question']
-                    answer_template = question['answer']
-                    choices_template = question.get('choices', [])
+                # Generate preview for the questions
+                question_text = question['question']
+                answer = question['answer']
+                choices = question.get('choices', [])
 
-                    question_text, num_dict, opt_dict, person_dict, obj_dict, numbers = process_question_template(question_template)
+                if view_mode == 'processed':
+                    question_text, num_dict, opt_dict, person_dict, obj_dict, numbers = process_question_template(question['question'])
                     eval_context = {**num_dict, **opt_dict, **person_dict, **obj_dict}
-                    answer = evaluate_expression(answer_template, eval_context)
+                    answer = evaluate_expression(question['answer'], eval_context)
+                    choices = [evaluate_expression(choice, eval_context) for choice in choices]
 
-                    choices = []
-                    if choices_template:
-                        for choice_template in choices_template:
-                            choices.append(evaluate_expression(choice_template, eval_context))
-
-                # สลับตำแหน่งของ choices ถ้า checkbox ถูกติ๊ก
+                # Shuffle choices if needed
                 if shuffle_choices and choices:
                     random.shuffle(choices)
 
-                preview_questions.append({
-                    'question': question_text,
-                    'choices': choices,
-                    'answer': answer,
-                    'score': score
-                })
-                
-            if 'create_exercise' in request.form:
-                return redirect(url_for('exercise', quiz_id=quiz_set_id, scores=scores))
+                preview_questions.append({'question': question_text, 'choices': choices, 'answer': answer, 'score': score})
 
-    return render_template('create_exercise.html', 
-                           quiz_sets=quiz_set_options, 
-                           preview_questions=preview_questions, 
-                           selected_quiz_set=selected_quiz_set,
-                           shuffle_choices=shuffle_choices,
-                           view_mode=view_mode)
+            # Check if "Generate Exercise" button was clicked
+            if request.form.get('create_exercise'):
+                exercise_data = {
+                    'quiz_set': selected_quiz_set['_id'],
+                    'quiz_name': selected_quiz_set['quiz_name'],
+                    'category': selected_quiz_set['category'],
+                    'created_date': datetime.now().strftime('%d/%m/%Y %H:%M'),
+                    'status': 'active',
+                    'scores': scores,
+                    'submissions': 0
+                }
+                mydb['active_questions'].insert_one(exercise_data)
+                flash('Exercise created successfully!', 'success')
+                return redirect(url_for('create_exercise'))
+
+    return render_template('create_exercise.html', quiz_sets=quiz_set_options, preview_questions=preview_questions, selected_quiz_set=selected_quiz_set, shuffle_choices=shuffle_choices, view_mode=view_mode)
 
 
 

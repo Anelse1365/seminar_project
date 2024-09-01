@@ -1,3 +1,16 @@
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        <div class="container mt-3">
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+{% endwith %}
+
 {% extends 'base.html' %}
 {% block title %}Create Exercise{% endblock %}
 {% block body %}
@@ -9,12 +22,13 @@
                 <!-- ฟอร์มการเลือกชุดข้อสอบและการตั้งค่า -->
                 <div class="mb-3">
                     <label for="quiz_set" class="form-label">Select Quiz Set</label>
-                    <select name="quiz_set" id="quiz_set" class="form-select form-select-lg" aria-label="Select Quiz Set" onchange="this.form.submit()">
-                        <option selected>Select</option>
+                    <select name="quiz_set" id="quiz_set" class="form-select form-select-lg" aria-label="Select Quiz Set">
+                        <option value="">Select</option>
                         {% for quiz_set in quiz_sets %}
                             <option value="{{ quiz_set[0] }}" {% if selected_quiz_set and quiz_set[0] == selected_quiz_set['_id'] %}selected{% endif %}>{{ quiz_set[1] }} - {{ quiz_set[2] }}</option>
                         {% endfor %}
                     </select>
+                    <button type="button" class="btn btn-secondary mt-2" onclick="this.form.submit()">Select Quiz Set</button>
                 </div>
                 <!-- Option และการตั้งค่าเพิ่มเติม -->
                 <div class="form-check mb-3">
@@ -70,8 +84,10 @@
                                 </div>
                             </div>
                         {% endfor %}
-                        <input type="hidden" name="create_exercise" value="true">
-                        <button type="submit" class="btn btn-primary mt-3" name="create_exercise">Generate Exercise</button>
+                        <!-- แก้ไขชื่อปุ่ม Generate Exercise และ Hidden Input -->
+                        <input type="hidden" name="generate_exercise_trigger" value="true">
+                        <button type="submit" class="btn btn-primary mt-3" name="generate_exercise">Generate Exercise</button>
+
                     </div>
                 {% endif %}
             </form>
@@ -79,4 +95,14 @@
         </div>
     </div>
 </div>
+
+<script>
+    document.querySelector('form').addEventListener('submit', function(e) {
+    const quizSetSelect = document.getElementById('quiz_set');
+    if (!quizSetSelect.value) {
+        e.preventDefault();
+        alert('Please select a quiz set before proceeding.');
+    }
+});
+</script>
 {% endblock %}

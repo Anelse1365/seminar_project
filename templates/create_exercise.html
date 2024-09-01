@@ -21,14 +21,14 @@
             <form id="create-exercise-form" method="POST" action="{{ url_for('create_exercise') }}">
                 <!-- ฟอร์มการเลือกชุดข้อสอบและการตั้งค่า -->
                 <div class="mb-3">
-                    <label for="quiz_set" class="form-label">Select Quiz Set</label>
+                    <label for="quiz_set" class="form-label">เลือกชุดข้อสอบ</label>
                     <select name="quiz_set" id="quiz_set" class="form-select form-select-lg" aria-label="Select Quiz Set">
                         <option value="">Select</option>
                         {% for quiz_set in quiz_sets %}
                             <option value="{{ quiz_set[0] }}" {% if selected_quiz_set and quiz_set[0] == selected_quiz_set['_id'] %}selected{% endif %}>{{ quiz_set[1] }} - {{ quiz_set[2] }}</option>
                         {% endfor %}
                     </select>
-                    <button type="button" class="btn btn-secondary mt-2" onclick="this.form.submit()">Select Quiz Set</button>
+                    <button type="button" class="btn btn-secondary mt-2" onclick="this.form.submit()">แสดงชุดข้อสอบ</button>
                 </div>
                 <!-- Option และการตั้งค่าเพิ่มเติม -->
                 <div class="form-check mb-3">
@@ -46,10 +46,12 @@
                     <input class="form-check-input" type="radio" name="view_mode" id="view_mode_processed" value="processed" {% if view_mode == 'processed' %}checked{% endif %}>
                     <label class="form-check-label" for="view_mode_processed">View as Processed Questions</label>
                 </div>
-                <div class="mb-3 mt-3">
-                    <label for="default_score" class="form-label">Default Score for All Questions</label>
-                    <input type="number" id="default_score" name="default_score" class="form-control" value="1">
+                <div class="mb-3 mt-3 d-flex align-items-center">
+                    <label for="default_score" class="form-label me-2">Default Score for All Questions</label>
+                    <input type="number" id="default_score" name="default_score" class="form-control w-25" value="1">
+                    <button type="button" class="btn btn-secondary ms-2" id="apply-default-score">เปลี่ยน</button>
                 </div>
+                
                 <!-- ปุ่มสร้าง exercise -->
                 {% if selected_quiz_set %}
                     <div id="questions-container" class="my-4">
@@ -97,12 +99,28 @@
 </div>
 
 <script>
+    // Function to apply the default score to all question scores
+    document.getElementById('apply-default-score').addEventListener('click', function() {
+        // Get the default score value
+        const defaultScore = document.getElementById('default_score').value;
+
+        // Find all score input elements for each question
+        const scoreInputs = document.querySelectorAll('input[name^="score_"]');
+
+        // Apply the default score to each question's score input
+        scoreInputs.forEach(input => {
+            input.value = defaultScore;
+        });
+    });
+
+    // Validate the form on submit to ensure a quiz set is selected
     document.querySelector('form').addEventListener('submit', function(e) {
-    const quizSetSelect = document.getElementById('quiz_set');
-    if (!quizSetSelect.value) {
-        e.preventDefault();
-        alert('Please select a quiz set before proceeding.');
-    }
-});
+        const quizSetSelect = document.getElementById('quiz_set');
+        if (!quizSetSelect.value) {
+            e.preventDefault();
+            alert('Please select a quiz set before proceeding.');
+        }
+    });
 </script>
+
 {% endblock %}

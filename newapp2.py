@@ -382,9 +382,11 @@ def create_exercise():
 
 @app.route('/exercise/<quiz_id>', methods=['GET', 'POST'])
 def exercise(quiz_id):
-    # Fetch the selected quiz set
+    # ดึงชุดข้อสอบที่เลือกจากฐานข้อมูล
     selected_quiz_set = mydb['ชุดข้อสอบ'].find_one({'_id': ObjectId(quiz_id)})
-    
+
+    # ดึงข้อมูล active exercise ที่เกี่ยวข้องกับ quiz_id
+    active_exercise = mydb['active_questions'].find_one({'quiz_set': ObjectId(quiz_id)})
 
     questions = []
     results = []
@@ -392,41 +394,47 @@ def exercise(quiz_id):
     total_score = 0
     max_score = 0
 
-    if selected_quiz_set:
+    if selected_quiz_set and active_exercise:
         raw_questions = selected_quiz_set.get('questions', [])
-        
-        for question in raw_questions:
+        scores = active_exercise.get('scores', [])  # ดึงคะแนนจาก active_exercises
+
+        for index, question in enumerate(raw_questions):
             question_template = question['question']
             answer_template = question['answer']
             choices_template = question.get('choices', [])
-            score = question.get('score', 1)  # Default score is 1 if not provided
+            score = scores[index] if index < len(scores) else 1  # ใช้คะแนนจาก active_exercises ถ้ามี
 
-            # Process the template to generate real questions
+            # ประมวลผลคำถาม
             question_text, num_dict, opt_dict, person_dict, obj_dict, numbers = process_question_template(question_template)
             eval_context = {**num_dict, **opt_dict, **person_dict, **obj_dict}
             answer = evaluate_expression(answer_template, eval_context)
 
+            # ประมวลผลตัวเลือกหากมี
             choices = []
             if choices_template:
                 for choice_template in choices_template:
                     choices.append(evaluate_expression(choice_template, eval_context))
 
+            # เพิ่มคำถามพร้อมกับคะแนนไปยัง list
             questions.append({
                 'question': question_text,
                 'choices': choices,
-                'answer': str(answer),  # Convert answer to string for comparison later
+                'answer': str(answer),
                 'score': score
             })
-            max_score += score
+            max_score += score  # เพิ่มคะแนนสูงสุดรวม
 
+    # การจัดการการส่งคำตอบและคำนวณคะแนน
     if request.method == 'POST':
         for i, question in enumerate(questions, start=1):
-            if question['choices']:  # For multiple choice questions
+            # ดึงคำตอบของผู้ใช้
+            if question['choices']:
                 user_answer = request.form.get(f'question{i}')
-            else:  # For open-ended questions
+            else:
                 user_answer = request.form.get(f'answer_{i}')
 
-            if user_answer is not None:  # ตรวจสอบว่าคำตอบถูกส่งมาหรือไม่
+            # ตรวจสอบคำตอบและคำนวณคะแนน
+            if user_answer is not None:
                 correct_answer = question['answer']
                 is_correct = user_answer == correct_answer
                 result_score = question['score'] if is_correct else 0
@@ -438,7 +446,7 @@ def exercise(quiz_id):
                     'is_correct': is_correct,
                     'score': result_score
                 })
-        submitted = len(results) > 0  # กำหนดว่า submitted เป็น True หากมีการตอบคำถาม
+        submitted = len(results) > 0
 
     return render_template('exercise.html',
                            quiz_id=quiz_id,

@@ -426,6 +426,17 @@ def exercise(quiz_id):
 
     # การจัดการการส่งคำตอบและคำนวณคะแนน
     if request.method == 'POST':
+        student_id = session.get('username')  # ใช้ username จาก session
+        student = mydb['users'].find_one({'username': student_id})  # ดึงข้อมูลนักเรียน
+        
+        # ตรวจสอบว่ามีข้อมูลของนักเรียนหรือไม่
+        if student:
+            student_name = f"{student.get('first_name', 'Unknown')} {student.get('last_name', 'Unknown')}"
+            grade_level = student.get('grade_level', 'Unknown')
+        else:
+            student_name = "Unknown"
+            grade_level = "Unknown"
+
         for i, question in enumerate(questions, start=1):
             # ดึงคำตอบของผู้ใช้
             if question['choices']:
@@ -448,6 +459,38 @@ def exercise(quiz_id):
                 })
         submitted = len(results) > 0
 
+        # บันทึกผลการทำข้อสอบของนักเรียนลงใน answer_history
+        if submitted:
+            submission_data = {
+                "exercise_id": ObjectId(quiz_id),  # อ้างอิงไปยัง active_questions
+                "student_id": student_id,
+                "student_name": student_name,
+                "grade_level": grade_level,
+                "submission_date": datetime.now().strftime('%d/%m/%Y %H:%M'),
+                "total_score": total_score,
+                "max_score": max_score,
+                "results": results
+            }
+
+            # ตรวจสอบว่าเป็นการส่งครั้งแรกของนักเรียนคนนั้นสำหรับข้อสอบนี้หรือไม่
+            existing_submission = mydb['answer_history'].find_one({
+                'exercise_id': ObjectId(quiz_id),
+                'student_id': student_id
+            })
+
+            # หากยังไม่มี submission นี้ใน answer_history ให้บันทึกข้อมูลใหม่ และอัปเดต submissions
+            if existing_submission is None:
+                # บันทึกข้อมูล submission ลงใน answer_history
+                mydb['answer_history'].insert_one(submission_data)
+                
+                # เพิ่มค่า submissions ใน active_questions ขึ้น 1
+                mydb['active_questions'].update_one(
+                    {'quiz_set': ObjectId(quiz_id)},
+                    {'$inc': {'submissions': 1}}
+                )
+            else:
+                flash('คุณได้ส่งข้อสอบชุดนี้แล้ว', 'warning')  # แจ้งเตือนว่ามีการส่งมาแล้ว
+
     return render_template('exercise.html',
                            quiz_id=quiz_id,
                            questions=questions,
@@ -455,8 +498,6 @@ def exercise(quiz_id):
                            results=results,
                            total_score=total_score,
                            max_score=max_score)
-
-
 
 @app.route('/submit_answer/<question_id>', methods=['POST'])
 def submit_answer(question_id):

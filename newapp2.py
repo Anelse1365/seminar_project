@@ -6,6 +6,7 @@ from wtforms import TextAreaField, StringField, SubmitField, FieldList, FormFiel
 from wtforms.validators import DataRequired
 from pymongo import MongoClient
 from datetime import datetime, timezone, timedelta
+from bson import ObjectId, errors  # เพิ่ม errors สำหรับจัดการข้อผิดพลาด ObjectId
 import random
 import bcrypt
 from functools import wraps
@@ -284,9 +285,6 @@ def quiz_maker():
 
     return render_template('quiz_maker.html', templates=template_options, categories=categories)
 
-
-from bson import ObjectId, errors  # เพิ่ม errors สำหรับจัดการข้อผิดพลาด ObjectId
-
 @app.route('/active_exercise.html', methods=['GET', 'POST'])
 def active_exercise():
     # ดึงข้อมูลจาก active_questions ทุกโจทย์
@@ -324,11 +322,6 @@ def view_submission_details(submission_id):
 
     # ส่งข้อมูลไปยัง template view_submission_details.html
     return render_template('view_submission_details.html', submission=submission)
-
-
-
-
-
 
 @app.route('/create_exercise', methods=['GET', 'POST'])
 def create_exercise():

@@ -28,16 +28,22 @@
                             <label for="answer" class="form-label">{{ form.answer.label }}</label>
                             {{ form.answer(class="form-control", id="answer") }}
                         </div>
-                        <!-- Add this within each form block where you want to include the category -->
+                        
+                        <!-- หมวดหมู่สำหรับข้อเขียน -->
                         <div class="mb-3">
                             <label for="category" class="form-label">Category</label>
-                            <select name="existing_category" class="form-select" id="existing-category">
+                            <select name="existing_category" class="form-select" id="existing-category-written">
                                 <option value="" selected>-- เลือกหมวดหมู่ --</option>
                                 {% for category in existing_categories %}
                                 <option value="{{ category }}">{{ category }}</option>
                                 {% endfor %}
                                 <option value="new">-- สร้างหมวดหมู่ใหม่ --</option>
                             </select>
+                        </div>
+
+                        <div class="mb-3" id="new-category-container-written" style="display: none;">
+                            <label for="new-category" class="form-label">New Category</label>
+                            <input type="text" name="new_category" class="form-control" id="new-category-written">
                         </div>
 
                         <button type="submit" class="btn btn-primary w-100">{{ form.submit.label }}</button>
@@ -61,10 +67,11 @@
                             </div>
                         </div>
                         <button type="button" class="btn btn-outline-primary" id="add-choice-btn">เพิ่มช้อยส์</button><br><br>
-                        <!-- Add this within each form block where you want to include the category -->
+
+                        <!-- หมวดหมู่สำหรับตัวเลือก -->
                         <div class="mb-3">
                             <label for="category" class="form-label">Category</label>
-                            <select name="existing_category" class="form-select" id="existing-category">
+                            <select name="existing_category" class="form-select" id="existing-category-multiple-choice">
                                 <option value="" selected>-- เลือกหมวดหมู่ --</option>
                                 {% for category in existing_categories %}
                                 <option value="{{ category }}">{{ category }}</option>
@@ -73,11 +80,10 @@
                             </select>
                         </div>
 
-                        <div class="mb-3" id="new-category-container" style="display: none;">
+                        <div class="mb-3" id="new-category-container-multiple-choice" style="display: none;">
                             <label for="new-category" class="form-label">New Category</label>
-                            <input type="text" name="new_category" class="form-control" id="new-category">
+                            <input type="text" name="new_category" class="form-control" id="new-category-multiple-choice">
                         </div>
-
 
                         <button type="submit" class="btn btn-primary w-100">{{ form.submit.label }}</button>
                     </form>
@@ -122,15 +128,27 @@
         choicesContainer.appendChild(newChoiceDiv);
     });
 
-    document.getElementById('existing-category').addEventListener('change', function() {
-    const newCategoryContainer = document.getElementById('new-category-container');
-    
-    if (this.value === 'new') {
-        newCategoryContainer.style.display = 'block';
-    } else {
-        newCategoryContainer.style.display = 'none';
-    }
-});
+    // สำหรับหมวดหมู่ข้อเขียน
+    document.getElementById('existing-category-written').addEventListener('change', function() {
+        const newCategoryContainer = document.getElementById('new-category-container-written');
+        
+        if (this.value === 'new') {
+            newCategoryContainer.style.display = 'block';
+        } else {
+            newCategoryContainer.style.display = 'none';
+        }
+    });
+
+    // สำหรับหมวดหมู่ตัวเลือก
+    document.getElementById('existing-category-multiple-choice').addEventListener('change', function() {
+        const newCategoryContainer = document.getElementById('new-category-container-multiple-choice');
+        
+        if (this.value === 'new') {
+            newCategoryContainer.style.display = 'block';
+        } else {
+            newCategoryContainer.style.display = 'none';
+        }
+    });
 
 </script>
 {% endblock %}

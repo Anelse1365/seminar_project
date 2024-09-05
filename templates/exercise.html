@@ -2,18 +2,20 @@
 {% block title %}ตอบคำถาม{% endblock %}
 {% block body %}
 <div class="container">
-    <div class="row justify-content-center">
-        <div class="col-lg-8">
-            <h1 class="text-center">ตอบคำถาม</h1><br>
-            <form method="POST" action="{{ url_for('exercise', quiz_id=quiz_id) }}">
-                {% for question in questions %}
-                <div class="mb-4">
-                    <label for="question_{{ loop.index }}" class="form-label">คำถาม {{ loop.index }} ({{ question['score'] }} คะแนน)</label>
-                    <textarea id="question_{{ loop.index }}" class="form-control" rows="3" readonly>{{ question['question'] }}</textarea>
-                    <div class="mt-3">
-                        {% set question_index = loop.index %}
-                        {% if question['choices'] %}
-                            {% for choice in question['choices'] %}
+    <form method="POST" action="{{ url_for('exercise', quiz_id=quiz_id) }}">
+        <div class="row justify-content-center">
+            {% for question in questions %}
+            <div class="col-md-8 mb-4">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-white text-black">
+                        {{ loop.index }}. ({{ question['score'] }} คะแนน)
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text">{{ question['question'] }}</p>
+                        <div class="mt-3">
+                            {% set question_index = loop.index %}
+                            {% if question['choices'] %}
+                                {% for choice in question['choices'] %}
                                 <div class="form-check">
                                     <input class="form-check-input" type="radio" 
                                            name="question{{ question_index }}" 
@@ -23,39 +25,47 @@
                                         {{ choice }}
                                     </label>
                                 </div>
-                            {% endfor %}
-                        {% else %}
-                            <label for="answer_{{ loop.index }}" class="form-label">คำตอบของคุณ</label>
-                            <input type="text" id="answer_{{ loop.index }}" name="answer_{{ loop.index }}" class="form-control">
-                        {% endif %}
-                    </div>
-                </div>
-                {% endfor %}
-
-                <button type="submit" class="btn btn-primary w-100">ส่งคำตอบ</button>
-            </form>
-            
-            {% if submitted %}
-                <div class="mt-4">
-                    <h2 class="text-center">ผลลัพธ์</h2>
-                    {% for result in results %}
-                        <div class="mb-3">
-                            <p><strong>คำถาม {{ loop.index }}:</strong> {{ result.question }}</p>
-                            <p><strong>คำตอบของคุณ:</strong> {{ result.user_answer }}</p>
-                            <p><strong>คำตอบที่ถูกต้อง:</strong> {{ result.correct_answer }}</p>
-                            {% if result.is_correct %}
-                                <p class="text-success">ถูกต้อง! คุณได้รับ {{ result.score }} คะแนน</p>
+                                {% endfor %}
                             {% else %}
-                                <p class="text-danger">ไม่ถูกต้อง! คะแนนที่ควรได้คือ {{ result.score }} คะแนน</p>
+                                <label for="answer_{{ loop.index }}" class="form-label">ตอบ</label>
+                                <input type="text" id="answer_{{ loop.index }}" name="answer_{{ loop.index }}" class="form-control">
                             {% endif %}
                         </div>
-                    {% endfor %}
-                    <p class="text-center"><strong>คะแนนรวม:</strong> {{ total_score }} / {{ max_score }}</p>
+                    </div>
                 </div>
-            {% endif %}
+            </div>
+            {% endfor %}
+        </div>
 
-            <a href="/" class="btn btn-secondary w-100 mt-4">กลับ</a>
+        <div class="row justify-content-center">
+            <div class="col-md-8 d-flex justify-content-end">
+                <button type="submit" class="btn btn-primary mt-4">ส่งคำตอบ</button>
+            </div>
+        </div>
+    </form>
+    
+    {% if submitted %}
+    <div class="row justify-content-center mt-5">
+        <div class="col-md-8">
+            <h2 class="text-center">ผลลัพธ์</h2>
+            {% for result in results %}
+            <div class="card mb-3 shadow-sm">
+                <div class="card-body">
+                    <p><strong>{{ loop.index }}:</strong> {{ result.question }}</p>
+                    <p><strong>คำตอบของคุณ:</strong> {{ result.user_answer }}</p>
+                    <p><strong>คำตอบที่ถูกต้อง:</strong> {{ result.correct_answer }}</p>
+                    {% if result.is_correct %}
+                    <p class="text-success">ถูกต้อง! คุณได้รับ {{ result.score }} คะแนน</p>
+                    {% else %}
+                    <p class="text-danger">ไม่ถูกต้อง! คะแนนที่ควรได้คือ {{ result.score }} คะแนน</p>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+            <p class="text-center"><strong>คะแนนรวม:</strong> {{ total_score }} / {{ max_score }}</p>
         </div>
     </div>
+    {% endif %}
+
 </div>
 {% endblock %}

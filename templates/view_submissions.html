@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block body %}
+<div class="container mt-5">
+    <h2>รายชื่อนักเรียนที่ส่งข้อสอบในชุดข้อสอบ: {{ submissions[0].quiz_name if submissions else 'ไม่พบข้อมูล' }}</h2>
+    <table class="table table-bordered mt-3">
+        <thead>
+            <tr>
+                <th>ชื่อ</th>
+                <th>ระดับชั้น</th>
+                <th>วันที่ส่ง</th>
+                <th>คะแนนรวม</th>
+                <th>คะแนนสูงสุด</th>
+                <th>ดูผลการตอบคำถาม</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for submission in submissions %}
+            <tr>
+                <td>{{ submission.student_name }}</td>
+                <td>{{ submission.grade_level }}</td>
+                <td>{{ submission.submission_date }}</td>
+                <td>{{ submission.total_score }}</td>
+                <td>{{ submission.max_score }}</td>
+                <td>
+                    <!-- ลิงก์ไปดูรายละเอียดคำตอบของนักเรียน -->
+                    <a href="{{ url_for('view_submission_details', submission_id=submission._id) }}">ดูคำตอบ</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

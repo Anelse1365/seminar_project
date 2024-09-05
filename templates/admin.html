@@ -40,5 +40,11 @@
             </a>
             <p style="text-align: center; margin-top: 10px;">คลังข้อสอบ</p>
         </div>
+        <div>
+            <a href="{{ url_for('active_exercise') }}">
+                <img src="{{ url_for('static', filename='img/8.png') }}" alt="นักเรียนในระบบ" style="width: 150px; height: 150px; border-radius: 20px;">
+            </a>
+            <p style="text-align: center; margin-top: 10px;">ข้อสอบที่กำลังดำเนิน</p>
+        </div>
     </div>
 {% endblock %}

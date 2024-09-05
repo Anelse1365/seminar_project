@@ -28,7 +28,7 @@
                 <ul>
                     {% for exercise in active_exercises %}
                         <li>
-                            {{ exercise['quiz_name'] }} - {{ exercise['category'] }}
+                            {{ exercise['quiz_name'] }}
                             <a href="{{ url_for('exercise', quiz_id=exercise['quiz_set']) }}">Start Exercise</a>
                         </li>
                     {% endfor %}

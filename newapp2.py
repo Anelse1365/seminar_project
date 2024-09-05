@@ -24,6 +24,7 @@ questions_template_collection = mydb["questions_template"]
 p_name_collection = mydb["p_name"]
 users = mydb["users"]
 category_collection = mydb["ชุดข้อสอบ"]
+active_questions_db = mydb['active_questions']
 
 class NameForm(FlaskForm):
     quiz = TextAreaField('Quiz', validators=[DataRequired()])
@@ -286,6 +287,34 @@ def quiz_maker():
 
 from bson import ObjectId, errors  # เพิ่ม errors สำหรับจัดการข้อผิดพลาด ObjectId
 
+@app.route('/active_exercise.html', methods=['GET', 'POST'])
+def active_exercise():
+    # ดึงข้อมูลจาก active_questions ทุกโจทย์
+    active_exercises = list(active_questions_db.find())
+
+    return render_template('active_exercise.html', active_exercises=active_exercises)
+
+@app.route('/view_submissions/<exercise_id>', methods=['GET'])
+def view_submissions(exercise_id):
+    # ดึงข้อมูลการส่งคำตอบจาก collection 'answer_history' โดยใช้ exercise_id
+    submissions = list(mydb['answer_history'].find({'exercise_id': ObjectId(exercise_id)}))
+
+    # ส่งข้อมูลไปยัง template view_submissions.html
+    return render_template('view_submissions.html', submissions=submissions)
+
+@app.route('/view_submission_details/<submission_id>', methods=['GET'])
+def view_submission_details(submission_id):
+    # ดึงข้อมูลคำตอบของนักเรียนจาก collection 'answer_history'
+    submission = mydb['answer_history'].find_one({'_id': ObjectId(submission_id)})
+
+    # ส่งข้อมูลไปยัง template view_submission_details.html
+    return render_template('view_submission_details.html', submission=submission)
+
+
+
+
+
+
 @app.route('/create_exercise', methods=['GET', 'POST'])
 def create_exercise():
     quiz_sets = list(mydb['ชุดข้อสอบ'].find({}, {'_id': 1, 'quiz_name': 1, 'category': 1}))
@@ -357,12 +386,36 @@ def create_exercise():
                     'score': score
                 })
 
+            # ตรวจสอบว่ามี expiration_date ในฟอร์ม
+            expiration_date_str = request.form.get('expiration_date')
+            if not expiration_date_str:
+                flash('Please provide an expiration date.', 'error')
+                return render_template('create_exercise.html', 
+                                       quiz_sets=quiz_set_options, 
+                                       preview_questions=preview_questions, 
+                                       selected_quiz_set=selected_quiz_set,
+                                       shuffle_choices=shuffle_choices,
+                                       view_mode=view_mode)
+
+            try:
+                # แปลง expiration_date เป็น datetime ออบเจกต์
+                expiration_date = datetime.strptime(expiration_date_str, '%Y-%m-%dT%H:%M')
+            except ValueError:
+                flash('Invalid expiration date format. Please try again.', 'error')
+                return render_template('create_exercise.html', 
+                                       quiz_sets=quiz_set_options, 
+                                       preview_questions=preview_questions, 
+                                       selected_quiz_set=selected_quiz_set,
+                                       shuffle_choices=shuffle_choices,
+                                       view_mode=view_mode)
+
             if 'generate_exercise' in request.form:
                 exercise_data = {
                     'quiz_set': selected_quiz_set['_id'],
                     'quiz_name': selected_quiz_set['quiz_name'],
                     'category': selected_quiz_set['category'],
-                    'created_date': datetime.now().strftime('%d/%m/%Y %H:%M'),
+                    'created_date': datetime.now(),  # ใช้ `datetime` ออบเจกต์
+                    'expiration_date': expiration_date,  # ใช้ `datetime` ออบเจกต์
                     'status': 'active',
                     'scores': scores,
                     'submissions': 0  
@@ -377,6 +430,7 @@ def create_exercise():
                            selected_quiz_set=selected_quiz_set,
                            shuffle_choices=shuffle_choices,
                            view_mode=view_mode)
+
 
 
 
@@ -397,6 +451,7 @@ def exercise(quiz_id):
     if selected_quiz_set and active_exercise:
         raw_questions = selected_quiz_set.get('questions', [])
         scores = active_exercise.get('scores', [])  # ดึงคะแนนจาก active_exercises
+        quiz_name = selected_quiz_set.get('quiz_name', 'Unknown')  # ดึงชื่อชุดข้อสอบ
 
         for index, question in enumerate(raw_questions):
             question_template = question['question']
@@ -463,6 +518,7 @@ def exercise(quiz_id):
         if submitted:
             submission_data = {
                 "exercise_id": ObjectId(quiz_id),  # อ้างอิงไปยัง active_questions
+                 "quiz_name": quiz_name,  # บันทึกชื่อของชุดข้อสอบ
                 "student_id": student_id,
                 "student_name": student_name,
                 "grade_level": grade_level,

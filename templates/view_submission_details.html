@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block body %}
+<div class="container mt-5">
+    <h2>ผลการตอบคำถามของ {{ submission.student_name }}</h2>
+    <p>ชุดข้อสอบ: {{ submission.quiz_name }}</p>
+    <p>วันที่ส่ง: {{ submission.submission_date }}</p>
+    <p>คะแนนรวม: {{ submission.total_score }}/{{ submission.max_score }}</p>
+
+    <table class="table table-bordered mt-3">
+        <thead>
+            <tr>
+                <th>คำถาม</th>
+                <th>คำตอบของผู้ใช้</th>
+                <th>คำตอบที่ถูกต้อง</th>
+                <th>ถูกต้อง</th>
+                <th>คะแนน</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for result in submission.results %}
+            <tr>
+                <td>{{ result.question }}</td>
+                <td>{{ result.user_answer }}</td>
+                <td>{{ result.correct_answer }}</td>
+                <td>{{ 'ถูกต้อง' if result.is_correct else 'ผิด' }}</td>
+                <td>{{ result.score }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

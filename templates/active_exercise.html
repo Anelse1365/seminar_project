@@ -1,9 +1,28 @@
 {% extends "base.html" %}
 
 {% block body %}
+<style>
+    .status {
+        cursor: pointer;
+    }
+    .status.active {
+        color: green;
+    }
+    .status.inactive {
+        color: red;
+    }
+    .delete-icon {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        cursor: pointer;
+        color: red;
+    }
+</style>
 <div style="display: flex; justify-content: center; flex-wrap: wrap; gap: 50px; margin-top: 50px;">
     {% for exercise in active_exercises %}
-    <div class="card" style="width: 18rem;">
+    <div class="card" style="width: 18rem; position: relative;">
+        <i class="delete-icon fas fa-trash" data-id="{{ exercise._id }}" title="ลบชุดข้อสอบ"></i>
         <div class="card-body">
             <h5 class="card-title">{{ exercise.quiz_name }}</h5>
             <h6 class="card-subtitle mb-2 text-body-secondary">
@@ -12,12 +31,79 @@
             <h6 class="card-subtitle mb-2 text-body-secondary">
                 วันหมดอายุ: {{ exercise.expiration_date.strftime('%d/%m/%Y %H:%M') }}
             </h6>
-            <h6 class="card-subtitle mb-2 text-body-secondary">สถานะ: {{ exercise.status }}</h6>
-            <p class="card-text">ส่งแล้ว {{ exercise.submissions }} คน</p>
-            <a href="{{ url_for('view_submissions', exercise_id=exercise.quiz_set) }}" class="card-link">ดู</a> <!-- จะพาไปยัง view_submissions -->
             
+            <h6 class="card-subtitle mb-2 text-body-secondary">
+                สถานะ: 
+                <span class="status {{ 'active' if exercise.status == 'กำลังใช้งาน' else 'inactive' }}" 
+                      data-id="{{ exercise._id }}" 
+                      data-status="{{ exercise.status }}">
+                    {{ exercise.status }}
+                </span>
+            </h6>
+            
+            <p class="card-text">ส่งแล้ว {{ exercise.submissions }} คน</p>
+            <a href="{{ url_for('view_submissions', exercise_id=exercise.quiz_set) }}" class="card-link">ดู</a>
         </div>
     </div>
     {% endfor %}
 </div>
+
+<!-- JavaScript code to handle status update and delete action -->
+<!-- JavaScript code to handle status update and delete action -->
+<script>
+    document.querySelectorAll('.status').forEach(function(statusElement) {
+        statusElement.addEventListener('click', function() {
+            var currentStatus = this.dataset.status;
+            var newStatus = currentStatus === 'กำลังใช้งาน' ? 'ปิดการใช้งาน' : 'กำลังใช้งาน';
+            var confirmationMessage = `คุณแน่ใจหรือไม่ว่าจะเปลี่ยนสถานะเป็น "${newStatus}"?`;
+    
+            if (confirm(confirmationMessage)) {
+                fetch(`/update_status/${this.dataset.id}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ status: newStatus })
+                }).then(response => {
+                    if (response.ok) {
+                        this.textContent = newStatus;
+                        this.style.color = newStatus === 'กำลังใช้งาน' ? 'green' : 'red';
+                        this.dataset.status = newStatus;
+                    } else {
+                        alert('ไม่สามารถเปลี่ยนสถานะได้');
+                    }
+                });
+            }
+        });
+    });
+    
+    document.querySelectorAll('.delete-icon').forEach(function(deleteIcon) {
+        deleteIcon.addEventListener('click', function() {
+            var exerciseId = this.dataset.id;
+            var confirmationMessage = 'คุณแน่ใจหรือไม่ว่าจะลบชุดข้อสอบนี้?';
+    
+            if (confirm(confirmationMessage)) {
+                fetch(`/delete_exercise/${exerciseId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                }).then(response => response.json())
+                  .then(data => {
+                      if (data.success) {
+                          // ลบการ์ดออกจากหน้า
+                          this.closest('.card').remove();
+                      } else {
+                          alert(data.message);
+                      }
+                  })
+                  .catch(error => {
+                      alert('เกิดข้อผิดพลาดในการลบชุดข้อสอบ');
+                      console.error('Error:', error);
+                  });
+            }
+        });
+    });
+    </script>
+    
 {% endblock %}

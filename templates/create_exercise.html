@@ -91,7 +91,11 @@
                         {% endfor %}
                         <!-- แก้ไขชื่อปุ่ม Generate Exercise และ Hidden Input -->
                         <input type="hidden" name="generate_exercise_trigger" value="true">
-                        <button type="submit" class="btn btn-primary mt-3" name="generate_exercise">Generate Exercise</button>
+                        <div class="row justify-content-center">
+                            <div class="col-md-8 d-flex justify-content-end">
+                                <button type="submit" class="btn btn-primary mt-3" name="generate_exercise">สร้างแบบฝึกหัด</button>
+                            </div>
+                        </div>
 
                     </div>
                 {% endif %}

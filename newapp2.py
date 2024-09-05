@@ -1,11 +1,11 @@
 import re
 from bson import ObjectId
-from flask import Flask, render_template, request, redirect, url_for, flash ,session
+from flask import Flask, render_template, request, redirect, url_for, flash ,session, jsonify 
 from flask_wtf import FlaskForm
 from wtforms import TextAreaField, StringField, SubmitField, FieldList, FormField
 from wtforms.validators import DataRequired
 from pymongo import MongoClient
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
 import random
 import bcrypt
 from functools import wraps
@@ -293,6 +293,21 @@ def active_exercise():
     active_exercises = list(active_questions_db.find())
 
     return render_template('active_exercise.html', active_exercises=active_exercises)
+@app.route('/update_status/<exercise_id>', methods=['POST'])
+def update_status(exercise_id):
+    data = request.get_json()
+    new_status = data.get('status')
+
+    result = active_questions_db.update_one(
+        {'_id': ObjectId(exercise_id)},
+        {'$set': {'status': new_status}}
+    )
+
+    if result.matched_count > 0:
+        return 'OK'
+    else:
+        return 'Failed', 400
+
 
 @app.route('/view_submissions/<exercise_id>', methods=['GET'])
 def view_submissions(exercise_id):
@@ -387,9 +402,9 @@ def create_exercise():
                 })
 
             # ตรวจสอบว่ามี expiration_date ในฟอร์ม
+            #แต่เดะกลับมาแก้สวนนี้ที่หลัง โคตรเลอะเทอะเลย
             expiration_date_str = request.form.get('expiration_date')
             if not expiration_date_str:
-                flash('Please provide an expiration date.', 'error')
                 return render_template('create_exercise.html', 
                                        quiz_sets=quiz_set_options, 
                                        preview_questions=preview_questions, 
@@ -431,10 +446,6 @@ def create_exercise():
                            shuffle_choices=shuffle_choices,
                            view_mode=view_mode)
 
-
-
-
-from datetime import datetime, timezone, timedelta
 
 @app.route('/exercise/<quiz_id>', methods=['GET', 'POST'])
 def exercise(quiz_id):
@@ -572,8 +583,7 @@ def exercise(quiz_id):
                     {'quiz_set': ObjectId(quiz_id)},
                     {'$inc': {'submissions': 1}}
                 )
-            else:
-                flash('คุณได้ส่งข้อสอบชุดนี้แล้ว', 'warning')  # แจ้งเตือนว่ามีการส่งมาแล้ว
+
 
     return render_template('exercise.html',
                            quiz_id=quiz_id,
@@ -720,6 +730,20 @@ def delete_quiz(quiz_id):
     category_collection.delete_one({'_id': ObjectId(quiz_id)})
     flash('Quiz deleted successfully!', 'success')
     return redirect(url_for('quiz_storage'))
+
+# Route สำหรับลบชุดข้อสอบ
+@app.route('/delete_exercise/<exercise_id>', methods=['POST'])
+def delete_exercise(exercise_id):
+    try:
+        # ลบชุดข้อสอบโดยใช้ exercise_id
+        result = active_questions_db.delete_one({"_id": ObjectId(exercise_id)})
+        
+        if result.deleted_count > 0:
+            return jsonify({"success": True, "message": "ชุดข้อสอบถูกลบสำเร็จ"})
+        else:
+            return jsonify({"success": False, "message": "ไม่พบชุดข้อสอบที่ต้องการลบ"}), 404
+    except Exception as e:
+        return jsonify({"success": False, "message": f"เกิดข้อผิดพลาด: {str(e)}"}), 500
 
 
 

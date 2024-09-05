@@ -2,6 +2,15 @@
 {% block title %}ตอบคำถาม{% endblock %}
 {% block body %}
 <div class="container">
+    {% if expired %}
+    <div class="alert alert-danger text-center mt-5" role="alert">
+        หมดเวลาทำแบบข้อสอบ
+    </div>
+    <div class="text-center mt-3">
+        <a href="{{ url_for('student_home') }}" class="btn btn-secondary">กลับไปที่หน้าหลัก</a>
+    </div>
+    {% else %}
+    <!-- ฟอร์มการทำข้อสอบ -->
     <form method="POST" action="{{ url_for('exercise', quiz_id=quiz_id) }}">
         <div class="row justify-content-center">
             {% for question in questions %}
@@ -18,9 +27,9 @@
                                 {% for choice in question['choices'] %}
                                 <div class="form-check">
                                     <input class="form-check-input" type="radio" 
-                                           name="question{{ question_index }}" 
-                                           id="choice_{{ question_index }}_{{ loop.index }}" 
-                                           value="{{ choice }}">
+                                        name="question{{ question_index }}" 
+                                        id="choice_{{ question_index }}_{{ loop.index }}" 
+                                        value="{{ choice }}">
                                     <label class="form-check-label" for="choice_{{ question_index }}_{{ loop.index }}">
                                         {{ choice }}
                                     </label>
@@ -43,7 +52,8 @@
             </div>
         </div>
     </form>
-    
+
+    <!-- ส่วนแสดงผลลัพธ์หลังจากส่งคำตอบ -->
     {% if submitted %}
     <div class="row justify-content-center mt-5">
         <div class="col-md-8">
@@ -66,6 +76,6 @@
         </div>
     </div>
     {% endif %}
-
+    {% endif %}
 </div>
 {% endblock %}

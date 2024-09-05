@@ -2,9 +2,8 @@
 {% block title %}Create Exercise{% endblock %}
 {% block body %}
         <div style="text-align: center; margin-top: 50px;">
-            <h1>Welcome.</h1>
+            <h1>Welcome to Student Home</h1>
             <p>สวัสดี, {{ session.username }}. </p>
-            <p>ขณะนี้ยังไม่มีงานที่ได้มอบหมาย </p>
 
         </div>
     
@@ -23,7 +22,6 @@
                 <p style="text-align: center; margin-top: 10px;">ดูชุดข้อสอบ</p>
             </div>
             <div class="container">
-                <h1>Welcome to Student Home</h1>
                 <h3>Available Exercises:</h3>
                 <ul>
                     {% for exercise in active_exercises %}

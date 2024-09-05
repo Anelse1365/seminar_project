@@ -53,7 +53,7 @@ def student_home():
     if 'username' in session:
         if session['role'] == 'user':
             # ดึงข้อมูลชุดข้อสอบที่ active จาก MongoDB
-            active_exercises = list(mydb['active_questions'].find({'status': 'active'}))
+            active_exercises = list(mydb['active_questions'].find({'status': 'กำลังใช้งาน'}))
 
             # ส่งข้อมูลไปยัง student_home.html
             return render_template('student_home.html', active_exercises=active_exercises)
@@ -416,7 +416,7 @@ def create_exercise():
                     'category': selected_quiz_set['category'],
                     'created_date': datetime.now(),  # ใช้ `datetime` ออบเจกต์
                     'expiration_date': expiration_date,  # ใช้ `datetime` ออบเจกต์
-                    'status': 'active',
+                    'status': 'กำลังใช้งาน',
                     'scores': scores,
                     'submissions': 0  
                 }
@@ -434,13 +434,41 @@ def create_exercise():
 
 
 
+from datetime import datetime, timezone, timedelta
+
 @app.route('/exercise/<quiz_id>', methods=['GET', 'POST'])
 def exercise(quiz_id):
+    # กำหนดค่าเริ่มต้นให้กับ expired
+    expired = False
     # ดึงชุดข้อสอบที่เลือกจากฐานข้อมูล
     selected_quiz_set = mydb['ชุดข้อสอบ'].find_one({'_id': ObjectId(quiz_id)})
 
     # ดึงข้อมูล active exercise ที่เกี่ยวข้องกับ quiz_id
     active_exercise = mydb['active_questions'].find_one({'quiz_set': ObjectId(quiz_id)})
+
+    
+    # ตรวจสอบเวลาหมดอายุของข้อสอบ
+    if active_exercise:
+        expiration_date = active_exercise.get('expiration_date')
+        if expiration_date:
+            expiration_date = expiration_date.astimezone(timezone(timedelta(hours=7)))  # ตั้งเขตเวลาเป็น UTC+7
+
+        current_time = datetime.now(timezone(timedelta(hours=7)))  # ตั้งเขตเวลาเป็น UTC+7
+
+        # ตรวจสอบว่าข้อสอบหมดเวลาหรือยัง
+        if expiration_date and current_time > expiration_date:
+            expired = True  # ตั้ง expired เป็น True เมื่อหมดเวลา
+
+    # เงื่อนไขเมื่อหมดอายุ ให้ส่งค่า expired ไปยัง template
+    if expired:
+        return render_template('exercise.html', 
+                               quiz_id=quiz_id, 
+                               questions=[], 
+                               submitted=False, 
+                               results=[], 
+                               total_score=0, 
+                               max_score=0, 
+                               expired=expired)  # ส่งค่า expired=True
 
     questions = []
     results = []
@@ -467,8 +495,8 @@ def exercise(quiz_id):
             # ประมวลผลตัวเลือกหากมี
             choices = []
             if choices_template:
-                for choice_template in choices_template:
-                    choices.append(evaluate_expression(choice_template, eval_context))
+                for choice in choices_template:
+                    choices.append(evaluate_expression(choice, eval_context))
 
             # เพิ่มคำถามพร้อมกับคะแนนไปยัง list
             questions.append({
@@ -518,7 +546,7 @@ def exercise(quiz_id):
         if submitted:
             submission_data = {
                 "exercise_id": ObjectId(quiz_id),  # อ้างอิงไปยัง active_questions
-                 "quiz_name": quiz_name,  # บันทึกชื่อของชุดข้อสอบ
+                "quiz_name": quiz_name,  # บันทึกชื่อของชุดข้อสอบ
                 "student_id": student_id,
                 "student_name": student_name,
                 "grade_level": grade_level,

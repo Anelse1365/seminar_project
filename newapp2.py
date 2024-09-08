@@ -51,17 +51,40 @@ def add_header(response):
 
 @app.route('/student_home')
 def student_home():
-    if 'username' in session:
-        if session['role'] == 'user':
-            # ดึงข้อมูลชุดข้อสอบที่ active จาก MongoDB
-            active_exercises = list(mydb['active_questions'].find({'status': 'กำลังใช้งาน'}))
+    student_id = session.get('username')
 
-            # ส่งข้อมูลไปยัง student_home.html
-            return render_template('student_home.html', active_exercises=active_exercises)
-        elif session['role'] == 'admin':
-            return render_template('admin.html')
-    else:
-        return redirect(url_for('login'))
+    # ดึงข้อมูล active_exercises และ answer_history
+    active_exercises = mydb['active_questions'].find()
+    completed_exercises = mydb['answer_history'].find({'student_id': student_id})
+
+    completed_exercise_ids = [entry['exercise_id'] for entry in completed_exercises]
+
+    exercises = []
+    for exercise in active_exercises:
+        quiz_id = exercise['quiz_set']
+        quiz_name = exercise['quiz_name']
+        expiration_date = exercise.get('expiration_date', None)
+
+        # ตรวจสอบว่าหมดอายุหรือไม่
+        expired = False
+        if expiration_date:
+            current_time = datetime.now(timezone(timedelta(hours=7)))  # ตั้งค่าเขตเวลา UTC+7
+            expiration_date = expiration_date.astimezone(timezone(timedelta(hours=7)))
+            expired = current_time > expiration_date
+
+        # ตรวจสอบว่าผู้ใช้ทำ exercise เสร็จหรือยัง
+        is_completed = quiz_id in completed_exercise_ids
+
+        exercises.append({
+            'quiz_name': quiz_name,
+            'quiz_id': quiz_id,
+            'expired': expired,
+            'is_completed': is_completed,
+            'expiration_date': expiration_date.strftime('%d/%m/%Y %H:%M') if expiration_date else None
+        })
+
+    return render_template('student_home.html', active_exercises=exercises)
+
 
 
 

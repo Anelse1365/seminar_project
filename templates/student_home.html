@@ -1,32 +1,43 @@
 {% extends 'base_user.html' %}
-{% block title %}Create Exercise{% endblock %}
+{% block title %}Student Home{% endblock %}
 {% block body %}
-        <div style="text-align: center; margin-top: 50px;">
-            <h1>Welcome to Student Home</h1>
-            <p>สวัสดี, {{ session.username }}. </p>
+    <div style="text-align: center; margin-top: 50px;">
+        <h1>Welcome to Student Home</h1>
+        <p>สวัสดี, {{ session.username }}.</p>
+    </div>
 
+    <div style="display: flex; justify-content: center; flex-wrap: wrap; gap: 50px; margin-top: 50px;">
+        <div>
+            <a href="{{ url_for('index') }}">
+                <img src="{{ url_for('static', filename='img/14.png') }}" alt="สร้าง Template" style="width: 150px; height: 150px; border-radius: 20px;">
+            </a>
+            <p style="text-align: center; margin-top: 10px;">งานที่ได้รับ</p>
         </div>
-    
-        <div style="display: flex; justify-content: center; flex-wrap: wrap; gap: 50px; margin-top: 50px;">
-            <div>
-                <a href="{{ url_for('index') }}">
-                    <img src="{{ url_for('static', filename='img/14.png') }}" alt="สร้าง Template" style="width: 150px; height: 150px; border-radius: 20px;">
-                </a>
-                
-                <p style="text-align: center; margin-top: 10px;">งานที่ได้รับ</p>
-            </div>
 
-            <div class="container">
-                <h3>Available Exercises:</h3>
-                <ul>
-                    {% for exercise in active_exercises %}
-                        <li>
-                            {{ exercise['quiz_name'] }}
-                            <a href="{{ url_for('exercise', quiz_id=exercise['quiz_set']) }}">Start Exercise</a>
-                        </li>
-                    {% endfor %}
-                </ul>
-            </div>
- 
+        <div class="container">
+            <h3 class="text-center mb-4">Available Exercises</h3>
+            <div class="row">
+                {% for exercise in active_exercises %}
+                    <div class="col-md-4 mb-3">
+                        <div class="card h-100 shadow-sm">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ exercise['quiz_name'] }}</h5>
+                                <p class="card-text">หมดอายุ: {{ exercise['expiration_date'] }}</p>
 
+                                {% if exercise['expired'] %}
+                                    <p class="card-text text-danger">ข้อสอบหมดอายุแล้ว</p>
+                                    <button class="btn btn-secondary" disabled>Expired</button>
+                                {% elif exercise['is_completed'] %}
+                                    <p class="card-text text-success">คุณได้ส่งคำตอบแล้ว</p>
+                                    <button class="btn btn-secondary" disabled>Exercise Completed</button>
+                                {% else %}
+                                    <a href="{{ url_for('exercise', quiz_id=exercise['quiz_id']) }}" class="btn btn-primary">Start Exercise</a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
 {% endblock %}

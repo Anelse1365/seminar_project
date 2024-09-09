@@ -1,43 +1,81 @@
 {% extends 'base_user.html' %}
 {% block title %}Student Home{% endblock %}
 {% block body %}
-    <div style="text-align: center; margin-top: 50px;">
-        <h1>Welcome to Student Home</h1>
-        <p>สวัสดี, {{ session.username }}.</p>
+<div style="text-align: center; margin-top: 50px;">
+    <h1>Welcome to Student Home</h1>
+    <p>สวัสดี, {{ session.username }}.</p>
+</div>
+
+<div style="display: flex; justify-content: center; flex-wrap: wrap; gap: 50px; margin-top: 50px;">
+    <div>
+        <a href="{{ url_for('index') }}">
+            <img src="{{ url_for('static', filename='img/14.png') }}" alt="สร้าง Template" style="width: 150px; height: 150px; border-radius: 20px;">
+        </a>
+        <p style="text-align: center; margin-top: 10px;">งานที่ได้รับ</p>
     </div>
+</div>
 
-    <div style="display: flex; justify-content: center; flex-wrap: wrap; gap: 50px; margin-top: 50px;">
-        <div>
-            <a href="{{ url_for('index') }}">
-                <img src="{{ url_for('static', filename='img/14.png') }}" alt="สร้าง Template" style="width: 150px; height: 150px; border-radius: 20px;">
-            </a>
-            <p style="text-align: center; margin-top: 10px;">งานที่ได้รับ</p>
-        </div>
+<!-- Bootstrap Tabs for separating active and expired exercises -->
+<ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+    <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="pills-home-tab" data-bs-toggle="pill" data-bs-target="#pills-home" type="button" role="tab" aria-controls="pills-home" aria-selected="true">งานที่ได้รับมอบหมาย</button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="pills-profile-tab" data-bs-toggle="pill" data-bs-target="#pills-profile" type="button" role="tab" aria-controls="pills-profile" aria-selected="false">เลยเวลากำหนด</button>
+    </li>
+</ul>
 
+<div class="tab-content" id="pills-tabContent">
+    <!-- Tab for Active Exercises -->
+    <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
         <div class="container">
-            <h3 class="text-center mb-4">Available Exercises</h3>
+            <h3 class="text-center mb-4">งานที่ได้รับมอบหมาย</h3>
             <div class="row">
                 {% for exercise in active_exercises %}
-                    <div class="col-md-4 mb-3">
-                        <div class="card h-100 shadow-sm">
-                            <div class="card-body">
-                                <h5 class="card-title">{{ exercise['quiz_name'] }}</h5>
-                                <p class="card-text">หมดอายุ: {{ exercise['expiration_date'] }}</p>
+                    {% if not exercise['expired'] %}
+                        <div class="col-md-4 mb-3">
+                            <div class="card h-100 shadow-sm">
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ exercise['quiz_name'] }}</h5>
+                                    <p class="card-text">หมดอายุ: {{ exercise['expiration_date'] }}</p>
 
-                                {% if exercise['expired'] %}
-                                    <p class="card-text text-danger">ข้อสอบหมดอายุแล้ว</p>
-                                    <button class="btn btn-secondary" disabled>Expired</button>
-                                {% elif exercise['is_completed'] %}
-                                    <p class="card-text text-success">คุณได้ส่งคำตอบแล้ว</p>
-                                    <button class="btn btn-secondary" disabled>Exercise Completed</button>
-                                {% else %}
-                                    <a href="{{ url_for('exercise', quiz_id=exercise['quiz_id']) }}" class="btn btn-primary">Start Exercise</a>
-                                {% endif %}
+                                    {% if exercise['is_completed'] %}
+                                        <p class="card-text text-success">คุณได้ส่งคำตอบแล้ว</p>
+                                        <button class="btn btn-secondary" disabled>Exercise Completed</button>
+                                    {% else %}
+                                    <p>ยังไม่ได้ส่ง</p>
+                                        <a href="{{ url_for('exercise', quiz_id=exercise['quiz_id']) }}" class="btn btn-primary">เริ่มทำ</a>
+                                    {% endif %}
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    {% endif %}
                 {% endfor %}
             </div>
         </div>
     </div>
+
+    <!-- Tab for Expired Exercises -->
+    <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
+        <div class="container">
+            <h3 class="text-center mb-4">เลยเวลากำหนด</h3>
+            <div class="row">
+                {% for exercise in active_exercises %}
+                    {% if exercise['expired'] %}
+                        <div class="col-md-4 mb-3">
+                            <div class="card h-100 shadow-sm">
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ exercise['quiz_name'] }}</h5>
+                                    <p class="card-text">หมดอายุ: {{ exercise['expiration_date'] }}</p>
+                                    <p class="card-text text-danger">หมดเวลาทำข้อสอบ</p>
+                                    <button class="btn btn-secondary" disabled>Expired</button>
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

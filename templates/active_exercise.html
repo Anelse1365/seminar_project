@@ -29,10 +29,16 @@
                 สร้างเมื่อ: {{ exercise.created_date.strftime('%d/%m/%Y %H:%M') }}  
             </h6>
             <h6 class="card-subtitle mb-2 text-body-secondary">
-                วันหมดอายุ: {{ exercise.expiration_date.strftime('%d/%m/%Y %H:%M') }}
+                วันหมดอายุ: 
+                <span class="editable-date" contenteditable="true" data-id="{{ exercise._id }}">
+                    {{ exercise.expiration_date.strftime('%d/%m/%Y %H:%M') }}
+                </span>
+                <i class="save-icon fas fa-save" style="cursor: pointer; color: blue; display: none;" title="บันทึกการเปลี่ยนแปลง"></i>
             </h6>
             
+            
             <h6 class="card-subtitle mb-2 text-body-secondary">
+                
                 สถานะ: 
                 <span class="status {{ 'active' if exercise.status == 'กำลังใช้งาน' else 'inactive' }}" 
                       data-id="{{ exercise._id }}" 
@@ -49,61 +55,95 @@
 </div>
 
 <!-- JavaScript code to handle status update and delete action -->
-<!-- JavaScript code to handle status update and delete action -->
 <script>
-    document.querySelectorAll('.status').forEach(function(statusElement) {
-        statusElement.addEventListener('click', function() {
-            var currentStatus = this.dataset.status;
-            var newStatus = currentStatus === 'กำลังใช้งาน' ? 'ปิดการใช้งาน' : 'กำลังใช้งาน';
-            var confirmationMessage = `คุณแน่ใจหรือไม่ว่าจะเปลี่ยนสถานะเป็น "${newStatus}"?`;
-    
-            if (confirm(confirmationMessage)) {
-                fetch(`/update_status/${this.dataset.id}`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ status: newStatus })
-                }).then(response => {
-                    if (response.ok) {
-                        this.textContent = newStatus;
-                        this.style.color = newStatus === 'กำลังใช้งาน' ? 'green' : 'red';
-                        this.dataset.status = newStatus;
-                    } else {
-                        alert('ไม่สามารถเปลี่ยนสถานะได้');
-                    }
-                });
+document.querySelectorAll('.editable-date').forEach(function(dateElement) {
+    dateElement.addEventListener('focus', function() {
+        // แสดงไอคอนบันทึกเมื่อมีการแก้ไข
+        var saveIcon = this.nextElementSibling;
+        saveIcon.style.display = 'inline';
+    });
+
+    dateElement.addEventListener('blur', function() {
+        // ซ่อนไอคอนบันทึกเมื่อผู้ใช้คลิกออกไป
+        var saveIcon = this.nextElementSibling;
+        saveIcon.style.display = 'none';
+    });
+
+    // เมื่อคลิกที่ไอคอนบันทึก ให้ส่งคำร้องขอไปยังเซิร์ฟเวอร์
+    dateElement.nextElementSibling.addEventListener('click', function() {
+        var newExpirationDate = dateElement.textContent.trim();
+        var exerciseId = dateElement.dataset.id;
+
+        // ตรวจสอบรูปแบบวันที่ว่าถูกต้องหรือไม่
+        if (!/^\d{2}\/\d{2}\/\d{4} \d{2}:\d{2}$/.test(newExpirationDate)) {
+            alert('รูปแบบวันที่ไม่ถูกต้อง! กรุณาใช้รูปแบบ "dd/mm/yyyy hh:mm"');
+            return;
+        }
+
+        // ส่งคำร้องขออัปเดตวันหมดอายุไปยังเซิร์ฟเวอร์
+        fetch(`/update_expiration_date/${exerciseId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ expiration_date: newExpirationDate })
+        }).then(response => {
+            if (response.ok) {
+                alert('อัปเดตวันหมดอายุเรียบร้อยแล้ว');
+                saveIcon.style.display = 'none'; // ซ่อนไอคอนบันทึกหลังจากอัปเดตสำเร็จ
+            } else {
+                alert('ไม่สามารถอัปเดตวันหมดอายุได้');
             }
         });
     });
-    
-    document.querySelectorAll('.delete-icon').forEach(function(deleteIcon) {
-        deleteIcon.addEventListener('click', function() {
-            var exerciseId = this.dataset.id;
-            var confirmationMessage = 'คุณแน่ใจหรือไม่ว่าจะลบชุดข้อสอบนี้?';
-    
-            if (confirm(confirmationMessage)) {
-                fetch(`/delete_exercise/${exerciseId}`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                }).then(response => response.json())
-                  .then(data => {
-                      if (data.success) {
-                          // ลบการ์ดออกจากหน้า
-                          this.closest('.card').remove();
-                      } else {
-                          alert(data.message);
-                      }
-                  })
-                  .catch(error => {
-                      alert('เกิดข้อผิดพลาดในการลบชุดข้อสอบ');
-                      console.error('Error:', error);
-                  });
-            }
-        });
+});
+document.querySelectorAll('.status').forEach(function(statusElement) {
+    statusElement.addEventListener('click', function() {
+        var currentStatus = this.dataset.status;
+        var newStatus = currentStatus === 'กำลังใช้งาน' ? 'ปิดการใช้งาน' : 'กำลังใช้งาน';
+        var confirmationMessage = `คุณแน่ใจหรือไม่ว่าจะเปลี่ยนสถานะเป็น "${newStatus}"?`;
+
+        if (confirm(confirmationMessage)) {
+            fetch(`/update_status/${this.dataset.id}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ status: newStatus })
+            }).then(response => {
+                if (response.ok) {
+                    this.textContent = newStatus;
+                    this.style.color = newStatus === 'กำลังใช้งาน' ? 'green' : 'red';
+                    this.dataset.status = newStatus;
+                } else {
+                    alert('ไม่สามารถเปลี่ยนสถานะได้');
+                }
+            });
+        }
     });
-    </script>
-    
+});
+
+document.querySelectorAll('.delete-icon').forEach(function(deleteIcon) {
+    deleteIcon.addEventListener('click', function() {
+        var exerciseId = this.dataset.id;
+        var confirmationMessage = 'คุณแน่ใจหรือไม่ว่าจะลบชุดข้อสอบนี้?';
+
+        if (confirm(confirmationMessage)) {
+            fetch(`/delete_exercise/${exerciseId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }).then(response => {
+                if (response.ok) {
+                    // ลบการ์ดออกจากหน้า
+                    this.closest('.card').remove();
+                } else {
+                    alert('ไม่สามารถลบชุดข้อสอบได้');
+                }
+            });
+        }
+    });
+});
+</script>
 {% endblock %}

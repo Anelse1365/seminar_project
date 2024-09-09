@@ -28,18 +28,10 @@
             <h6 class="card-subtitle mb-2 text-body-secondary">
                 สร้างเมื่อ: {{ exercise.created_date.strftime('%d/%m/%Y %H:%M') }}  
             </h6>
-            <h6 class="card-subtitle mb-2 text-body-secondary">
-                วันหมดอายุ: 
-                <span class="editable-date" contenteditable="true" data-id="{{ exercise._id }}">
-                    {{ exercise.expiration_date.strftime('%d/%m/%Y %H:%M') }}
-                </span>
+            <h6 class="card-subtitle mb-2 text-body-secondary">วันหมดอายุ:<input type="datetime-local" class="editable-date" data-id="{{ exercise._id }}"
+                       value="{{ exercise.expiration_date.strftime('%Y-%m-%dT%H:%M') }}" style="border: none; background: none; width: auto; cursor: pointer;">
                 <i class="save-icon fas fa-save" style="cursor: pointer; color: blue; display: none;" title="บันทึกการเปลี่ยนแปลง"></i>
-            </h6>
-            
-            
-            <h6 class="card-subtitle mb-2 text-body-secondary">
-                
-                สถานะ: 
+            </h6><h6 class="card-subtitle mb-2 text-body-secondary"> สถานะ: 
                 <span class="status {{ 'active' if exercise.status == 'กำลังใช้งาน' else 'inactive' }}" 
                       data-id="{{ exercise._id }}" 
                       data-status="{{ exercise.status }}">
@@ -56,31 +48,64 @@
 
 <!-- JavaScript code to handle status update and delete action -->
 <script>
+// ฟังก์ชันตรวจสอบวันหมดอายุและอัปเดตสถานะ
+function checkExpirationDates() {
+    document.querySelectorAll('.editable-date').forEach(function(dateElement) {
+        var expirationDate = new Date(dateElement.value);
+        var currentDate = new Date();
+
+        // ดึงองค์ประกอบสถานะที่เกี่ยวข้อง
+        var statusElement = dateElement.closest('.card-body').querySelector('.status');
+
+        // ถ้าวันหมดอายุน้อยกว่าวันปัจจุบัน เปลี่ยนสถานะเป็น 'หมดเวลา'
+        if (expirationDate < currentDate) {
+            if (statusElement.dataset.status !== 'หมดเวลา') {
+                updateStatus(statusElement, 'หมดเวลา', 'gray');
+            }
+        } else {
+            // ถ้าวันหมดอายุยังไม่ถึง และสถานะเป็น 'หมดเวลา' ให้เปลี่ยนกลับเป็น 'กำลังใช้งาน'
+            if (statusElement.dataset.status === 'หมดเวลา') {
+                updateStatus(statusElement, 'กำลังใช้งาน', 'green');
+            }
+        }
+    });
+}
+
+// ฟังก์ชันอัปเดตสถานะเป็น 'หมดเวลา' หรือ 'กำลังใช้งาน'
+function updateStatus(statusElement, newStatus, color) {
+    var exerciseId = statusElement.dataset.id;
+
+    fetch(`/update_status/${exerciseId}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ status: newStatus })
+    }).then(response => {
+        if (response.ok) {
+            statusElement.textContent = newStatus;
+            statusElement.style.color = color;
+            statusElement.dataset.status = newStatus;
+        } else {
+            alert('ไม่สามารถเปลี่ยนสถานะได้');
+        }
+    });
+}
+
+// เรียกใช้ฟังก์ชันเพื่อตรวจสอบวันหมดอายุเมื่อโหลดหน้าเว็บ
+checkExpirationDates();
+
+// เมื่อมีการแก้ไขวันหมดอายุ
 document.querySelectorAll('.editable-date').forEach(function(dateElement) {
-    dateElement.addEventListener('focus', function() {
-        // แสดงไอคอนบันทึกเมื่อมีการแก้ไข
+    dateElement.addEventListener('input', function() {
         var saveIcon = this.nextElementSibling;
         saveIcon.style.display = 'inline';
     });
 
-    dateElement.addEventListener('blur', function() {
-        // ซ่อนไอคอนบันทึกเมื่อผู้ใช้คลิกออกไป
-        var saveIcon = this.nextElementSibling;
-        saveIcon.style.display = 'none';
-    });
-
-    // เมื่อคลิกที่ไอคอนบันทึก ให้ส่งคำร้องขอไปยังเซิร์ฟเวอร์
     dateElement.nextElementSibling.addEventListener('click', function() {
-        var newExpirationDate = dateElement.textContent.trim();
+        var newExpirationDate = dateElement.value;
         var exerciseId = dateElement.dataset.id;
 
-        // ตรวจสอบรูปแบบวันที่ว่าถูกต้องหรือไม่
-        if (!/^\d{2}\/\d{2}\/\d{4} \d{2}:\d{2}$/.test(newExpirationDate)) {
-            alert('รูปแบบวันที่ไม่ถูกต้อง! กรุณาใช้รูปแบบ "dd/mm/yyyy hh:mm"');
-            return;
-        }
-
-        // ส่งคำร้องขออัปเดตวันหมดอายุไปยังเซิร์ฟเวอร์
         fetch(`/update_expiration_date/${exerciseId}`, {
             method: 'POST',
             headers: {
@@ -90,35 +115,25 @@ document.querySelectorAll('.editable-date').forEach(function(dateElement) {
         }).then(response => {
             if (response.ok) {
                 alert('อัปเดตวันหมดอายุเรียบร้อยแล้ว');
-                saveIcon.style.display = 'none'; // ซ่อนไอคอนบันทึกหลังจากอัปเดตสำเร็จ
+                saveIcon.style.display = 'none';
+                checkExpirationDates(); // ตรวจสอบวันหมดอายุอีกครั้งหลังการอัปเดต
             } else {
                 alert('ไม่สามารถอัปเดตวันหมดอายุได้');
             }
         });
     });
 });
+
 document.querySelectorAll('.status').forEach(function(statusElement) {
     statusElement.addEventListener('click', function() {
         var currentStatus = this.dataset.status;
+        if (currentStatus === 'หมดเวลา') return; // ไม่ให้เปลี่ยนสถานะถ้าเป็น 'หมดเวลา'
+
         var newStatus = currentStatus === 'กำลังใช้งาน' ? 'ปิดการใช้งาน' : 'กำลังใช้งาน';
         var confirmationMessage = `คุณแน่ใจหรือไม่ว่าจะเปลี่ยนสถานะเป็น "${newStatus}"?`;
 
         if (confirm(confirmationMessage)) {
-            fetch(`/update_status/${this.dataset.id}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ status: newStatus })
-            }).then(response => {
-                if (response.ok) {
-                    this.textContent = newStatus;
-                    this.style.color = newStatus === 'กำลังใช้งาน' ? 'green' : 'red';
-                    this.dataset.status = newStatus;
-                } else {
-                    alert('ไม่สามารถเปลี่ยนสถานะได้');
-                }
-            });
+            updateStatus(this, newStatus, newStatus === 'กำลังใช้งาน' ? 'green' : 'red');
         }
     });
 });
@@ -136,7 +151,6 @@ document.querySelectorAll('.delete-icon').forEach(function(deleteIcon) {
                 }
             }).then(response => {
                 if (response.ok) {
-                    // ลบการ์ดออกจากหน้า
                     this.closest('.card').remove();
                 } else {
                     alert('ไม่สามารถลบชุดข้อสอบได้');
@@ -145,5 +159,6 @@ document.querySelectorAll('.delete-icon').forEach(function(deleteIcon) {
         }
     });
 });
+
 </script>
 {% endblock %}

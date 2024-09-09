@@ -332,6 +332,29 @@ def update_status(exercise_id):
         return 'OK'
     else:
         return 'Failed', 400
+    
+# เพิ่ม route สำหรับอัปเดตวันหมดอายุ
+@app.route('/update_expiration_date/<exercise_id>', methods=['POST'])
+def update_expiration_date(exercise_id):
+    data = request.get_json()
+    new_expiration_date = data.get('expiration_date')
+
+    # แปลง string ที่ได้รับเป็น datetime object
+    try:
+        new_expiration_date = datetime.strptime(new_expiration_date, '%Y-%m-%dT%H:%M')
+    except ValueError:
+        return jsonify({'error': 'รูปแบบวันที่ไม่ถูกต้อง'}), 400
+
+    # อัปเดตวันหมดอายุในฐานข้อมูล
+    result = active_questions_db.update_one(
+        {'_id': ObjectId(exercise_id)},
+        {'$set': {'expiration_date': new_expiration_date}}
+    )
+
+    if result.matched_count > 0:
+        return 'OK'
+    else:
+        return 'Failed', 400
 
 
 @app.route('/view_submissions/<exercise_id>', methods=['GET'])
@@ -765,26 +788,6 @@ def delete_exercise(exercise_id):
     except Exception as e:
         return jsonify({"success": False, "message": f"เกิดข้อผิดพลาด: {str(e)}"}), 500
     
-@app.route('/update_expiration_date/<exercise_id>', methods=['POST'])
-def update_expiration_date(exercise_id):
-    if 'username' not in session:
-        return redirect(url_for('login'))
-
-    new_expiration_date = request.json.get('expiration_date')
-
-    # แปลงวันที่จาก string เป็น datetime object
-    try:
-        expiration_date = datetime.strptime(new_expiration_date, '%d/%m/%Y %H:%M')
-    except ValueError:
-        return jsonify({'error': 'รูปแบบวันที่ไม่ถูกต้อง'}), 400
-
-    # อัปเดตวันหมดอายุใน MongoDB
-    mydb['active_questions'].update_one(
-        {'_id': exercise_id},
-        {'$set': {'expiration_date': expiration_date}}
-    )
-
-    return jsonify({'message': 'อัปเดตวันหมดอายุเรียบร้อยแล้ว'}), 200
 
 
 

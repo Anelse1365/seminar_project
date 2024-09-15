@@ -61,6 +61,16 @@
                             <input type="number" id="default_score" name="default_score" class="form-control w-25" value="1">
                             <button type="button" class="btn btn-secondary ms-2" id="apply-default-score">เปลี่ยน</button>
                         </div>
+                        <div class="mb-3">
+                            <label for="grade_level" class="form-label">เลือกนักเรียนระดับชั้น</label>
+                            <select name="grade_level" id="grade_level" class="form-select form-select-lg" aria-label="Select Grade Level">
+                                <option value="">เลือกระดับชั้น</option>
+                                {% for grade in grade_levels %}
+                                    <option value="{{ grade }}">{{ grade }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
                     <label for="expiration_date">กำหนดวันหมดอายุ:</label>
                     <input type="datetime-local" id="expiration_date" name="expiration_date" required>
                         {% for question in preview_questions %}

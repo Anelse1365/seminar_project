@@ -367,13 +367,17 @@ def update_expiration_date(exercise_id):
         return 'Failed', 400
 
 
-@app.route('/view_submissions/<exercise_id>', methods=['GET'])
-def view_submissions(exercise_id):
-    # ดึงข้อมูลการส่งคำตอบจาก collection 'answer_history' โดยใช้ exercise_id
-    submissions = list(mydb['answer_history'].find({'exercise_id': ObjectId(exercise_id)}))
+@app.route('/view_submissions/<exercise_id>/<grade_level>', methods=['GET'])
+def view_submissions(exercise_id, grade_level):
+    # ดึงข้อมูลการส่งคำตอบจาก collection 'answer_history' โดยใช้ exercise_id และ grade_level
+    submissions = list(mydb['answer_history'].find({
+        'exercise_id': ObjectId(exercise_id),
+        'grade_level': grade_level
+    }))
 
     # ส่งข้อมูลไปยัง template view_submissions.html
     return render_template('view_submissions.html', submissions=submissions)
+
 
 
 @app.route('/view_submission_details/<submission_id>', methods=['GET'])

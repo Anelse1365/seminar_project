@@ -26,6 +26,7 @@ p_name_collection = mydb["p_name"]
 users = mydb["users"]
 category_collection = mydb["ชุดข้อสอบ"]
 active_questions_db = mydb['active_questions']
+answer_history_db = mydb['answer_history']
 
 class NameForm(FlaskForm):
     quiz = TextAreaField('Quiz', validators=[DataRequired()])
@@ -68,13 +69,16 @@ def student_home():
         'status': 'กำลังใช้งาน',
         'grade_level': student_grade_level
     })
+    
+    # ดึงข้อมูลจาก answer_history โดยใช้ student_id
     completed_exercises = mydb['answer_history'].find({'student_id': student_id})
 
-    completed_exercise_ids = [entry['exercise_id'] for entry in completed_exercises]
+    # ตรวจสอบว่ามี active_questions_id หรือไม่ เพื่อป้องกัน KeyError
+    completed_exercise_ids = [entry.get('active_questions_id') for entry in completed_exercises if 'active_questions_id' in entry]
 
     exercises = []
     for exercise in active_exercises:
-        quiz_id = exercise['quiz_set']
+        quiz_id = exercise['_id']  # ใช้ _id ของ active_questions แทน
         quiz_name = exercise['quiz_name']
         expiration_date = exercise.get('expiration_date', None)
 
@@ -97,6 +101,7 @@ def student_home():
         })
 
     return render_template('student_home.html', active_exercises=exercises)
+
 
 
 
@@ -367,16 +372,16 @@ def update_expiration_date(exercise_id):
         return 'Failed', 400
 
 
-@app.route('/view_submissions/<exercise_id>/<grade_level>', methods=['GET'])
-def view_submissions(exercise_id, grade_level):
-    # ดึงข้อมูลการส่งคำตอบจาก collection 'answer_history' โดยใช้ exercise_id และ grade_level
+@app.route('/view_submissions/<active_questions_id>', methods=['GET'])
+def view_submissions(active_questions_id):
+    # ดึงข้อมูลการส่งคำตอบจาก collection 'answer_history' โดยใช้ active_questions_id
     submissions = list(mydb['answer_history'].find({
-        'exercise_id': ObjectId(exercise_id),
-        'grade_level': grade_level
+        'active_questions_id': ObjectId(active_questions_id)  # ใช้ active_questions_id แทน grade_level
     }))
 
     # ส่งข้อมูลไปยัง template view_submissions.html
     return render_template('view_submissions.html', submissions=submissions)
+
 
 
 
@@ -387,6 +392,7 @@ def view_submission_details(submission_id):
 
     # ส่งข้อมูลไปยัง template view_submission_details.html
     return render_template('view_submission_details.html', submission=submission)
+
 
 @app.route('/create_exercise', methods=['GET', 'POST'])
 def create_exercise():
@@ -513,10 +519,24 @@ def create_exercise():
 def exercise(quiz_id):
     expired = False
 
-    # ดึงชุดข้อสอบที่เลือกจากฐานข้อมูล
-    selected_quiz_set = mydb['ชุดข้อสอบ'].find_one({'_id': ObjectId(quiz_id)})
+    # ดึงข้อมูล active_exercise โดยใช้ quiz_id (ซึ่งเป็น _id ของ active_exercise)
+    active_exercise = mydb['active_questions'].find_one({'_id': ObjectId(quiz_id)})
 
-    # ดึงข้อมูลนักเรียนจาก session หรือ database
+    if not active_exercise:
+        return "ไม่พบ active exercise สำหรับข้อสอบนี้"
+
+    # ดึง quiz_set_id จาก active_exercise
+    quiz_set_id = active_exercise.get('quiz_set')
+    if not quiz_set_id:
+        return "ไม่พบชุดข้อสอบที่เกี่ยวข้อง"
+
+    # ดึงชุดข้อสอบจากคอลเล็กชัน 'ชุดข้อสอบ' โดยใช้ quiz_set_id
+    selected_quiz_set = mydb['ชุดข้อสอบ'].find_one({'_id': quiz_set_id})
+
+    if not selected_quiz_set:
+        return "ไม่พบชุดข้อสอบที่คุณเลือก"
+
+    # ดึงข้อมูลนักเรียนจาก session หรือฐานข้อมูล
     student_id = session.get('username')
     student = mydb['users'].find_one({'username': student_id})
 
@@ -527,32 +547,39 @@ def exercise(quiz_id):
         student_name = "Unknown"
         student_grade_level = "Unknown"
 
-    # ดึงข้อมูล active exercise ที่เกี่ยวข้องกับ quiz_id และ grade_level
-    active_exercise = mydb['active_questions'].find_one({
-        'quiz_set': ObjectId(quiz_id),
-        'grade_level': student_grade_level,  # เพิ่มเงื่อนไขการกรองระดับชั้น
-        'status': 'กำลังใช้งาน'
+    # ตรวจสอบว่าระดับชั้นของนักเรียนตรงกับ active_exercise หรือไม่
+    if active_exercise.get('grade_level') != student_grade_level:
+        return "คุณไม่มีสิทธิ์ทำข้อสอบชุดนี้"
+
+    # ตรวจสอบว่ามีการทำข้อสอบ active_exercise นี้ไปแล้วหรือไม่
+    active_exercise_id = active_exercise.get('_id')
+
+    existing_submission = mydb['answer_history'].find_one({
+        'active_questions_id': active_exercise_id,
+        'student_id': student_id
     })
 
-    # ตรวจสอบเวลาหมดอายุของข้อสอบ
-    if active_exercise:
-        expiration_date = active_exercise.get('expiration_date')
-        if expiration_date:
-            expiration_date = expiration_date.astimezone(timezone(timedelta(hours=7)))
+    if existing_submission:
+        return "คุณได้ทำข้อสอบชุดนี้ไปแล้ว"
 
-        current_time = datetime.now(timezone(timedelta(hours=7)))
+    # ตรวจสอบวันหมดอายุ
+    expiration_date = active_exercise.get('expiration_date')
+    if expiration_date:
+        expiration_date = expiration_date.astimezone(timezone(timedelta(hours=7)))
 
-        if expiration_date and current_time > expiration_date:
-            expired = True
+    current_time = datetime.now(timezone(timedelta(hours=7)))
+
+    if expiration_date and current_time > expiration_date:
+        expired = True
 
     if expired:
-        return render_template('exercise.html', 
-                               quiz_id=quiz_id, 
-                               questions=[], 
-                               submitted=False, 
-                               results=[], 
-                               total_score=0, 
-                               max_score=0, 
+        return render_template('exercise.html',
+                               quiz_id=quiz_id,
+                               questions=[],
+                               submitted=False,
+                               results=[],
+                               total_score=0,
+                               max_score=0,
                                expired=expired)
 
     questions = []
@@ -572,6 +599,7 @@ def exercise(quiz_id):
             choices_template = question.get('choices', [])
             score = scores[index] if index < len(scores) else 1
 
+            # ประมวลผลคำถามและตัวเลือก
             question_text, num_dict, opt_dict, person_dict, obj_dict, numbers = process_question_template(question_template)
             eval_context = {**num_dict, **opt_dict, **person_dict, **obj_dict}
             answer = evaluate_expression(answer_template, eval_context)
@@ -612,8 +640,8 @@ def exercise(quiz_id):
 
         if submitted:
             submission_data = {
-                "exercise_id": ObjectId(quiz_id),
-                "active_questions_id": active_exercise.get('_id'),  # เพิ่ม active_questions_id
+                "exercise_id": quiz_set_id,  # ใช้ quiz_set_id แทน
+                "active_questions_id": active_exercise_id,
                 "quiz_name": quiz_name,
                 "student_id": student_id,
                 "student_name": student_name,
@@ -624,18 +652,12 @@ def exercise(quiz_id):
                 "results": results
             }
 
-            existing_submission = mydb['answer_history'].find_one({
-                'exercise_id': ObjectId(quiz_id),
-                'student_id': student_id
-            })
+            mydb['answer_history'].insert_one(submission_data)
 
-            if existing_submission is None:
-                mydb['answer_history'].insert_one(submission_data)
-
-                mydb['active_questions'].update_one(
-                    {'quiz_set': ObjectId(quiz_id), 'grade_level': student_grade_level},  # เพิ่ม grade_level ในการกรอง
-                    {'$inc': {'submissions': 1}}
-                )
+            mydb['active_questions'].update_one(
+                {'_id': active_exercise_id},
+                {'$inc': {'submissions': 1}}
+            )
 
     return render_template('exercise.html',
                            quiz_id=quiz_id,
@@ -644,6 +666,8 @@ def exercise(quiz_id):
                            results=results,
                            total_score=total_score,
                            max_score=max_score)
+
+
 
 
 @app.route('/submit_answer/<question_id>', methods=['POST'])
@@ -785,6 +809,7 @@ def delete_quiz(quiz_id):
     return redirect(url_for('quiz_storage'))
 
 # Route สำหรับลบชุดข้อสอบ
+# Route สำหรับลบชุดข้อสอบ
 @app.route('/delete_exercise/<exercise_id>', methods=['POST'])
 def delete_exercise(exercise_id):
     try:
@@ -792,12 +817,16 @@ def delete_exercise(exercise_id):
         result = active_questions_db.delete_one({"_id": ObjectId(exercise_id)})
         
         if result.deleted_count > 0:
-            return jsonify({"success": True, "message": "ชุดข้อสอบถูกลบสำเร็จ"})
+            # ถ้าลบชุดข้อสอบสำเร็จ ให้ลบข้อมูลคำตอบใน answer_history ที่เชื่อมกับ active_questions_id นี้
+            answer_history_db.delete_many({"active_questions_id": ObjectId(exercise_id)})
+            
+            return jsonify({"success": True, "message": "ชุดข้อสอบและคำตอบที่เกี่ยวข้องถูกลบสำเร็จ"})
         else:
             return jsonify({"success": False, "message": "ไม่พบชุดข้อสอบที่ต้องการลบ"}), 404
     except Exception as e:
         return jsonify({"success": False, "message": f"เกิดข้อผิดพลาด: {str(e)}"}), 500
-    
+
+
 
 
 

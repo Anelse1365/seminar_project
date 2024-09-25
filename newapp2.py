@@ -74,7 +74,9 @@ def student_home():
     completed_exercises = mydb['answer_history'].find({'student_id': student_id})
 
     # ตรวจสอบว่ามี active_questions_id หรือไม่ เพื่อป้องกัน KeyError
-    completed_exercise_ids = [entry.get('active_questions_id') for entry in completed_exercises if 'active_questions_id' in entry]
+    completed_exercise_dict = {
+        entry.get('active_questions_id'): entry for entry in completed_exercises if 'active_questions_id' in entry
+    }
 
     exercises = []
     for exercise in active_exercises:
@@ -90,14 +92,24 @@ def student_home():
             expired = current_time > expiration_date
 
         # ตรวจสอบว่าผู้ใช้ทำ exercise เสร็จหรือยัง
-        is_completed = quiz_id in completed_exercise_ids
+        is_completed = quiz_id in completed_exercise_dict
+        score = None
+        max_score = None
+
+        # หากทำเสร็จแล้ว ดึงคะแนนจาก answer_history
+        if is_completed:
+            completed_exercise = completed_exercise_dict[quiz_id]
+            score = completed_exercise.get('total_score', None)
+            max_score = completed_exercise.get('max_score', None)
 
         exercises.append({
             'quiz_name': quiz_name,
             'quiz_id': quiz_id,
             'expired': expired,
             'is_completed': is_completed,
-            'expiration_date': expiration_date.strftime('%d/%m/%Y %H:%M') if expiration_date else None
+            'expiration_date': expiration_date.strftime('%d/%m/%Y %H:%M') if expiration_date else None,
+            'score': score,
+            'max_score': max_score
         })
 
     return render_template('student_home.html', active_exercises=exercises)
@@ -249,13 +261,14 @@ def index():
 @app.route('/quiz_maker', methods=['GET', 'POST'])
 @admin_required
 def quiz_maker():
+    # ดึงข้อมูล templates จากฐานข้อมูล
     templates = list(questions_template_collection.find({}, {'_id': 1, 'question_template': 1, 'answer_template': 1, 'choices_template': 1, 'question_type': 1}))
     template_options = [
         (str(template['_id']), template['question_template'], template.get('answer_template', ''), template.get('choices_template', []))
         for template in templates
     ]
 
-    # Query distinct categories from the "ชุดข้อสอบ" collection
+    # ดึงหมวดหมู่จากคอลเลกชัน "ชุดข้อสอบ"
     category_collection = mydb["ชุดข้อสอบ"]
     categories = category_collection.distinct('category')
 
@@ -263,11 +276,13 @@ def quiz_maker():
         quiz_name = request.form.get('quiz_name')
         category = request.form.get('category')
         new_category_name = request.form.get('new_category')
+        explanation = request.form.get('explanation')
 
+        # ถ้ามีการสร้างหมวดหมู่ใหม่
         if new_category_name:
             category = new_category_name
 
-        # Use the "ชุดข้อสอบ" collection directly
+        # ใช้คอลเลกชัน "ชุดข้อสอบ"
         collection = mydb["ชุดข้อสอบ"]
 
         quiz_set = []
@@ -278,54 +293,59 @@ def quiz_maker():
             if template_id is None:
                 break
 
-            selected_template = questions_template_collection.find_one({'_id': ObjectId(template_id)})
-            if selected_template:
-                question_template = selected_template['question_template']
-                answer_template = selected_template.get('answer_template', '')  # ใช้ .get() เพื่อป้องกัน KeyError
-                choices_template = selected_template.get('choices_template', [])  # ดึงข้อมูล choices_template ถ้ามี
+            if template_id:
+                # ดึง template ที่เลือกจากฐานข้อมูล
+                selected_template = questions_template_collection.find_one({'_id': ObjectId(template_id)})
+                if selected_template:
+                    question_template = selected_template['question_template']
+                    answer_template = selected_template.get('answer_template', '')  # ดึง answer_template
+                    choices_template = selected_template.get('choices_template', [])  # ดึง choices ถ้ามี
 
-                question_text, num_dict, opt_dict, person_dict, obj_dict, numbers = process_question_template(question_template)
-                eval_context = {**num_dict, **opt_dict, **person_dict, **obj_dict}
-                evaluated_answer = evaluate_expression(answer_template, eval_context)
+                    # ประมวลผล template คำถาม
+                    question_text, num_dict, opt_dict, person_dict, obj_dict, numbers = process_question_template(question_template)
+                    eval_context = {**num_dict, **opt_dict, **person_dict, **obj_dict}
+                    evaluated_answer = evaluate_expression(answer_template, eval_context)
 
-                # สร้างข้อมูลของ choices พร้อมแทนค่า
-                evaluated_choices = []
-                choice_labels = ['a', 'b', 'c', 'd', 'e']  # ป้ายกำกับตัวเลือก (ขึ้นอยู่กับจำนวน)
-                for i, choice_template in enumerate(choices_template):
-                    evaluated_choice = evaluate_expression(choice_template, eval_context)
-                    evaluated_choices.append(f"{choice_labels[i]}. {evaluated_choice}")
+                    # สร้างตัวเลือกสำหรับคำถาม
+                    evaluated_choices = []
+                    choice_labels = ['a', 'b', 'c', 'd', 'e']  # ป้ายกำกับตัวเลือก
+                    for i, choice_template in enumerate(choices_template):
+                        evaluated_choice = evaluate_expression(choice_template, eval_context)
+                        evaluated_choices.append(f"{choice_labels[i]}. {evaluated_choice}")
 
-                # สร้าง item ของ quiz
-                quiz_item = {
-                    'question': question_template,
-                    'answer': answer_template,
-                }
+                    # สร้าง item ของ quiz เป็นคำถาม
+                    quiz_item = {
+                        'type': 'question',
+                        'question': question_template,
+                        'answer': answer_template,
+                    }
 
-                # ตรวจสอบว่า question_type ไม่ใช่ 'written'
-                if selected_template.get('question_type') != 'written':
-                    quiz_item['choices'] = choices_template  # บันทึก choices ถ้าไม่ใช่ 'written'
+                    # ถ้าไม่ใช่คำตอบแบบเขียน
+                    if selected_template.get('question_type') != 'written':
+                        quiz_item['choices'] = choices_template  # บันทึก choices ถ้ามี
 
-                quiz_set.append(quiz_item)
-            else:
-                flash('Please select a template for each question.', 'error')
-                return redirect(url_for('quiz_maker'))
+                    quiz_set.append(quiz_item)
 
             question_index += 1
 
-        # Generate timestamp
+        # สร้าง timestamp
         timestamp = datetime.now().strftime('%d/%m/%Y %H:%M')
 
+        # บันทึกชุดคำถามและคำอธิบายลงในฐานข้อมูล
         collection.insert_one({
             'quiz_name': quiz_name,
-            'category': category,  # Store the selected or created category
+            'category': category,  # บันทึกหมวดหมู่ที่เลือกหรือสร้างใหม่
+            'explanation': explanation,  # บันทึกคำอธิบายแยกออกจากคำถาม
             'questions': quiz_set,
-            'created_at': timestamp  # Add the timestamp here
+            'created_at': timestamp  # บันทึกเวลา
         })
 
         flash('Quizzes generated successfully!', 'success')
         return redirect(url_for('quiz_maker'))
 
     return render_template('quiz_maker.html', templates=template_options, categories=categories)
+
+
 
 @app.route('/active_exercise.html', methods=['GET', 'POST'])
 def active_exercise():
@@ -396,14 +416,15 @@ def view_submission_details(submission_id):
 
 @app.route('/create_exercise', methods=['GET', 'POST'])
 def create_exercise():
-    quiz_sets = list(mydb['ชุดข้อสอบ'].find({}, {'_id': 1, 'quiz_name': 1, 'category': 1}))
+    quiz_sets = list(mydb['ชุดข้อสอบ'].find({}, {'_id': 1, 'quiz_name': 1, 'category': 1, 'explanation': 1}))
     # ดึงข้อมูลระดับชั้นจากคอลเลคชัน 'users'
     grade_levels = mydb['users'].distinct('grade_level')
     quiz_set_options = [
         (
             str(quiz_set['_id']),
             quiz_set.get('quiz_name', 'Unknown Quiz Name'),
-            quiz_set.get('category', 'Unknown Category')
+            quiz_set.get('category', 'Unknown Category'),
+            quiz_set.get('explanation', 'Unknown Quiz Name')
         )
         for quiz_set in quiz_sets
     ]
@@ -446,6 +467,7 @@ def create_exercise():
 
         if selected_quiz_set:
             questions = selected_quiz_set.get('questions', [])
+            explanation = selected_quiz_set.get('explanation', '')  # ดึงคำอธิบายของชุดข้อสอบ
             for index, question in enumerate(questions, start=1):
                 score = int(request.form.get(f'score_{index}', default_score))
                 scores.append(score)
@@ -471,6 +493,7 @@ def create_exercise():
                 })
 
             expiration_date_str = request.form.get('expiration_date')
+
             if not expiration_date_str:
                 return render_template('create_exercise.html', 
                                        quiz_sets=quiz_set_options, 
@@ -488,6 +511,7 @@ def create_exercise():
                                        quiz_sets=quiz_set_options, 
                                        preview_questions=preview_questions, 
                                        selected_quiz_set=selected_quiz_set,
+                                        explanation=explanation,  # ส่งคำอธิบายไปยังเทมเพลต
                                        shuffle_choices=shuffle_choices,
                                        view_mode=view_mode)
 
@@ -536,6 +560,9 @@ def exercise(quiz_id):
     if not selected_quiz_set:
         return "ไม่พบชุดข้อสอบที่คุณเลือก"
 
+    # ดึง explanation จาก selected_quiz_set
+    explanation = selected_quiz_set.get('explanation', None)  # เพิ่มการดึง explanation
+
     # ดึงข้อมูลนักเรียนจาก session หรือฐานข้อมูล
     student_id = session.get('username')
     student = mydb['users'].find_one({'username': student_id})
@@ -580,7 +607,8 @@ def exercise(quiz_id):
                                results=[],
                                total_score=0,
                                max_score=0,
-                               expired=expired)
+                               expired=expired,
+                               explanation=explanation)  # ส่ง explanation ไปยัง template
 
     questions = []
     results = []
@@ -665,7 +693,9 @@ def exercise(quiz_id):
                            submitted=submitted,
                            results=results,
                            total_score=total_score,
-                           max_score=max_score)
+                           max_score=max_score,
+                           explanation=explanation)  # ส่ง explanation ไปยัง template
+
 
 
 

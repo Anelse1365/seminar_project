@@ -73,37 +73,50 @@
                         
                     <label for="expiration_date">กำหนดวันหมดอายุ:</label>
                     <input type="datetime-local" id="expiration_date" name="expiration_date" required>
-                        {% for question in preview_questions %}
-                            <div class="card mb-3">
-                                <div class="card-body">
-                                    <div class="d-flex justify-content-between">
-                                        <span class="question-number">{{ loop.index }}.</span>
-                                        <input type="number" name="score_{{ loop.index }}" class="form-control w-25" placeholder="Score" value="{{ request.form.get('score_' ~ loop.index, 1) }}">
-                                    </div>
-                                    <p><strong>Question:</strong> {{ question['question'] }}</p>
-                                    {% set question_index = loop.index %}
-                                    {% if question['choices'] %}
-                                        {% for choice in question['choices'] %}
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="radio" 
-                                                    name="question{{ question_index }}" 
-                                                    id="choice_{{ question_index }}_{{ loop.index }}" 
-                                                    value="{{ choice }}" 
-                                                    {% if choice == question['answer'] %}checked{% endif %} disabled>
-                                                <label class="form-check-label" for="choice_{{ question_index }}_{{ loop.index }}">
-                                                    {{ choice }}
-                                                </label>
-                                            </div>
-                                        {% endfor %}
-                                    {% else %}
-                                        <div class="mb-3">
-                                            <label for="answer_template_{{ loop.index0 }}" class="form-label">Answer</label>
-                                            <input type="text" id="answer_template_{{ loop.index0 }}" class="form-control" value="{{ question['answer'] }}" disabled>
-                                        </div>
-                                    {% endif %}
+
+                    <!-- แสดงคำอธิบายถ้ามี -->
+                    {% if selected_quiz_set.explanation %}
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <p><strong>ชี้แจง:</strong> {{ selected_quiz_set.explanation }}</p>
+                        </div>
+                    </div>
+                 {% endif %}
+                
+                    
+                    <!-- ลูปแสดงคำถาม -->
+                    {% for question in preview_questions %}
+                        <div class="card mb-3">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between">
+                                    <span class="question-number">{{ loop.index }}.</span>
+                                    <input type="number" name="score_{{ loop.index }}" class="form-control w-25" placeholder="Score" value="{{ request.form.get('score_' ~ loop.index, 1) }}">
                                 </div>
+                                <p><strong>Question:</strong> {{ question['question'] }}</p>
+                                {% set question_index = loop.index %}
+                                {% if question['choices'] %}
+                                    {% for choice in question['choices'] %}
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" 
+                                                name="question{{ question_index }}" 
+                                                id="choice_{{ question_index }}_{{ loop.index }}" 
+                                                value="{{ choice }}" 
+                                                {% if choice == question['answer'] %}checked{% endif %} disabled>
+                                            <label class="form-check-label" for="choice_{{ question_index }}_{{ loop.index }}">
+                                                {{ choice }}
+                                            </label>
+                                        </div>
+                                    {% endfor %}
+                                {% else %}
+                                    <div class="mb-3">
+                                        <label for="answer_template_{{ loop.index0 }}" class="form-label">Answer</label>
+                                        <input type="text" id="answer_template_{{ loop.index0 }}" class="form-control" value="{{ question['answer'] }}" disabled>
+                                    </div>
+                                {% endif %}
                             </div>
-                        {% endfor %}
+                        </div>
+                    {% endfor %}
+                    
                         <!-- แก้ไขชื่อปุ่ม Generate Exercise และ Hidden Input -->
                         <input type="hidden" name="generate_exercise_trigger" value="true">
                         <div class="row justify-content-center">

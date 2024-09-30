@@ -1,9 +1,23 @@
 {% extends 'base.html' %}
+
 {% block title %}View Users{% endblock %}
+
 {% block body %}
 <div class="container mt-5">
     <h1 class="mb-4">Users List</h1>
-    
+
+    <!-- Grade Level Filter Buttons -->
+    <ul class="nav nav-pills mb-3" id="grade-level-tabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="all-tab" data-grade="all" type="button">All</button>
+        </li>
+        {% for grade_level, users in users_by_grade.items() %}
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" data-grade="{{ grade_level }}" type="button">{{ grade_level }}</button>
+        </li>
+        {% endfor %}
+    </ul>
+
     <table class="table table-bordered">
         <thead>
             <tr>
@@ -15,60 +29,57 @@
             </tr>
         </thead>
         <tbody>
-            {% for user in users %}
-            <tr>
-                <td>{{ user.username }}</td>
-                <td>{{ user.first_name }}</td>
-                <td>{{ user.last_name }}</td>
-                <td>{{ user.grade_level }}</td>
-                <td>
-                    <!-- Edit Button -->
-                    <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editUserModal-{{ user._id }}">
-                        แก้ไข
-                    </button>
-                    <!-- Delete Button -->
-                    <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal" data-user-id="{{ user._id }}">
-                        ลบ
-                    </button>
-                </td>
-            </tr>
+            {% for grade_level, users in users_by_grade.items() %}
+                {% for user in users %}
+                <tr data-grade="{{ grade_level }}">
+                    <td>{{ user.username }}</td>
+                    <td>{{ user.first_name }}</td>
+                    <td>{{ user.last_name }}</td>
+                    <td>{{ grade_level }}</td>
+                    <td>
+                        <!-- Actions (Edit/Delete buttons) -->
+                        <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editUserModal-{{ user._id }}">แก้ไข</button>
+                        <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal" data-user-id="{{ user._id }}">ลบ</button>
+                    </td>   
+                </tr>
 
-            <!-- Edit Modal -->
-            <div class="modal fade" id="editUserModal-{{ user._id }}" tabindex="-1" aria-labelledby="editUserModalLabel-{{ user._id }}" aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="editUserModalLabel-{{ user._id }}">Edit User</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            <form method="POST">
-                                <input type="hidden" name="user_id" value="{{ user._id }}">
-                                <div class="mb-3">
-                                    <label for="username" class="form-label">Username:</label>
-                                    <input type="text" id="username" name="username" class="form-control" value="{{ user.username }}" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="first_name" class="form-label">First Name:</label>
-                                    <input type="text" id="first_name" name="first_name" class="form-control" value="{{ user.first_name }}" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="last_name" class="form-label">Last Name:</label>
-                                    <input type="text" id="last_name" name="last_name" class="form-control" value="{{ user.last_name }}" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="grade_level" class="form-label">Grade Level:</label>
-                                    <input type="text" id="grade_level" name="grade_level" class="form-control" value="{{ user.grade_level }}" required>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                    <input type="submit" name="edit_user" class="btn btn-primary" value="Save Changes">
-                                </div>
-                            </form>
+                <!-- Edit Modal -->
+                <div class="modal fade" id="editUserModal-{{ user._id }}" tabindex="-1" aria-labelledby="editUserModalLabel-{{ user._id }}" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="editUserModalLabel-{{ user._id }}">Edit User</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form method="POST">
+                                    <input type="hidden" name="user_id" value="{{ user._id }}">
+                                    <div class="mb-3">
+                                        <label for="username" class="form-label">Username:</label>
+                                        <input type="text" id="username" name="username" class="form-control" value="{{ user.username }}" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="first_name" class="form-label">First Name:</label>
+                                        <input type="text" id="first_name" name="first_name" class="form-control" value="{{ user.first_name }}" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="last_name" class="form-label">Last Name:</label>
+                                        <input type="text" id="last_name" name="last_name" class="form-control" value="{{ user.last_name }}" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="grade_level" class="form-label">Grade Level:</label>
+                                        <input type="text" id="grade_level" name="grade_level" class="form-control" value="{{ user.grade_level }}" required>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                        <input type="submit" name="edit_user" class="btn btn-primary" value="Save Changes">
+                                    </div>
+                                </form>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
+                {% endfor %}
             {% endfor %}
         </tbody>
     </table>
@@ -142,6 +153,27 @@
 </div>
 
 <script>
+    // Add event listener to each grade-level button
+    document.querySelectorAll('#grade-level-tabs button').forEach(button => {
+        button.addEventListener('click', function() {
+            var selectedGrade = this.getAttribute('data-grade'); // Get grade level from button
+            var rows = document.querySelectorAll('tbody tr'); // Get all table rows
+
+            rows.forEach(row => {
+                var grade = row.getAttribute('data-grade'); // Get grade level from each row
+                if (selectedGrade === 'all' || grade === selectedGrade) {
+                    row.style.display = ''; // Show row if matches or if "All" is selected
+                } else {
+                    row.style.display = 'none'; // Hide row if doesn't match
+                }
+            });
+
+            // Toggle active class on clicked button
+            document.querySelectorAll('#grade-level-tabs button').forEach(btn => btn.classList.remove('active'));
+            this.classList.add('active');
+        });
+    });
+
     // Pass user ID to the delete confirmation modal
     var confirmDeleteModal = document.getElementById('confirmDeleteModal');
     confirmDeleteModal.addEventListener('show.bs.modal', function (event) {
@@ -151,4 +183,5 @@
         deleteUserIdInput.value = userId;
     });
 </script>
+
 {% endblock %}

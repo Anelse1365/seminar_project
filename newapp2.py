@@ -750,10 +750,11 @@ def delete_template(template_id):
     questions_template_collection.delete_one({'_id': ObjectId(template_id)})
     flash('Template deleted successfully!', 'success')
     return redirect(url_for('view_templates'))
-
+from itertools import groupby
+from operator import itemgetter
 @app.route('/view_user', methods=['GET', 'POST'])
 def view_user():
-    all_users = users.find({"role": {"$ne": "admin"}})  # Exclude admins
+    all_users = list(users.find({"role": {"$ne": "admin"}}))  # Exclude admins and convert to list
 
     if request.method == 'POST':
         if 'edit_user' in request.form:
@@ -787,7 +788,11 @@ def view_user():
         
         return redirect(url_for('view_user'))
 
-    return render_template('view_user.html', users=all_users)
+    # Group users by grade_level
+    all_users = sorted(all_users, key=itemgetter('grade_level'))
+    users_by_grade = {k: list(g) for k, g in groupby(all_users, key=itemgetter('grade_level'))}
+
+    return render_template('view_user.html', users_by_grade=users_by_grade)
 
 @app.route('/quiz_storage', methods=['GET'])
 def quiz_storage():

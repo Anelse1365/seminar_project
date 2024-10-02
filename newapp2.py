@@ -41,6 +41,21 @@ def admin_required(f):
             return redirect(url_for('student_home'))
         return f(*args, **kwargs)
     return decorated_function
+def get_admin_id():
+    """Helper function to retrieve the current admin's user_id from the session."""
+    return session.get('user_id')
+
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        # ตรวจสอบว่าผู้ใช้ล็อกอินหรือไม่ โดยเช็คจาก session
+        if 'username' not in session:
+            # ถ้าไม่ได้ล็อกอินให้ redirect ไปหน้า login
+            flash('You need to log in to access this page.', 'error')
+            return redirect(url_for('login'))
+        return f(*args, **kwargs)
+    return decorated_function
+
 
 @app.after_request
 def add_header(response):
@@ -48,19 +63,18 @@ def add_header(response):
     response.headers['Pragma'] = 'no-cache'
     response.headers['Expires'] = '0'
     return response
+    
 
 
 @app.route('/student_home')
+@login_required  # ใช้ decorator เพื่อตรวจสอบการล็อกอิน
 def student_home():
-    if 'username' not in session:
-        return redirect(url_for('login'))
-
     student_id = session.get('username')
 
     # ดึงข้อมูลนักเรียนจากฐานข้อมูล
     student = mydb['users'].find_one({'username': student_id})
     if not student:
-        return redirect(url_for('login'))
+        return redirect(url_for('login'))  # ตรวจสอบว่ามีผู้ใช้หรือไม่
 
     student_grade_level = student.get('grade_level', 'Unknown')
 
@@ -80,7 +94,7 @@ def student_home():
 
     exercises = []
     for exercise in active_exercises:
-        quiz_id = exercise['_id']  # ใช้ _id ของ active_questions แทน
+        quiz_id = exercise['_id']
         quiz_name = exercise['quiz_name']
         expiration_date = exercise.get('expiration_date', None)
 
@@ -119,6 +133,7 @@ def student_home():
 
 
 
+
 @app.route('/', methods=['POST', 'GET'])
 def login():
     error = None
@@ -127,6 +142,8 @@ def login():
         
         if login_user:
             if bcrypt.checkpw(request.form['password'].encode('utf-8'), login_user['password']):
+                # บันทึก _id ของผู้ใช้ลงใน session
+                session['user_id'] = str(login_user['_id'])
                 session['username'] = request.form['username']
                 session['role'] = login_user.get('role', 'user')
                 
@@ -185,7 +202,6 @@ def index():
 
     if form.validate_on_submit():
         text = form.quiz.data
-        # ตรวจสอบว่าหมวดหมู่ที่เลือกคือ 'new' หรือไม่
         selected_category = request.form.get('existing_category')
         new_category = request.form.get('new_category')
 
@@ -193,6 +209,8 @@ def index():
             category = new_category
         else:
             category = selected_category
+
+        admin_id = session.get('user_id')  # ดึง admin_id จาก session
 
         # ตรวจสอบว่าเป็น Multiple-choice หรือ Written question
         if 'correct_choice' in request.form:
@@ -216,7 +234,8 @@ def index():
                     'choices_template': choices[:],
                     'choices': evaluated_choices,
                     'correct_answer': correct_answer,
-                    'answer_template': choices[correct_choice_index]
+                    'answer_template': choices[correct_choice_index],
+                    'admin_id': ObjectId(admin_id)  # บันทึก admin_id ของ admin ที่สร้างคำถาม
                 })
                 flash('Multiple-choice question saved successfully!', 'success')
             except Exception as e:
@@ -245,7 +264,8 @@ def index():
                     **num_dict,
                     **opt_dict,
                     **person_dict,
-                    **obj_dict
+                    **obj_dict,
+                    'admin_id': ObjectId(admin_id)  # บันทึก admin_id ของ admin ที่สร้างคำถาม
                 })
                 flash('Written question saved successfully!', 'success')
             except Exception as e:
@@ -256,21 +276,24 @@ def index():
     return render_template('index.html', form=form, existing_categories=existing_categories)
 
 
-
-
 @app.route('/quiz_maker', methods=['GET', 'POST'])
 @admin_required
 def quiz_maker():
-    # ดึงข้อมูล templates จากฐานข้อมูล
-    templates = list(questions_template_collection.find({}, {'_id': 1, 'question_template': 1, 'answer_template': 1, 'choices_template': 1, 'question_type': 1}))
+    admin_id = session.get('user_id')  # ดึง admin_id จาก session
+
+    # ดึงข้อมูล templates ที่สร้างโดย admin นี้จากฐานข้อมูล
+    templates = list(questions_template_collection.find(
+        {'admin_id': ObjectId(admin_id)},  # กรองตาม admin_id
+        {'_id': 1, 'question_template': 1, 'answer_template': 1, 'choices_template': 1, 'question_type': 1}
+    ))
     template_options = [
         (str(template['_id']), template['question_template'], template.get('answer_template', ''), template.get('choices_template', []))
         for template in templates
     ]
 
-    # ดึงหมวดหมู่จากคอลเลกชัน "ชุดข้อสอบ"
+    # ดึงหมวดหมู่ที่ admin นี้สร้างจากคอลเลกชัน "ชุดข้อสอบ"
     category_collection = mydb["ชุดข้อสอบ"]
-    categories = category_collection.distinct('category')
+    categories = category_collection.distinct('category', {'admin_id': ObjectId(admin_id)})
 
     if request.method == 'POST':
         quiz_name = request.form.get('quiz_name')
@@ -286,7 +309,6 @@ def quiz_maker():
         collection = mydb["ชุดข้อสอบ"]
 
         quiz_set = []
-
         question_index = 0
         while True:
             template_id = request.form.get(f'template_{question_index}')
@@ -295,11 +317,11 @@ def quiz_maker():
 
             if template_id:
                 # ดึง template ที่เลือกจากฐานข้อมูล
-                selected_template = questions_template_collection.find_one({'_id': ObjectId(template_id)})
+                selected_template = questions_template_collection.find_one({'_id': ObjectId(template_id), 'admin_id': ObjectId(admin_id)})
                 if selected_template:
                     question_template = selected_template['question_template']
-                    answer_template = selected_template.get('answer_template', '')  # ดึง answer_template
-                    choices_template = selected_template.get('choices_template', [])  # ดึง choices ถ้ามี
+                    answer_template = selected_template.get('answer_template', '')
+                    choices_template = selected_template.get('choices_template', [])
 
                     # ประมวลผล template คำถาม
                     question_text, num_dict, opt_dict, person_dict, obj_dict, numbers = process_question_template(question_template)
@@ -308,19 +330,17 @@ def quiz_maker():
 
                     # สร้างตัวเลือกสำหรับคำถาม
                     evaluated_choices = []
-                    choice_labels = ['a', 'b', 'c', 'd', 'e']  # ป้ายกำกับตัวเลือก
+                    choice_labels = ['a', 'b', 'c', 'd', 'e']
                     for i, choice_template in enumerate(choices_template):
                         evaluated_choice = evaluate_expression(choice_template, eval_context)
                         evaluated_choices.append(f"{choice_labels[i]}. {evaluated_choice}")
 
-                    # สร้าง item ของ quiz เป็นคำถาม
                     quiz_item = {
                         'type': 'question',
                         'question': question_template,
                         'answer': answer_template,
                     }
 
-                    # ถ้าไม่ใช่คำตอบแบบเขียน
                     if selected_template.get('question_type') != 'written':
                         quiz_item['choices'] = choices_template  # บันทึก choices ถ้ามี
 
@@ -337,7 +357,8 @@ def quiz_maker():
             'category': category,  # บันทึกหมวดหมู่ที่เลือกหรือสร้างใหม่
             'explanation': explanation,  # บันทึกคำอธิบายแยกออกจากคำถาม
             'questions': quiz_set,
-            'created_at': timestamp  # บันทึกเวลา
+            'created_at': timestamp,  # บันทึกเวลา
+            'admin_id': ObjectId(admin_id)  # บันทึก admin_id เพื่อระบุตัว admin ที่สร้าง
         })
 
         flash('Quizzes generated successfully!', 'success')
@@ -347,14 +368,29 @@ def quiz_maker():
 
 
 
+
 @app.route('/active_exercise.html', methods=['GET', 'POST'])
+@admin_required
 def active_exercise():
-    # ดึงข้อมูลจาก active_questions ทุกโจทย์
-    active_exercises = list(active_questions_db.find())
+    # ดึง id ของ admin ที่ล็อกอินอยู่
+    admin_id = get_admin_id()
+
+    # ดึงข้อมูลเฉพาะข้อสอบที่สร้างโดย admin คนนั้น
+    active_exercises = list(active_questions_db.find({'created_by':admin_id}))
 
     return render_template('active_exercise.html', active_exercises=active_exercises)
+
 @app.route('/update_status/<exercise_id>', methods=['POST'])
+@admin_required
 def update_status(exercise_id):
+    admin_id = get_admin_id()
+
+    # ตรวจสอบว่า exercise ถูกสร้างโดย admin ที่ล็อกอินอยู่
+    exercise = active_questions_db.find_one({'_id': ObjectId(exercise_id), 'created_by': admin_id})
+    
+    if not exercise:
+        return 'Unauthorized', 403
+
     data = request.get_json()
     new_status = data.get('status')
 
@@ -367,9 +403,10 @@ def update_status(exercise_id):
         return 'OK'
     else:
         return 'Failed', 400
-    
+
 # เพิ่ม route สำหรับอัปเดตวันหมดอายุ
 @app.route('/update_expiration_date/<exercise_id>', methods=['POST'])
+@admin_required
 def update_expiration_date(exercise_id):
     data = request.get_json()
     new_expiration_date = data.get('expiration_date')
@@ -393,6 +430,7 @@ def update_expiration_date(exercise_id):
 
 
 @app.route('/view_submissions/<active_questions_id>', methods=['GET'])
+@admin_required
 def view_submissions(active_questions_id):
     # ดึงข้อมูลการส่งคำตอบจาก collection 'answer_history' โดยใช้ active_questions_id
     submissions = list(mydb['answer_history'].find({
@@ -406,6 +444,7 @@ def view_submissions(active_questions_id):
 
 
 @app.route('/view_submission_details/<submission_id>', methods=['GET'])
+@admin_required
 def view_submission_details(submission_id):
     # ดึงข้อมูลคำตอบของนักเรียนจาก collection 'answer_history'
     submission = mydb['answer_history'].find_one({'_id': ObjectId(submission_id)})
@@ -415,10 +454,19 @@ def view_submission_details(submission_id):
 
 
 @app.route('/create_exercise', methods=['GET', 'POST'])
+@admin_required
 def create_exercise():
-    quiz_sets = list(mydb['ชุดข้อสอบ'].find({}, {'_id': 1, 'quiz_name': 1, 'category': 1, 'explanation': 1}))
+    admin_id = session.get('user_id')  # ดึง admin_id จาก session
+
+    # ดึงเฉพาะ quiz sets ที่สร้างโดย admin ที่ล็อกอินอยู่
+    quiz_sets = list(mydb['ชุดข้อสอบ'].find(
+        {'admin_id': ObjectId(admin_id)},  # กรอง quiz sets ตาม admin_id
+        {'_id': 1, 'quiz_name': 1, 'category': 1, 'explanation': 1}
+    ))
+
     # ดึงข้อมูลระดับชั้นจากคอลเลคชัน 'users'
-    grade_levels = mydb['users'].distinct('grade_level')
+    grade_levels = mydb['users'].distinct('grade_level', {'admin_id': ObjectId(admin_id)})
+    
     quiz_set_options = [
         (
             str(quiz_set['_id']),
@@ -442,7 +490,6 @@ def create_exercise():
         shuffle_choices = 'shuffle_choices' in request.form
         view_mode = request.form.get('view_mode', 'template')
 
-        # ตรวจสอบว่า quiz_set_id มีค่าและไม่เป็นค่า 'Select'
         if not quiz_set_id or quiz_set_id == 'Select':
             flash('Please select a quiz set before proceeding.', 'error')
             return render_template('create_exercise.html', 
@@ -454,7 +501,7 @@ def create_exercise():
                                    view_mode=view_mode)
 
         try:
-            selected_quiz_set = mydb['ชุดข้อสอบ'].find_one({'_id': ObjectId(quiz_set_id)})
+            selected_quiz_set = mydb['ชุดข้อสอบ'].find_one({'_id': ObjectId(quiz_set_id), 'admin_id': ObjectId(admin_id)})
         except errors.InvalidId:
             flash('Invalid quiz set selected. Please try again.', 'error')
             return render_template('create_exercise.html', 
@@ -467,7 +514,7 @@ def create_exercise():
 
         if selected_quiz_set:
             questions = selected_quiz_set.get('questions', [])
-            explanation = selected_quiz_set.get('explanation', '')  # ดึงคำอธิบายของชุดข้อสอบ
+            explanation = selected_quiz_set.get('explanation', '')
             for index, question in enumerate(questions, start=1):
                 score = int(request.form.get(f'score_{index}', default_score))
                 scores.append(score)
@@ -511,7 +558,7 @@ def create_exercise():
                                        quiz_sets=quiz_set_options, 
                                        preview_questions=preview_questions, 
                                        selected_quiz_set=selected_quiz_set,
-                                        explanation=explanation,  # ส่งคำอธิบายไปยังเทมเพลต
+                                       explanation=explanation,  # ส่งคำอธิบายไปยังเทมเพลต
                                        shuffle_choices=shuffle_choices,
                                        view_mode=view_mode)
 
@@ -525,7 +572,8 @@ def create_exercise():
                     'expiration_date': expiration_date,
                     'status': 'กำลังใช้งาน',
                     'scores': scores,
-                    'submissions': 0  
+                    'submissions': 0,
+                    'created_by':admin_id  # เก็บ id ของ admin ที่สร้างข้อสอบ
                 }
                 mydb['active_questions'].insert_one(exercise_data)
                 flash('Exercise created successfully!', 'success')
@@ -539,7 +587,9 @@ def create_exercise():
                            shuffle_choices=shuffle_choices,
                            view_mode=view_mode)
 
+
 @app.route('/exercise/<quiz_id>', methods=['GET', 'POST'])
+@login_required
 def exercise(quiz_id):
     expired = False
 
@@ -697,27 +747,35 @@ def exercise(quiz_id):
                            explanation=explanation)  # ส่ง explanation ไปยัง template
 
 
-
-
-
 @app.route('/submit_answer/<question_id>', methods=['POST'])
 def submit_answer(question_id):
     user_answer = request.form['answer']
     return redirect(url_for('exercise', question_id=question_id, user_answer=user_answer))
+
 @app.route('/view_templates', methods=['GET'])
+@admin_required
 def view_templates():
-    templates = list(questions_template_collection.find({}, {
-        '_id': 1,
-        'question_template': 1,
-        'answer_template': 1,
-        'choices_template': 1,
-        'choices': 1,
-        'category': 1  # Add category field
-    }))
+    # ดึง admin_id ของ admin ที่ล็อกอินอยู่จาก session
+    admin_id = session.get('user_id')
     
-    categories = questions_template_collection.distinct('category')  # Fetch distinct categories
+    # ค้นหาเฉพาะ template ที่สร้างโดย admin คนนั้น
+    templates = list(questions_template_collection.find(
+        {'admin_id': ObjectId(admin_id)},  # กรองตาม admin_id
+        {
+            '_id': 1,
+            'question_template': 1,
+            'answer_template': 1,
+            'choices_template': 1,
+            'choices': 1,
+            'category': 1  # Add category field
+        }
+    ))
+    
+    # ดึงเฉพาะ category ที่ admin คนนั้นสร้าง
+    categories = questions_template_collection.distinct('category', {'admin_id': ObjectId(admin_id)})
 
     return render_template('view_templates.html', templates=templates, categories=categories)
+
 
 
 @app.route('/edit_template/<template_id>', methods=['GET', 'POST'])
@@ -752,12 +810,23 @@ def delete_template(template_id):
     return redirect(url_for('view_templates'))
 from itertools import groupby
 from operator import itemgetter
+
 @app.route('/view_user', methods=['GET', 'POST'])
+@admin_required  # ให้เฉพาะ admin เท่านั้นที่เข้าถึงได้
 def view_user():
-    all_users = list(users.find({"role": {"$ne": "admin"}}))  # Exclude admins and convert to list
+    admin_id = session.get('user_id')  # ดึงค่า _id ของ admin จาก session
+
+        # ตรวจสอบว่า admin_id มีค่าหรือไม่
+    if not admin_id:
+        flash('Admin ID not found. Please log in again.', 'error')
+        return redirect(url_for('login'))
+
+    # ค้นหาผู้ใช้ที่ไม่ได้เป็น admin และถูกสร้างโดย admin คนนี้
+    all_users = list(users.find({"role": {"$ne": "admin"}, "admin_id": ObjectId(admin_id)}))
 
     if request.method == 'POST':
         if 'edit_user' in request.form:
+            # แก้ไขข้อมูลผู้ใช้
             user_id = request.form['user_id']
             users.update_one(
                 {'_id': ObjectId(user_id)},
@@ -769,30 +838,37 @@ def view_user():
                 }}
             )
         elif 'delete_user' in request.form:
+            # ลบผู้ใช้
             user_id = request.form['user_id']
             users.delete_one({'_id': ObjectId(user_id)})
         else:
+            # ตรวจสอบว่ามี username นี้อยู่แล้วหรือไม่
             existing_user = users.find_one({'username': request.form['username']})
             if existing_user is None:
+                # เข้ารหัสรหัสผ่านก่อนบันทึก
                 hashpass = bcrypt.hashpw(request.form['password'].encode('utf-8'), bcrypt.gensalt())
+                # สร้างผู้ใช้ใหม่
                 users.insert_one({
                     'username': request.form['username'],
                     'password': hashpass,
                     'first_name': request.form['first_name'],
                     'last_name': request.form['last_name'],
                     'grade_level': request.form['grade_level'],
-                    'role': 'user'
+                    'role': 'user',
+                    'admin_id': ObjectId(admin_id)  # กำหนด admin_id ของผู้ใช้ใหม่ให้ตรงกับ admin ที่สร้าง
                 })
             else:
                 return 'That username already exists!'
-        
+
         return redirect(url_for('view_user'))
 
-    # Group users by grade_level
+    # จัดกลุ่มผู้ใช้ตาม grade_level
     all_users = sorted(all_users, key=itemgetter('grade_level'))
     users_by_grade = {k: list(g) for k, g in groupby(all_users, key=itemgetter('grade_level'))}
 
     return render_template('view_user.html', users_by_grade=users_by_grade)
+
+
 
 @app.route('/quiz_storage', methods=['GET'])
 def quiz_storage():
@@ -804,8 +880,6 @@ def quiz_storage():
     }))
     
     return render_template('quiz_storage.html', quizzes=quizzes)
-
-
 
 @app.route('/quiz/<quiz_id>', methods=['GET', 'POST'])
 def view_quiz(quiz_id):
@@ -837,13 +911,13 @@ def edit_quiz_name(quiz_id):
     )
     flash('Quiz name updated successfully!', 'success')
     return redirect(url_for('quiz_storage'))
+
 @app.route('/delete_quiz/<quiz_id>', methods=['POST'])
 def delete_quiz(quiz_id):
     category_collection.delete_one({'_id': ObjectId(quiz_id)})
     flash('Quiz deleted successfully!', 'success')
     return redirect(url_for('quiz_storage'))
 
-# Route สำหรับลบชุดข้อสอบ
 # Route สำหรับลบชุดข้อสอบ
 @app.route('/delete_exercise/<exercise_id>', methods=['POST'])
 def delete_exercise(exercise_id):

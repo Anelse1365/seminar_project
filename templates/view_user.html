@@ -4,7 +4,7 @@
 
 {% block body %}
 <div class="container mt-5">
-    <h1 class="mb-4">Users List</h1>
+    <h1 class="mb-4">นักเรียนในระบบ</h1>
 
     <!-- Grade Level Filter Buttons -->
     <ul class="nav nav-pills mb-3" id="grade-level-tabs" role="tablist">
@@ -21,20 +21,18 @@
     <table class="table table-bordered">
         <thead>
             <tr>
-                <th>Username</th>
-                <th>First Name</th>
-                <th>Last Name</th>
-                <th>Grade Level</th>
-                <th>Actions</th>
+                <th>เลขที่</th>
+                <th>ชื่อ</th>
+                <th>ระดับชั้น</th>
+                <th>แก้ไขข้อมูล</th>
             </tr>
         </thead>
         <tbody>
             {% for grade_level, users in users_by_grade.items() %}
                 {% for user in users %}
                 <tr data-grade="{{ grade_level }}">
-                    <td>{{ user.username }}</td>
-                    <td>{{ user.first_name }}</td>
-                    <td>{{ user.last_name }}</td>
+                    <td>{{ user.number }}</td>
+                    <td>{{ user.first_name }} {{ user.last_name }}</td>
                     <td>{{ grade_level }}</td>
                     <td>
                         <!-- Actions (Edit/Delete buttons) -->
@@ -42,7 +40,6 @@
                         <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal" data-user-id="{{ user._id }}">ลบ</button>
                     </td>   
                 </tr>
-
                 <!-- Edit Modal -->
                 <div class="modal fade" id="editUserModal-{{ user._id }}" tabindex="-1" aria-labelledby="editUserModalLabel-{{ user._id }}" aria-hidden="true">
                     <div class="modal-dialog">
@@ -70,6 +67,10 @@
                                         <label for="grade_level" class="form-label">Grade Level:</label>
                                         <input type="text" id="grade_level" name="grade_level" class="form-control" value="{{ user.grade_level }}" required>
                                     </div>
+                                    <div class="mb-3">
+                                        <label for="number" class="form-label">เลขที่:</label>
+                                        <input type="number" id="number" name="number" class="form-control" value="{{ user.number }}" required>
+                                    </div>
                                     <div class="modal-footer">
                                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                                         <input type="submit" name="edit_user" class="btn btn-primary" value="Save Changes">
@@ -82,6 +83,7 @@
                 {% endfor %}
             {% endfor %}
         </tbody>
+        
     </table>
 
     <!-- Button to open the modal -->
@@ -108,16 +110,20 @@
                             <input type="password" id="password" name="password" class="form-control" required>
                         </div>
                         <div class="mb-3">
-                            <label for="first_name" class="form-label">First Name:</label>
+                            <label for="first_name" class="form-label">ชื่อจริง:</label>
                             <input type="text" id="first_name" name="first_name" class="form-control" required>
                         </div>
                         <div class="mb-3">
-                            <label for="last_name" class="form-label">Last Name:</label>
+                            <label for="last_name" class="form-label">นามสกุล:</label>
                             <input type="text" id="last_name" name="last_name" class="form-control" required>
                         </div>
                         <div class="mb-3">
-                            <label for="grade_level" class="form-label">Grade Level:</label>
+                            <label for="grade_level" class="form-label">ระดับชั้น:</label>
                             <input type="text" id="grade_level" name="grade_level" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="number" class="form-label">เลขที่ :</label>
+                            <input type="number" id="number" name="number" class="form-control" required>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>

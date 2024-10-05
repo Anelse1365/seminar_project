@@ -10,15 +10,29 @@
         <a href="{{ url_for('student_home') }}" class="btn btn-secondary">กลับไปที่หน้าหลัก</a>
     </div>
     {% else %}
-    <!-- ฟอร์มการทำข้อสอบ -->
-    <form method="POST" action="{{ url_for('exercise', quiz_id=quiz_id) }}">
-        {% if explanation %}
-    <div class="card mb-3">
-        <div class="card-body">
-            <p><strong>ชี้แจง:</strong> {{ explanation }}</p>
-        </div>
+    
+    <!-- แสดงเฉพาะการทำข้อสอบหากยังไม่ได้ส่งคำตอบ -->
+    {% if not submitted %}
+     <!-- แสดงตัวนับเวลาถอยหลัง -->
+     <div class="text-center mb-3">
+        {% if duration_minutes > 0 %}
+        <h3>เวลาที่เหลือ: <span id="timer">{{ remaining_time }}</span> วินาที</h3>
+    {% else %}
+        <h3>ไม่จำกัดเวลาในการทำข้อสอบ</h3>
+    {% endif %}
+        
     </div>
-{% endif %}
+    <form method="POST" action="{{ url_for('exercise', quiz_id=quiz_id) }}">
+    <input type="hidden" id="timeTaken" name="time_taken" value="">
+
+        <!-- แสดงฟอร์มทำข้อสอบ -->
+        {% if explanation %}
+        <div class="card mb-3">
+            <div class="card-body">
+                <p><strong>ชี้แจง:</strong> {{ explanation }}</p>
+            </div>
+        </div>
+        {% endif %}
 
         <div class="row justify-content-center">
             {% for question in questions %}
@@ -60,6 +74,7 @@
             </div>
         </div>
     </form>
+    {% endif %}
 
     <!-- ส่วนแสดงผลลัพธ์หลังจากส่งคำตอบ -->
     {% if submitted %}
@@ -87,4 +102,39 @@
     {% endif %}
     {% endif %}
 </div>
+
+<script>
+// ล้าง localStorage เมื่อเริ่มทำข้อสอบ
+localStorage.removeItem('remainingTime');
+
+// อ่านเวลาที่เหลือจาก DOM
+let remainingTime = parseInt(document.getElementById('timer').textContent, 10);
+const timerElement = document.getElementById('timer');
+const totalDuration = remainingTime;  // เก็บเวลาเริ่มต้นที่เหลืออยู่
+
+// ตรวจสอบว่ามีการจำกัดเวลาหรือไม่
+if (remainingTime > 0) {
+    function updateTimer() {
+        if (remainingTime <= 0) {
+            clearInterval(timerInterval);
+            alert('หมดเวลาทำข้อสอบ!');
+            document.querySelector('form').submit(); // ส่งฟอร์ม
+        } else {
+            remainingTime--;
+            timerElement.textContent = remainingTime;
+            localStorage.setItem('remainingTime', remainingTime); // บันทึกเวลาที่เหลือใน localStorage
+        }
+    }
+
+    let timerInterval = setInterval(updateTimer, 1000); // อัปเดตทุกๆ 1 วินาที
+}
+
+// เคลียร์ localStorage เมื่อส่งคำตอบ
+document.querySelector('form').addEventListener('submit', function() {
+    const timeTaken = totalDuration - remainingTime;  // คำนวณเวลาที่ใช้ไป
+    document.getElementById('timeTaken').value = timeTaken;  // เก็บค่าเวลาที่ใช้ในฟิลด์ที่ซ่อน
+    localStorage.removeItem('remainingTime');
+});
+</script>
+
 {% endblock %}

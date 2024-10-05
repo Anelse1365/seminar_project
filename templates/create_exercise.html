@@ -50,6 +50,7 @@
                     <input class="form-check-input" type="radio" name="view_mode" id="view_mode_processed" value="processed" {% if view_mode == 'processed' %}checked{% endif %}>
                     <label class="form-check-label" for="view_mode_processed">View as Processed Questions</label>
                 </div>
+               
                 
                 <!-- ปุ่มสร้าง exercise -->
                 {% if selected_quiz_set %}
@@ -62,8 +63,8 @@
                             <button type="button" class="btn btn-secondary ms-2" id="apply-default-score">เปลี่ยน</button>
                         </div>
                         <div class="mb-3">
-                            <label for="grade_level" class="form-label">เลือกนักเรียนระดับชั้น</label>
-                            <select name="grade_level" id="grade_level" class="form-select form-select-lg" aria-label="Select Grade Level">
+                            <label for="grade_level" class="form-label" >เลือกนักเรียนระดับชั้น </label>
+                            <select name="grade_level" id="grade_level" class="form-select form-select-lg" aria-label="Select Grade Level" required>
                                 <option value="">เลือกระดับชั้น</option>
                                 {% for grade in grade_levels %}
                                     <option value="{{ grade }}">{{ grade }}</option>
@@ -72,7 +73,20 @@
                         </div>
                         
                     <label for="expiration_date">กำหนดวันหมดอายุ:</label>
-                    <input type="datetime-local" id="expiration_date" name="expiration_date" required>
+                    <input type="datetime-local" id="expiration_date" name="expiration_date" required><br>
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="has_duration" name="has_duration" onchange="toggleDurationFields()">
+                        <label class="form-check-label" for="has_duration">ระยะเวลาทำข้อสอบ</label>
+                    </div>
+                    
+                    <!-- ช่องสำหรับกำหนดชั่วโมงและนาที (ซ่อนเมื่อไม่ได้เลือก "ระยะเวลาทำข้อสอบ") -->
+                    <div id="duration_fields" class="mb-3" style="display:none;">
+                        <label for="hours" class="form-label">ชั่วโมง:</label>
+                        <input type="number" id="hours" name="hours" class="form-control w-25" min="0" value="0">
+                        
+                        <label for="minutes" class="form-label mt-2">นาที:</label>
+                        <input type="number" id="minutes" name="minutes" class="form-control w-25" min="0" max="59" value="0">
+                    </div>
 
                     <!-- แสดงคำอธิบายถ้ามี -->
                     {% if selected_quiz_set.explanation %}
@@ -134,6 +148,15 @@
 </div>
 
 <script>
+     function toggleDurationFields() {
+        const hasDuration = document.getElementById('has_duration').checked;
+        const durationFields = document.getElementById('duration_fields');
+        if (hasDuration) {
+            durationFields.style.display = 'block';
+        } else {
+            durationFields.style.display = 'none';
+        }
+    }
     // Function to apply the default score to all question scores
     document.getElementById('apply-default-score').addEventListener('click', function() {
         // Get the default score value

@@ -485,13 +485,73 @@ def create_exercise():
     scores = []
 
     if request.method == 'POST':
+        # รับค่าชั่วโมงและนาทีจากฟอร์ม
+        hours = int(request.form.get('hours', 0))
+        minutes = int(request.form.get('minutes', 0))
+        
+        # คำนวณระยะเวลาทั้งหมดในหน่วยนาที
+        duration_minutes = (hours * 60) + minutes
+
         quiz_set_id = request.form.get('quiz_set')
         grade_level = request.form.get('grade_level')  # ระดับชั้นที่เลือก
         shuffle_choices = 'shuffle_choices' in request.form
         view_mode = request.form.get('view_mode', 'template')
 
+        # ตรวจสอบการเลือกชุดข้อสอบ
         if not quiz_set_id or quiz_set_id == 'Select':
             flash('Please select a quiz set before proceeding.', 'error')
+            return render_template('create_exercise.html', 
+                                quiz_sets=quiz_set_options, 
+                                preview_questions=preview_questions, 
+                                selected_quiz_set=selected_quiz_set,
+                                grade_levels=grade_levels,
+                                shuffle_choices=shuffle_choices,
+                                view_mode=view_mode)
+
+        # ดึงข้อมูลชุดข้อสอบจาก MongoDB
+        try:
+            selected_quiz_set = mydb['ชุดข้อสอบ'].find_one({'_id': ObjectId(quiz_set_id), 'admin_id': ObjectId(admin_id)})
+        except errors.InvalidId:
+            flash('Invalid quiz set selected. Please try again.', 'error')
+            return render_template('create_exercise.html', 
+                                quiz_sets=quiz_set_options, 
+                                preview_questions=preview_questions, 
+                                selected_quiz_set=selected_quiz_set,
+                                grade_levels=grade_levels,
+                                shuffle_choices=shuffle_choices,
+                                view_mode=view_mode)
+
+    # ดึงคำถามและคำอธิบายจากชุดข้อสอบที่เลือก
+    if selected_quiz_set:
+        questions = selected_quiz_set.get('questions', [])
+        explanation = selected_quiz_set.get('explanation', '')
+        for index, question in enumerate(questions, start=1):
+            score = int(request.form.get(f'score_{index}', default_score))
+            scores.append(score)
+
+            question_text = question['question']
+            answer = question['answer']
+            choices = question.get('choices', [])
+
+            if view_mode == 'processed':
+                question_text, num_dict, opt_dict, person_dict, obj_dict, numbers = process_question_template(question['question'])
+                eval_context = {**num_dict, **opt_dict, **person_dict, **obj_dict}
+                answer = evaluate_expression(question['answer'], eval_context)
+                choices = [evaluate_expression(choice, eval_context) for choice in choices]
+
+            if shuffle_choices and choices:
+                random.shuffle(choices)
+
+            preview_questions.append({
+                'question': question_text,
+                'choices': choices,
+                'answer': answer,
+                'score': score
+            })
+
+        expiration_date_str = request.form.get('expiration_date')
+
+        if not expiration_date_str:
             return render_template('create_exercise.html', 
                                    quiz_sets=quiz_set_options, 
                                    preview_questions=preview_questions, 
@@ -501,83 +561,35 @@ def create_exercise():
                                    view_mode=view_mode)
 
         try:
-            selected_quiz_set = mydb['ชุดข้อสอบ'].find_one({'_id': ObjectId(quiz_set_id), 'admin_id': ObjectId(admin_id)})
-        except errors.InvalidId:
-            flash('Invalid quiz set selected. Please try again.', 'error')
+            expiration_date = datetime.strptime(expiration_date_str, '%Y-%m-%dT%H:%M')
+        except ValueError:
+            flash('Invalid expiration date format. Please try again.', 'error')
             return render_template('create_exercise.html', 
                                    quiz_sets=quiz_set_options, 
                                    preview_questions=preview_questions, 
                                    selected_quiz_set=selected_quiz_set,
-                                   grade_levels=grade_levels,
+                                   explanation=explanation,  # ส่งคำอธิบายไปยังเทมเพลต
                                    shuffle_choices=shuffle_choices,
                                    view_mode=view_mode)
 
-        if selected_quiz_set:
-            questions = selected_quiz_set.get('questions', [])
-            explanation = selected_quiz_set.get('explanation', '')
-            for index, question in enumerate(questions, start=1):
-                score = int(request.form.get(f'score_{index}', default_score))
-                scores.append(score)
-
-                question_text = question['question']
-                answer = question['answer']
-                choices = question.get('choices', [])
-
-                if view_mode == 'processed':
-                    question_text, num_dict, opt_dict, person_dict, obj_dict, numbers = process_question_template(question['question'])
-                    eval_context = {**num_dict, **opt_dict, **person_dict, **obj_dict}
-                    answer = evaluate_expression(question['answer'], eval_context)
-                    choices = [evaluate_expression(choice, eval_context) for choice in choices]
-
-                if shuffle_choices and choices:
-                    random.shuffle(choices)
-
-                preview_questions.append({
-                    'question': question_text,
-                    'choices': choices,
-                    'answer': answer,
-                    'score': score
-                })
-
-            expiration_date_str = request.form.get('expiration_date')
-
-            if not expiration_date_str:
-                return render_template('create_exercise.html', 
-                                       quiz_sets=quiz_set_options, 
-                                       preview_questions=preview_questions, 
-                                       selected_quiz_set=selected_quiz_set,
-                                       grade_levels=grade_levels,
-                                       shuffle_choices=shuffle_choices,
-                                       view_mode=view_mode)
-
-            try:
-                expiration_date = datetime.strptime(expiration_date_str, '%Y-%m-%dT%H:%M')
-            except ValueError:
-                flash('Invalid expiration date format. Please try again.', 'error')
-                return render_template('create_exercise.html', 
-                                       quiz_sets=quiz_set_options, 
-                                       preview_questions=preview_questions, 
-                                       selected_quiz_set=selected_quiz_set,
-                                       explanation=explanation,  # ส่งคำอธิบายไปยังเทมเพลต
-                                       shuffle_choices=shuffle_choices,
-                                       view_mode=view_mode)
-
-            if 'generate_exercise' in request.form:
-                exercise_data = {
-                    'quiz_set': selected_quiz_set['_id'],
-                    'quiz_name': selected_quiz_set['quiz_name'],
-                    'category': selected_quiz_set['category'],
-                    'grade_level': grade_level,  # เปลี่ยนจาก grade_levels เป็น grade_level ที่เลือก
-                    'created_date': datetime.now(),
-                    'expiration_date': expiration_date,
-                    'status': 'กำลังใช้งาน',
-                    'scores': scores,
-                    'submissions': 0,
-                    'created_by':admin_id  # เก็บ id ของ admin ที่สร้างข้อสอบ
-                }
-                mydb['active_questions'].insert_one(exercise_data)
-                flash('Exercise created successfully!', 'success')
-                return redirect(url_for('create_exercise'))
+        # ตรวจสอบการกดปุ่ม generate_exercise
+        if 'generate_exercise' in request.form:
+            exercise_data = {
+                'quiz_set': selected_quiz_set['_id'],
+                'quiz_name': selected_quiz_set['quiz_name'],
+                'category': selected_quiz_set['category'],
+                'grade_level': grade_level,  # เปลี่ยนจาก grade_levels เป็น grade_level ที่เลือก
+                'created_date': datetime.now(),
+                'expiration_date': expiration_date,
+                'status': 'กำลังใช้งาน',
+                'scores': scores,
+                'submissions': 0,
+                'duration_minutes': duration_minutes,  # บันทึกระยะเวลาในหน่วยนาที
+                'created_by': admin_id  # เก็บ id ของ admin ที่สร้างข้อสอบ
+            }
+            mydb['active_questions'].insert_one(exercise_data)
+            flash('Exercise created successfully!', 'success')
+            return redirect(url_for('create_exercise'))
 
     return render_template('create_exercise.html', 
                            quiz_sets=quiz_set_options, 
@@ -592,6 +604,7 @@ def create_exercise():
 @login_required
 def exercise(quiz_id):
     expired = False
+    
 
     # ดึงข้อมูล active_exercise โดยใช้ quiz_id (ซึ่งเป็น _id ของ active_exercise)
     active_exercise = mydb['active_questions'].find_one({'_id': ObjectId(quiz_id)})
@@ -665,7 +678,11 @@ def exercise(quiz_id):
     submitted = False
     total_score = 0
     max_score = 0
-
+    
+     # ดึงค่าระยะเวลา (เช่น 15 นาที) จาก active_exercise (เก็บเป็นนาที)
+    duration_minutes = active_exercise.get('duration_minutes', 0)
+    remaining_time = duration_minutes * 60  # แปลงเป็นวินาที
+    
     if selected_quiz_set and active_exercise:
         raw_questions = selected_quiz_set.get('questions', [])
         scores = active_exercise.get('scores', [])
@@ -696,6 +713,13 @@ def exercise(quiz_id):
             max_score += score
 
     if request.method == 'POST':
+        time_taken = request.form.get('time_taken', '0')  # รับเวลาที่ใช้ในการทำข้อสอบ
+        try:
+            take_time = int(time_taken)
+        except ValueError:
+            take_time = 0  # กรณีแปลงไม่ได้ให้ค่าเป็น 0
+            time_taken = request.form.get('time_taken', 0)  # รับเวลาที่ใช้ในการทำข้อสอบ
+
         for i, question in enumerate(questions, start=1):
             if question['choices']:
                 user_answer = request.form.get(f'question{i}')
@@ -727,7 +751,9 @@ def exercise(quiz_id):
                 "submission_date": datetime.now().strftime('%d/%m/%Y %H:%M'),
                 "total_score": total_score,
                 "max_score": max_score,
-                "results": results
+                "results": results,
+                "time":duration_minutes * 60,
+                "take_time": take_time  # เวลาที่ใช้จริงในการทำข้อสอบ
             }
 
             mydb['answer_history'].insert_one(submission_data)
@@ -743,8 +769,10 @@ def exercise(quiz_id):
                            submitted=submitted,
                            results=results,
                            total_score=total_score,
+                           duration_minutes=duration_minutes,
                            max_score=max_score,
-                           explanation=explanation)  # ส่ง explanation ไปยัง template
+                           explanation=explanation,remaining_time=int(remaining_time)
+                           )  # ส่ง explanation ไปยัง template
 
 
 @app.route('/submit_answer/<question_id>', methods=['POST'])
@@ -811,12 +839,13 @@ def delete_template(template_id):
 from itertools import groupby
 from operator import itemgetter
 
+
 @app.route('/view_user', methods=['GET', 'POST'])
 @admin_required  # ให้เฉพาะ admin เท่านั้นที่เข้าถึงได้
 def view_user():
     admin_id = session.get('user_id')  # ดึงค่า _id ของ admin จาก session
 
-        # ตรวจสอบว่า admin_id มีค่าหรือไม่
+    # ตรวจสอบว่า admin_id มีค่าหรือไม่
     if not admin_id:
         flash('Admin ID not found. Please log in again.', 'error')
         return redirect(url_for('login'))
@@ -834,13 +863,16 @@ def view_user():
                     'username': request.form['username'],
                     'first_name': request.form['first_name'],
                     'last_name': request.form['last_name'],
-                    'grade_level': request.form['grade_level']
+                    'grade_level': request.form['grade_level'],
+                    'number': request.form['number']
                 }}
             )
+            flash('User updated successfully!', 'success')
         elif 'delete_user' in request.form:
             # ลบผู้ใช้
             user_id = request.form['user_id']
             users.delete_one({'_id': ObjectId(user_id)})
+            flash('User deleted successfully!', 'success')
         else:
             # ตรวจสอบว่ามี username นี้อยู่แล้วหรือไม่
             existing_user = users.find_one({'username': request.form['username']})
@@ -854,16 +886,19 @@ def view_user():
                     'first_name': request.form['first_name'],
                     'last_name': request.form['last_name'],
                     'grade_level': request.form['grade_level'],
+                    'number': int(request.form['number']),
                     'role': 'user',
                     'admin_id': ObjectId(admin_id)  # กำหนด admin_id ของผู้ใช้ใหม่ให้ตรงกับ admin ที่สร้าง
                 })
+                flash('User created successfully!', 'success')
             else:
-                return 'That username already exists!'
+                flash('That username already exists!', 'error')
+                return redirect(url_for('view_user'))
 
         return redirect(url_for('view_user'))
 
     # จัดกลุ่มผู้ใช้ตาม grade_level
-    all_users = sorted(all_users, key=itemgetter('grade_level'))
+    all_users = sorted(all_users, key=itemgetter('grade_level'))  # ต้องจัดเรียงก่อนใช้ groupby
     users_by_grade = {k: list(g) for k, g in groupby(all_users, key=itemgetter('grade_level'))}
 
     return render_template('view_user.html', users_by_grade=users_by_grade)
@@ -871,8 +906,13 @@ def view_user():
 
 
 @app.route('/quiz_storage', methods=['GET'])
+@admin_required
 def quiz_storage():
-    quizzes = list(mydb["ชุดข้อสอบ"].find({}, {
+    # ดึง id ของ admin ที่ล็อกอินอยู่
+    admin_id = get_admin_id()
+
+    # ดึงข้อมูลเฉพาะข้อสอบที่สร้างโดย admin คนนั้น
+    quizzes = list(mydb["ชุดข้อสอบ"].find({'admin_id': ObjectId(admin_id)}, {
         '_id': 1,
         'quiz_name': 1,
         'category': 1,
@@ -880,6 +920,7 @@ def quiz_storage():
     }))
     
     return render_template('quiz_storage.html', quizzes=quizzes)
+
 
 @app.route('/quiz/<quiz_id>', methods=['GET', 'POST'])
 def view_quiz(quiz_id):

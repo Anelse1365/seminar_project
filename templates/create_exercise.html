@@ -17,138 +17,135 @@
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-lg-8">
-            <h1 class="text-center">Create Exercise</h1><br>
-            <form id="create-exercise-form" method="POST" action="{{ url_for('create_exercise') }}">
-                <!-- ฟอร์มการเลือกชุดข้อสอบและการตั้งค่า -->
-                <div class="mb-3">
-                    <label for="quiz_set" class="form-label">เลือกชุดข้อสอบ</label>
-                    <select name="quiz_set" id="quiz_set" class="form-select form-select-lg" aria-label="Select Quiz Set">
-                        <option value="">Select</option>
-                        {% for quiz_set in quiz_sets %}
-                            <option value="{{ quiz_set[0] }}" 
-                                    {% if selected_quiz_set and quiz_set[0] == selected_quiz_set['_id']|string %}selected{% endif %}>
-                                {{ quiz_set[1] }} - {{ quiz_set[2] }}
-                            </option>
-                        {% endfor %}
-                    </select>
-                    
-                    <button type="button" class="btn btn-secondary mt-2" onclick="this.form.submit()">แสดงชุดข้อสอบ</button>
-                </div>
-                <!-- Option และการตั้งค่าเพิ่มเติม -->
-                <div class="form-check mb-3">
-                    <input class="form-check-input" type="checkbox" name="shuffle_choices" id="shuffle_choices" {% if shuffle_choices %}checked{% endif %}>
-                    <label class="form-check-label" for="shuffle_choices">
-                        Shuffle Choices
-                    </label>
-                </div>
-            
-                <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" name="view_mode" id="view_mode_template" value="template" {% if view_mode == 'template' %}checked{% endif %}>
-                    <label class="form-check-label" for="view_mode_template">View as Template</label>
-                </div>
-                <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" name="view_mode" id="view_mode_processed" value="processed" {% if view_mode == 'processed' %}checked{% endif %}>
-                    <label class="form-check-label" for="view_mode_processed">View as Processed Questions</label>
-                </div>
-               
-                
-                <!-- ปุ่มสร้าง exercise -->
-                {% if selected_quiz_set %}
-                    <div id="questions-container" class="my-4">
-                         <!-- กำหนดวันหมดอายุ -->
-                         <h2 class="text-center mt-4">{{ selected_quiz_set['quiz_name'] }} - {{ selected_quiz_set['category'] }}</h2>
-                         <div class="mb-3 mt-3 d-flex align-items-center">
-                            <label for="default_score" class="form-label me-2">คะแนนต่อข้อ</label>
-                            <input type="number" id="default_score" name="default_score" class="form-control w-25" value="1">
-                            <button type="button" class="btn btn-secondary ms-2" id="apply-default-score">เปลี่ยน</button>
-                        </div>
+            <h1 class="text-center mb-4">สร้างแบบฝึกหัด</h1>
+
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <form id="create-exercise-form" method="POST" action="{{ url_for('create_exercise') }}">
                         <div class="mb-3">
-                            <label for="grade_level" class="form-label" >เลือกนักเรียนระดับชั้น </label>
-                            <select name="grade_level" id="grade_level" class="form-select form-select-lg" aria-label="Select Grade Level" required>
-                                <option value="">เลือกระดับชั้น</option>
-                                {% for grade in grade_levels %}
-                                    <option value="{{ grade }}">{{ grade }}</option>
+                            <label for="quiz_set" class="form-label">เลือกชุดข้อสอบ</label>
+                            <select name="quiz_set" id="quiz_set" class="form-select form-select-lg" aria-label="Select Quiz Set">
+                                <option value="">Select</option>
+                                {% for quiz_set in quiz_sets %}
+                                    <option value="{{ quiz_set[0] }}" 
+                                            {% if selected_quiz_set and quiz_set[0] == selected_quiz_set['_id']|string %}selected{% endif %}>
+                                        {{ quiz_set[1] }} - {{ quiz_set[2] }}
+                                    </option>
                                 {% endfor %}
                             </select>
                         </div>
-                        
-                    <label for="expiration_date">กำหนดวันหมดอายุ:</label>
-                    <input type="datetime-local" id="expiration_date" name="expiration_date" required><br>
-                    <div class="form-check mb-3">
-                        <input class="form-check-input" type="checkbox" id="has_duration" name="has_duration" onchange="toggleDurationFields()">
-                        <label class="form-check-label" for="has_duration">ระยะเวลาทำข้อสอบ</label>
-                    </div>
-                    
-                    <!-- ช่องสำหรับกำหนดชั่วโมงและนาที (ซ่อนเมื่อไม่ได้เลือก "ระยะเวลาทำข้อสอบ") -->
-                    <div id="duration_fields" class="mb-3" style="display:none;">
-                        <label for="hours" class="form-label">ชั่วโมง:</label>
-                        <input type="number" id="hours" name="hours" class="form-control w-25" min="0" value="0">
-                        
-                        <label for="minutes" class="form-label mt-2">นาที:</label>
-                        <input type="number" id="minutes" name="minutes" class="form-control w-25" min="0" max="59" value="0">
-                    </div>
-
-                    <!-- แสดงคำอธิบายถ้ามี -->
-                    {% if selected_quiz_set.explanation %}
-                    <div class="card mb-3">
-                        <div class="card-body">
-                            <p><strong>ชี้แจง:</strong> {{ selected_quiz_set.explanation }}</p>
+                        <div class="d-grid gap-2">
+                            <button type="button" class="btn btn-secondary" onclick="this.form.submit()">แสดงชุดข้อสอบ</button>
                         </div>
-                    </div>
-                 {% endif %}
-                
-                    
-                    <!-- ลูปแสดงคำถาม -->
-                    {% for question in preview_questions %}
-                        <div class="card mb-3">
-                            <div class="card-body">
-                                <div class="d-flex justify-content-between">
-                                    <span class="question-number">{{ loop.index }}.</span>
-                                    <input type="number" name="score_{{ loop.index }}" class="form-control w-25" placeholder="Score" value="{{ request.form.get('score_' ~ loop.index, 1) }}">
+
+                        <hr class="my-4">
+
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="checkbox" name="shuffle_choices" id="shuffle_choices" {% if shuffle_choices %}checked{% endif %}>
+                            <label class="form-check-label" for="shuffle_choices">สลับตัวเลือก</label>
+                        </div>
+
+                        <div class="d-flex justify-content-between mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="view_mode" id="view_mode_template" value="template" {% if view_mode == 'template' %}checked{% endif %}>
+                                <label class="form-check-label" for="view_mode_template">ดูแบบ Template</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="view_mode" id="view_mode_processed" value="processed" {% if view_mode == 'processed' %}checked{% endif %}>
+                                <label class="form-check-label" for="view_mode_processed">ดูแบบคำถามที่ประมวลแล้ว</label>
+                            </div>
+                        </div>
+
+                        <!-- เฉพาะเมื่อเลือกชุดข้อสอบแล้ว -->
+                        {% if selected_quiz_set %}
+                            <div class="my-4">
+                                <h4 class="text-center">{{ selected_quiz_set['quiz_name'] }} - {{ selected_quiz_set['category'] }}</h4>
+
+                                <div class="mb-3 mt-4 d-flex align-items-center">
+                                    <label for="default_score" class="form-label me-2">คะแนนต่อข้อ</label>
+                                    <input type="number" id="default_score" name="default_score" class="form-control w-25" value="1">
+                                    <button type="button" class="btn btn-secondary ms-2" id="apply-default-score">เปลี่ยน</button>
                                 </div>
-                                <p><strong>Question:</strong> {{ question['question'] }}</p>
-                                {% set question_index = loop.index %}
-                                {% if question['choices'] %}
-                                    {% for choice in question['choices'] %}
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="radio" 
-                                                name="question{{ question_index }}" 
-                                                id="choice_{{ question_index }}_{{ loop.index }}" 
-                                                value="{{ choice }}" 
-                                                {% if choice == question['answer'] %}checked{% endif %} disabled>
-                                            <label class="form-check-label" for="choice_{{ question_index }}_{{ loop.index }}">
-                                                {{ choice }}
-                                            </label>
-                                        </div>
-                                    {% endfor %}
-                                {% else %}
-                                    <div class="mb-3">
-                                        <label for="answer_template_{{ loop.index0 }}" class="form-label">Answer</label>
-                                        <input type="text" id="answer_template_{{ loop.index0 }}" class="form-control" value="{{ question['answer'] }}" disabled>
+
+                                <div class="mb-3">
+                                    <label for="grade_level" class="form-label">เลือกนักเรียนระดับชั้น</label>
+                                    <select name="grade_level" id="grade_level" class="form-select" required>
+                                        <option value="">เลือกระดับชั้น</option>
+                                        {% for grade in grade_levels %}
+                                            <option value="{{ grade }}">{{ grade }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="expiration_date">กำหนดวันหมดอายุ:</label>
+                                    <input type="datetime-local" id="expiration_date" name="expiration_date" required>
+                                </div>
+
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="checkbox" id="has_duration" name="has_duration" onchange="toggleDurationFields()">
+                                    <label class="form-check-label" for="has_duration">ระยะเวลาทำข้อสอบ</label>
+                                </div>
+
+                                <div id="duration_fields" class="mb-3" style="display:none;">
+                                    <label for="hours" class="form-label">ชั่วโมง:</label>
+                                    <input type="number" id="hours" name="hours" class="form-control w-25" min="0" value="0">
+                                    
+                                    <label for="minutes" class="form-label mt-2">นาที:</label>
+                                    <input type="number" id="minutes" name="minutes" class="form-control w-25" min="0" max="59" value="0">
+                                </div>
+
+                                {% if selected_quiz_set.explanation %}
+                                    <div class="alert alert-info mt-3" role="alert">
+                                        <strong>คำชี้แจง:</strong> {{ selected_quiz_set.explanation }}
                                     </div>
                                 {% endif %}
-                            </div>
-                        </div>
-                    {% endfor %}
-                    
-                        <!-- แก้ไขชื่อปุ่ม Generate Exercise และ Hidden Input -->
-                        <input type="hidden" name="generate_exercise_trigger" value="true">
-                        <div class="row justify-content-center">
-                            <div class="col-md-8 d-flex justify-content-end">
-                                <button type="submit" class="btn btn-primary mt-3" name="generate_exercise">สร้างแบบฝึกหัด</button>
-                            </div>
-                        </div>
 
-                    </div>
-                {% endif %}
-            </form>
-            
+                                <!-- ลูปแสดงคำถาม -->
+                                {% for question in preview_questions %}
+                                    <div class="card mb-3">
+                                        <div class="card-body">
+                                            <div class="d-flex justify-content-between">
+                                                <span class="question-number">{{ loop.index }}.</span>
+                                                <input type="number" name="score_{{ loop.index }}" class="form-control w-25" placeholder="Score" value="{{ request.form.get('score_' ~ loop.index, 1) }}">
+                                            </div>
+                                            <p><strong>Question:</strong> {{ question['question'] }}</p>
+                                            
+                                            {% if question['choices'] %}
+                                                {% for choice in question['choices'] %}
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="radio" name="question{{ loop.index }}" id="choice_{{ loop.index }}_{{ loop.index }}" value="{{ choice }}" {% if choice == question['answer'] %}checked{% endif %} disabled>
+                                                        <label class="form-check-label" for="choice_{{ loop.index }}_{{ loop.index }}">
+                                                            {{ choice }}
+                                                        </label>
+                                                    </div>
+                                                {% endfor %}
+                                            {% else %}
+                                                <div class="mb-3">
+                                                    <label for="answer_template_{{ loop.index0 }}" class="form-label">Answer</label>
+                                                    <input type="text" id="answer_template_{{ loop.index0 }}" class="form-control" value="{{ question['answer'] }}" disabled>
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                {% endfor %}
+
+                                <!-- ปุ่มสร้าง exercise -->
+                                <div class="d-grid gap-2">
+                                    <button type="submit" class="btn btn-primary mt-3" name="generate_exercise">สร้างแบบฝึกหัด</button>
+                                </div>
+                            </div>
+                        {% endif %}
+                    </form>
+                </div>
+            </div>
+
         </div>
     </div>
 </div>
 
 <script>
-     function toggleDurationFields() {
+    function toggleDurationFields() {
         const hasDuration = document.getElementById('has_duration').checked;
         const durationFields = document.getElementById('duration_fields');
         if (hasDuration) {
@@ -157,28 +154,21 @@
             durationFields.style.display = 'none';
         }
     }
-    // Function to apply the default score to all question scores
+
+    // Apply default score to all questions
     document.getElementById('apply-default-score').addEventListener('click', function() {
-        // Get the default score value
         const defaultScore = document.getElementById('default_score').value;
-
-        // Find all score input elements for each question
         const scoreInputs = document.querySelectorAll('input[name^="score_"]');
-
-        // Apply the default score to each question's score input
-        scoreInputs.forEach(input => {
-            input.value = defaultScore;
-        });
+        scoreInputs.forEach(input => input.value = defaultScore);
     });
 
-    // Validate the form on submit to ensure a quiz set is selected
+    // Validate form before submitting
     document.querySelector('form').addEventListener('submit', function(e) {
         const quizSetSelect = document.getElementById('quiz_set');
         if (!quizSetSelect.value) {
             e.preventDefault();
-            alert('Please select a quiz set before proceeding.');
+            alert('กรุณาเลือกชุดข้อสอบ');
         }
     });
 </script>
-
 {% endblock %}

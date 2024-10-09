@@ -23,10 +23,13 @@ myclient = MongoClient('mongodb+srv://admin:1234@cluster0.dvcham8.mongodb.net/?r
 mydb = myclient["mydb"]
 questions_template_collection = mydb["questions_template"]
 p_name_collection = mydb["p_name"]
+obj_db = mydb["obj"]
 users = mydb["users"]
 category_collection = mydb["ชุดข้อสอบ"]
+
 active_questions_db = mydb['active_questions']
 answer_history_db = mydb['answer_history']
+answer_history = mydb['answer_history']
 
 class NameForm(FlaskForm):
     quiz = TextAreaField('Quiz', validators=[DataRequired()])
@@ -975,6 +978,144 @@ def delete_exercise(exercise_id):
             return jsonify({"success": False, "message": "ไม่พบชุดข้อสอบที่ต้องการลบ"}), 404
     except Exception as e:
         return jsonify({"success": False, "message": f"เกิดข้อผิดพลาด: {str(e)}"}), 500
+    
+@app.route('/view_user_score', methods=['GET'])
+@admin_required  # Only admin can access
+def view_user_score():
+    admin_id = session.get('user_id')  # Get admin ID from session
+
+    # Get all users created by this admin
+    all_users = list(users.find({"role": {"$ne": "admin"}, "admin_id": ObjectId(admin_id)}))
+
+    # Get all quizzes created by this admin from active_questions
+    active_quizzes = list(active_questions_db.find({'created_by': admin_id}))
+
+    # Initialize a dictionary to store scores by student username
+    scores_by_student = {}
+
+    # Get the scores from answer_history and group them by student (using username)
+    all_scores = list(answer_history.find({
+        "active_questions_id": {"$in": [quiz['_id'] for quiz in active_quizzes]}
+    }))
+
+    # Create a dictionary to map each student's score for each quiz
+    for score in all_scores:
+        student_username = score['student_id']  # Use student_id (which is username in 'users')
+        active_questions_id = score['active_questions_id']
+
+        # Initialize the student's score dictionary if not exists
+        if student_username not in scores_by_student:
+            scores_by_student[student_username] = {}
+        
+        # Store the score for the corresponding quiz
+        scores_by_student[student_username][str(active_questions_id)] = {
+            "total_score": score['total_score'],
+            "max_score": score['max_score']
+        }
+
+    # Group users by grade level
+    users_by_grade = {}
+    for user in all_users:
+        grade_level = user['grade_level']
+        if grade_level not in users_by_grade:
+            users_by_grade[grade_level] = []
+        users_by_grade[grade_level].append(user)
+
+    # Pass both users and quizzes to the template
+    return render_template('view_user_score.html', 
+                           users_by_grade=users_by_grade,  
+                           active_quizzes=active_quizzes, 
+                           scores_by_student=scores_by_student)
+
+@app.route('/data_variables', methods=['GET'])
+def data_variables():
+    # ดึงข้อมูล p_name และ obj จาก MongoDB
+    p_name_data = p_name_collection.find_one({"_id": "p_name_id"})  # แทนที่ 'p_name_id' ด้วยค่า id ที่แท้จริง
+    obj_data = obj_db.find_one({"_id": "obj_id"})  # แทนที่ 'obj_id' ด้วยค่า id ที่แท้จริง
+    
+    return render_template('data_variables.html', p_name=p_name_data, obj=obj_data)
+@app.route('/get_data/<data_type>', methods=['GET'])
+def get_data(data_type):
+    if data_type == 'person':
+        # Fetch all documents from p_name_collection
+        data = list(p_name_collection.find())  # Convert cursor to list
+    elif data_type == 'object':
+        # Fetch all documents from obj_db
+        data = list(obj_db.find())  # Convert cursor to list
+    else:
+        return jsonify({"error": "Invalid data type"}), 400
+
+    if data:
+        # Remove the '_id' field from each document (if not needed)
+        for doc in data:
+            doc.pop('_id', None)
+        return jsonify(data)
+    
+    return jsonify({"error": "No data found"}), 404
+
+@app.route('/add_person', methods=['POST'])
+def add_person():
+    data = request.get_json()
+    p_name_collection.insert_one({
+        "name": data['name'],
+        "gender": data['gender']
+    })
+    return jsonify({"success": True}), 200
+
+@app.route('/add_object', methods=['POST'])
+def add_object():
+    data = request.get_json()
+    obj_db.insert_one({
+        "name": data['name'],
+        "type": data['type'],
+        "unit": data['unit']
+    })
+    return jsonify({"success": True}), 200
+@app.route('/delete_data/<type>/<id>', methods=['DELETE'])
+def delete_data(type, id):
+    if type == 'person':
+        # ลบข้อมูลจากฐานข้อมูลที่เกี่ยวข้อง
+        result = p_name_collection(id)  # ฟังก์ชันสำหรับลบ person
+    elif type == 'object':
+        # ลบข้อมูลจากฐานข้อมูลที่เกี่ยวข้อง
+        result = obj_db(id)  # ฟังก์ชันสำหรับลบ object
+    
+    if result:
+        return jsonify({'success': True})
+    else:
+        return jsonify({'success': False, 'error': 'Could not delete item'})
+
+
+
+@app.route('/edit_data/<string:type>/<string:id>', methods=['PUT'])
+def edit_data(type, id):
+    data = request.get_json()  # รับข้อมูลที่ถูกส่งมาจากฟอร์มแก้ไข
+
+    if not data:
+        return jsonify({'success': False, 'error': 'No data provided'}), 400
+
+    # ตรวจสอบประเภทข้อมูลว่าคือ person หรือ object
+    if type == 'person':
+        collection = p_name_collection
+        updated_data = {
+            'name': data.get('name'), 
+            'gender': data.get('gender')
+        }
+    else:
+        collection = obj_db
+        updated_data = {
+            'name': data.get('name'), 
+            'type': data.get('type'), 
+            'unit': data.get('unit')
+        }
+
+    result = collection.update_one({'_id': ObjectId(id)}, {'$set': updated_data})
+
+    if result.modified_count > 0:
+        return jsonify({'success': True})
+    return jsonify({'success': False, 'error': 'No document found with that ID'}), 404
+
+
 
 
 
@@ -1159,4 +1300,5 @@ def safe_eval(expression, eval_context):
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    #port 5000 app.run(debug=True)
+    app.run(host='0.0.0.0', port=5000)

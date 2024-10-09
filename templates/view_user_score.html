@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block title %}View User Scores{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <h1 class="mb-4">รายชื่อนักเรียนและคะแนน</h1>
+
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>เลขที่</th>
+                <th>ชื่อ</th>
+                <th>ระดับชั้น</th>
+                {% for quiz in active_quizzes %}
+                    <th>{{ quiz.quiz_name }}</th>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for grade_level, students in users_by_grade.items() %}
+                {% for student in students %}
+                <tr>
+                    <td>{{ student.number }}</td>
+                    <td>{{ student.first_name }} {{ student.last_name }}</td>
+                    <td>{{ grade_level }}</td>
+                    {% for quiz in active_quizzes %}
+                        <td>
+                            {% if scores_by_student[student.username] and scores_by_student[student.username].get(quiz._id) %}
+                            {{ scores_by_student[student.username][quiz._id].total_score }}/{{ scores_by_student[student.username][quiz._id].max_score }}
+                        {% else %}
+                            -
+                        {% endif %}
+
+                        </td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

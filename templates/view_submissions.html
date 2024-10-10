@@ -10,7 +10,8 @@
                 <th>ระดับชั้น</th>
                 <th>วันที่ส่ง</th>
                 <th>คะแนนที่ได้</th>
-                <th>เต็ม</th>
+                <th>เวลาที่ใช้ไป</th>
+                <th>เวลาทั้งหมด</th>
                 <th>ผลการตอบคำถาม</th>
             </tr>
         </thead>
@@ -20,8 +21,9 @@
                 <td>{{ submission.student_name }}</td>
                 <td>{{ submission.grade_level }}</td>
                 <td>{{ submission.submission_date }}</td>
-                <td>{{ submission.total_score }}</td>
-                <td>{{ submission.max_score }}</td>
+                <td>{{ submission.total_score }}/{{ submission.max_score }}</td>
+                <td>{{ submission.take_time }} วินาที</td>
+                <td>{{ submission.time }} วินาที</td>
                 <td>
                     <!-- ลิงก์ไปดูรายละเอียดคำตอบของนักเรียน -->
                     <a href="{{ url_for('view_submission_details', submission_id=submission._id) }}">ดูคำตอบ</a>

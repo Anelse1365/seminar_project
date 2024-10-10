@@ -5,259 +5,226 @@
 <div class="container">
     <h1 class="text-center mt-4">ฐานข้อมูล</h1>
 
-    <div class="d-flex justify-content-center my-3">
-        <button id="personBtn" class="btn btn-primary mx-2">Person</button>
-        <button id="objBtn" class="btn btn-secondary mx-2">Object</button>
-        <button id="addPersonBtn" class="btn btn-success mx-2" data-bs-toggle="modal" data-bs-target="#personModal">Add Person</button>
-        <button id="addObjBtn" class="btn btn-info mx-2" data-bs-toggle="modal" data-bs-target="#objModal">Add Object</button>
+    <!-- ปุ่มเพิ่มข้อมูล Person -->
+    <button class="btn btn-success mb-3" onclick="openAddPersonModal()">เพิ่ม Person</button>
+
+    <!-- แสดงข้อมูล Person -->
+    <h3>Person Data</h3>
+    <div class="row">
+        {% for person in p_name %}
+            <div class="col-md-4">
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title"><strong>ชื่อ:</strong> {{ person.name }}</h5>
+                        <p class="card-text"><strong>เพศ:</strong> {{ person.gender }}</p>
+                        <button class="btn btn-warning" onclick="openEditPersonModal('{{ person._id }}', '{{ person.name }}', '{{ person.gender }}')">แก้ไข</button>
+                        <button class="btn btn-danger" onclick="deletePerson('{{ person._id }}')"><i class="fa fa-trash"></i></button>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
     </div>
 
-    <div id="displayArea" class="row mt-4"></div>
-</div>
-
-<!-- Modal for Adding Person -->
-<div class="modal fade" id="personModal" tabindex="-1" aria-labelledby="personModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="personModalLabel">Add Person</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form id="personForm">
-                    <div class="mb-3">
-                        <label for="personName" class="form-label">Name</label>
-                        <input type="text" class="form-control" id="personName" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="personGender" class="form-label">Gender</label>
-                        <select class="form-control" id="personGender" required>
-                            <option value="">Select Gender</option>
-                            <option value="ชาย">Male</option>
-                            <option value="หญิง">Female</option>
-                        </select>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Submit</button>
-                </form>
+    <!-- Modal สำหรับเพิ่ม/แก้ไขข้อมูล Person -->
+    <div class="modal fade" id="editPersonModal" tabindex="-1" aria-labelledby="editPersonModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editPersonModalLabel">จัดการข้อมูล Person</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editPersonForm">
+                        <input type="hidden" id="editPersonId">
+                        <div class="mb-3">
+                            <label for="editPersonName" class="form-label">ชื่อ</label>
+                            <input type="text" class="form-control" id="editPersonName" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editPersonGender" class="form-label">เพศ</label>
+                            <input type="text" class="form-control" id="editPersonGender" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">บันทึกการเปลี่ยนแปลง</button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
-<!-- Modal for Adding Object -->
-<div class="modal fade" id="objModal" tabindex="-1" aria-labelledby="objModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="objModalLabel">Add Object</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    <!-- ปุ่มเพิ่มข้อมูล Object -->
+    <button class="btn btn-success mb-3" onclick="openAddObjectModal()">เพิ่ม Object</button>
+
+    <!-- แสดงข้อมูล Object -->
+    <h3>Object Data</h3>
+    <div class="row">
+        {% for obj in obj %}
+            <div class="col-md-4">
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title"><strong>ชื่อ:</strong> {{ obj.name }}</h5>
+                        <p class="card-text"><strong>ประเภท:</strong> {{ obj.type }}</p>
+                        <p class="card-text"><strong>หน่วย:</strong> {{ obj.unit }}</p>
+                        <button class="btn btn-warning" onclick="openEditObjectModal('{{ obj._id }}', '{{ obj.name }}', '{{ obj.type }}', '{{ obj.unit }}')">แก้ไข</button>
+                        <button class="btn btn-danger" onclick="deleteObject('{{ obj._id }}')"><i class="fa fa-trash"></i></button>
+                    </div>
+                </div>
             </div>
-            <div class="modal-body">
-                <form id="objForm">
-                    <div class="mb-3">
-                        <label for="objName" class="form-label">Name</label>
-                        <input type="text" class="form-control" id="objName" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="objType" class="form-label">Type</label>
-                        <input type="text" class="form-control" id="objType" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="objUnit" class="form-label">Unit</label>
-                        <input type="text" class="form-control" id="objUnit" required>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Submit</button>
-                </form>
+        {% endfor %}
+    </div>
+
+    <!-- Modal สำหรับเพิ่ม/แก้ไขข้อมูล Object -->
+    <div class="modal fade" id="editObjectModal" tabindex="-1" aria-labelledby="editObjectModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editObjectModalLabel">จัดการข้อมูล Object</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editObjectForm">
+                        <input type="hidden" id="editObjectId">
+                        <div class="mb-3">
+                            <label for="editObjectName" class="form-label">ชื่อ</label>
+                            <input type="text" class="form-control" id="editObjectName" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editObjectType" class="form-label">ประเภท</label>
+                            <input type="text" class="form-control" id="editObjectType" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editObjectUnit" class="form-label">หน่วย</label>
+                            <input type="text" class="form-control" id="editObjectUnit" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">บันทึกการเปลี่ยนแปลง</button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
 <script>
-    document.getElementById('personBtn').addEventListener('click', function() {
-        fetchData('person');
-    });
-
-    document.getElementById('objBtn').addEventListener('click', function() {
-        fetchData('object');
-    });
-
-    function fetchData(type) {
-        fetch(`/get_data/${type}`)
-        .then(response => response.json())
-        .then(data => {
-            if (data.error) {
-                document.getElementById('displayArea').innerHTML = `<p>${data.error}</p>`;
-            } else {
-                let displayContent = '';
-                if (type === 'person') {
-    displayContent = data.map(doc => `
-        <div class="col-md-4">
-            <div class="card mb-4">
-                <div class="card-body position-relative">
-                    <h5 class="card-title"><strong>ชื่อ:</strong> ${doc.name}</h5>
-                    <p class="card-text"><strong>Gender:</strong> ${doc.gender}</p>
-                    <button class="btn btn-warning btn-sm edit-btn" data-id="${doc._id}">Edit</button>
-                    <button class="btn btn-danger btn-sm delete-btn" data-id="${doc._id}">
-                        <i class="bi bi-trash"></i>
-                    </button>
-                </div>
-            </div>
-        </div>
-    `).join('');
-} else if (type === 'object') {
-    displayContent = data.map(doc => `
-        <div class="col-md-4">
-            <div class="card mb-4">
-                <div class="card-body position-relative">
-                    <h5 class="card-title"><strong>ชื่อ:</strong> ${doc.name}</h5>
-                    <p class="card-text"><strong>Type:</strong> ${doc.type}</p>
-                    <p class="card-text"><strong>Unit:</strong> ${doc.unit}</p>
-                    <button class="btn btn-warning btn-sm edit-btn" data-id="${doc._id}">Edit</button>
-                    <button class="btn btn-danger btn-sm delete-btn" data-id="${doc._id}">
-                        <i class="bi bi-trash"></i>
-                    </button>
-                </div>
-            </div>
-        </div>
-    `).join('');
-}
-
-                 else if (type === 'object') {
-                    displayContent = data.map(doc => `
-                        <div class="col-md-4">
-                            <div class="card mb-4">
-                                <div class="card-body position-relative">
-                                    <h5 class="card-title"><strong>ชื่อ:</strong> ${doc.name}</h5>
-                                    <p class="card-text"><strong>Type:</strong> ${doc.type}</p>
-                                    <p class="card-text"><strong>Unit:</strong> ${doc.unit}</p>
-                                    <button class="btn btn-warning btn-sm edit-btn" data-id="${doc.id}">Edit</button>
-                                    <button class="btn btn-danger btn-sm delete-btn" data-id="${doc.id}">
-                                        <i class="bi bi-trash"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    `).join('');
-                }
-                document.getElementById('displayArea').innerHTML = `<div class="row">${displayContent}</div>`;
-                
-                // Add event listeners for delete and edit buttons
-                document.querySelectorAll('.delete-btn').forEach(btn => {
-                    btn.addEventListener('click', function() {
-                        const id = this.dataset.id;
-                        // Implement delete functionality here
-                        deleteItem(type, id);
-                    });
-                });
-                
-                document.querySelectorAll('.edit-btn').forEach(btn => {
-                    btn.addEventListener('click', function() {
-                        const id = this.dataset.id;
-                        // Implement edit functionality here
-                        editItem(type, id);
-                    });
-                });
-            }
-        })
-        .catch(error => {
-            document.getElementById('displayArea').innerHTML = `<p>Error fetching data</p>`;
-        });
+    // ฟังก์ชันเปิด Modal สำหรับเพิ่ม Person
+    function openAddPersonModal() {
+        document.getElementById('editPersonId').value = '';
+        document.getElementById('editPersonName').value = '';
+        document.getElementById('editPersonGender').value = '';
+        var editPersonModal = new bootstrap.Modal(document.getElementById('editPersonModal'));
+        editPersonModal.show();
     }
 
-    // Submit Person Form
-    document.getElementById('personForm').addEventListener('submit', function(event) {
-        event.preventDefault();
-        const name = document.getElementById('personName').value;
-        const gender = document.getElementById('personGender').value;
-
-        fetch('/add_person', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ name: name, gender: gender }),
-        })
-        .then(response => response.json())
-        .then(data => {
-            alert('Person added successfully');
-            document.getElementById('personForm').reset();
-            fetchData('person'); // Refresh person data
-        })
-        .catch(error => {
-            console.error('Error:', error);
-        });
-    });
-
-    // Submit Object Form
-    document.getElementById('objForm').addEventListener('submit', function(event) {
-        event.preventDefault();
-        const name = document.getElementById('objName').value;
-        const type = document.getElementById('objType').value;
-        const unit = document.getElementById('objUnit').value;
-
-        fetch('/add_object', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ name: name, type: type, unit: unit }),
-        })
-        .then(response => response.json())
-        .then(data => {
-            alert('Object added successfully');
-            document.getElementById('objForm').reset();
-            fetchData('object'); // Refresh object data
-        })
-        .catch(error => {
-            console.error('Error:', error);
-        });
-    });
-function deleteItem(type, id) {
-    if (confirm('Are you sure you want to delete this item?')) {
-        fetch(`/delete_data/${type}/${id}`, {
-            method: 'DELETE'
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                alert('Item deleted successfully');
-                fetchData(type);
-            } else {
-                alert('Error deleting item: ' + (data.error || 'Unknown error'));
-            }
-        })
-        .catch(error => console.error('Error:', error));
-    }
-}
-
-function editItem(type, id) {
-    const data = {
-        name: 'newName', // แก้ไขตามฟิลด์ที่คุณต้องการ
-        gender: 'newGender' // หรือ type, unit ขึ้นอยู่กับประเภท
-    };
-
-    fetch(`/edit_data/${type}/${id}`, {
-        method: 'PUT',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data)
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            alert('Item updated successfully');
-            fetchData(type);
-        } else {
-            alert('Error updating item: ' + (data.error || 'Unknown error'));
+    // ฟังก์ชันลบ Person
+    function deletePerson(personId) {
+        if (confirm('คุณต้องการลบข้อมูลนี้หรือไม่?')) {
+            fetch('/delete_person/' + personId, {
+                method: 'DELETE'
+            }).then(response => response.json())
+              .then(data => {
+                  if (data.success) {
+                      location.reload();
+                  } else {
+                      alert('เกิดข้อผิดพลาดในการลบข้อมูล');
+                  }
+              });
         }
-    })
-    .catch(error => console.error('Error:', error));
-}
+    }
 
+    // ฟังก์ชันเปิด Modal สำหรับเพิ่ม Object
+    function openAddObjectModal() {
+        document.getElementById('editObjectId').value = '';
+        document.getElementById('editObjectName').value = '';
+        document.getElementById('editObjectType').value = '';
+        document.getElementById('editObjectUnit').value = '';
+        var editObjectModal = new bootstrap.Modal(document.getElementById('editObjectModal'));
+        editObjectModal.show();
+    }
 
+    // ฟังก์ชันลบ Object
+    function deleteObject(objectId) {
+        if (confirm('คุณต้องการลบข้อมูลนี้หรือไม่?')) {
+            fetch('/delete_object/' + objectId, {
+                method: 'DELETE'
+            }).then(response => response.json())
+              .then(data => {
+                  if (data.success) {
+                      location.reload();
+                  } else {
+                      alert('เกิดข้อผิดพลาดในการลบข้อมูล');
+                  }
+              });
+        }
+    }
+
+    // ฟังก์ชันบันทึกข้อมูล Person
+    document.getElementById('editPersonForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        var personId = document.getElementById('editPersonId').value;
+        var name = document.getElementById('editPersonName').value;
+        var gender = document.getElementById('editPersonGender').value;
+
+        var url = personId ? '/update_person/' + personId : '/add_person';
+        var method = personId ? 'PUT' : 'POST';
+
+        fetch(url, {
+            method: method,
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({name: name, gender: gender})
+        }).then(response => response.json())
+          .then(data => {
+              if (data.success) {
+                  location.reload();
+              } else {
+                  alert('เกิดข้อผิดพลาดในการบันทึกข้อมูล');
+              }
+          });
+    });
+
+    // ฟังก์ชันบันทึกข้อมูล Object
+    document.getElementById('editObjectForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        var objectId = document.getElementById('editObjectId').value;
+        var name = document.getElementById('editObjectName').value;
+        var type = document.getElementById('editObjectType').value;
+        var unit = document.getElementById('editObjectUnit').value;
+
+        var url = objectId ? '/update_object/' + objectId : '/add_object';
+        var method = objectId ? 'PUT' : 'POST';
+
+        fetch(url, {
+            method: method,
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({name: name, type: type, unit: unit})
+        }).then(response => response.json())
+          .then(data => {
+              if (data.success) {
+                  location.reload();
+              } else {
+                  alert('เกิดข้อผิดพลาดในการบันทึกข้อมูล');
+              }
+          });
+    });
+
+    // ฟังก์ชันเปิด Modal แก้ไข Person
+    function openEditPersonModal(personId, personName, personGender) {
+        document.getElementById('editPersonId').value = personId;
+        document.getElementById('editPersonName').value = personName;
+        document.getElementById('editPersonGender').value = personGender;
+        var editPersonModal = new bootstrap.Modal(document.getElementById('editPersonModal'));
+        editPersonModal.show();
+    }
+
+    // ฟังก์ชันเปิด Modal แก้ไข Object
+    function openEditObjectModal(objectId, objectName, objectType, objectUnit) {
+        document.getElementById('editObjectId').value = objectId;
+        document.getElementById('editObjectName').value = objectName;
+        document.getElementById('editObjectType').value = objectType;
+        document.getElementById('editObjectUnit').value = objectUnit;
+        var editObjectModal = new bootstrap.Modal(document.getElementById('editObjectModal'));
+        editObjectModal.show();
+    }
 </script>
-
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
 {% endblock %}

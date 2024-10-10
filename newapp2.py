@@ -1029,11 +1029,12 @@ def view_user_score():
 
 @app.route('/data_variables', methods=['GET'])
 def data_variables():
-    # ดึงข้อมูล p_name และ obj จาก MongoDB
-    p_name_data = p_name_collection.find_one({"_id": "p_name_id"})  # แทนที่ 'p_name_id' ด้วยค่า id ที่แท้จริง
-    obj_data = obj_db.find_one({"_id": "obj_id"})  # แทนที่ 'obj_id' ด้วยค่า id ที่แท้จริง
+    # ดึงข้อมูลจาก MongoDB collections ทั้ง p_name และ obj
+    p_name_data = list(p_name_collection.find())  # ดึงข้อมูล p_name ทั้งหมด
+    obj_data = list(obj_db.find())  # ดึงข้อมูล obj ทั้งหมด
     
     return render_template('data_variables.html', p_name=p_name_data, obj=obj_data)
+
 @app.route('/get_data/<data_type>', methods=['GET'])
 def get_data(data_type):
     if data_type == 'person':
@@ -1071,56 +1072,47 @@ def add_object():
         "unit": data['unit']
     })
     return jsonify({"success": True}), 200
-@app.route('/delete_data/<type>/<id>', methods=['DELETE'])
-def delete_data(type, id):
-    if type == 'person':
-        # ลบข้อมูลจากฐานข้อมูลที่เกี่ยวข้อง
-        result = p_name_collection(id)  # ฟังก์ชันสำหรับลบ person
-    elif type == 'object':
-        # ลบข้อมูลจากฐานข้อมูลที่เกี่ยวข้อง
-        result = obj_db(id)  # ฟังก์ชันสำหรับลบ object
-    
-    if result:
-        return jsonify({'success': True})
-    else:
-        return jsonify({'success': False, 'error': 'Could not delete item'})
 
+@app.route('/delete_person/<person_id>', methods=['DELETE'])
+def delete_person(person_id):
+    result = p_name_collection.delete_one({"_id": ObjectId(person_id)})
+    if result.deleted_count > 0:
+        return jsonify({"success": True}), 200
+    return jsonify({"success": False}), 404
 
+@app.route('/delete_object/<object_id>', methods=['DELETE'])
+def delete_object(object_id):
+    result = obj_db.delete_one({"_id": ObjectId(object_id)})
+    if result.deleted_count > 0:
+        return jsonify({"success": True}), 200
+    return jsonify({"success": False}), 404
 
-@app.route('/edit_data/<string:type>/<string:id>', methods=['PUT'])
-def edit_data(type, id):
-    data = request.get_json()  # รับข้อมูลที่ถูกส่งมาจากฟอร์มแก้ไข
-
-    if not data:
-        return jsonify({'success': False, 'error': 'No data provided'}), 400
-
-    # ตรวจสอบประเภทข้อมูลว่าคือ person หรือ object
-    if type == 'person':
-        collection = p_name_collection
-        updated_data = {
-            'name': data.get('name'), 
-            'gender': data.get('gender')
-        }
-    else:
-        collection = obj_db
-        updated_data = {
-            'name': data.get('name'), 
-            'type': data.get('type'), 
-            'unit': data.get('unit')
-        }
-
-    result = collection.update_one({'_id': ObjectId(id)}, {'$set': updated_data})
-
+# Route สำหรับแก้ไขข้อมูล Person
+@app.route('/update_person/<person_id>', methods=['PUT'])
+def edit_person(person_id):
+    data = request.get_json()
+    updated_data = {
+        "name": data['name'],
+        "gender": data['gender']
+    }
+    result = p_name_collection.update_one({"_id": ObjectId(person_id)}, {"$set": updated_data})
     if result.modified_count > 0:
-        return jsonify({'success': True})
-    return jsonify({'success': False, 'error': 'No document found with that ID'}), 404
+        return jsonify({"success": True})
+    return jsonify({"success": False})
 
-
-
-
-
-
-
+# Route สำหรับแก้ไขข้อมูล Object
+@app.route('/update_object/<object_id>', methods=['PUT'])
+def edit_object(object_id):
+    data = request.get_json()
+    updated_data = {
+        "name": data['name'],
+        "type": data['type'],
+        "unit": data['unit']
+    }
+    result = obj_db.update_one({"_id": ObjectId(object_id)}, {"$set": updated_data})
+    if result.modified_count > 0:
+        return jsonify({"success": True})
+    return jsonify({"success": False})
 
 
 
@@ -1301,4 +1293,4 @@ def safe_eval(expression, eval_context):
 
 if __name__ == '__main__':
     app.run(debug=True)
-    #app.run(host='0.0.0.0', port=5000)
+    # app.run(host='0.0.0.0', port=5000)

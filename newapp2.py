@@ -36,14 +36,25 @@ class NameForm(FlaskForm):
     answer = StringField('Answer')
     submit = SubmitField('Submit')
 
+# ฟังก์ชัน admin_required สำหรับหน้าที่ต้องการสิทธิ์ admin หรือ admin_0
 def admin_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        if 'username' not in session or session.get('role') != 'admin':
+        if 'username' not in session or session.get('role') not in ['admin']:
             flash('You do not have permission to access this page.', 'error')
             return redirect(url_for('student_home'))
         return f(*args, **kwargs)
     return decorated_function
+
+def admin_required_0(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'username' not in session or session.get('role') not in ['admin_0']:
+            flash('You do not have permission to access this page.', 'error')
+            return redirect(url_for('admin'))
+        return f(*args, **kwargs)
+    return decorated_function
+
 def get_admin_id():
     """Helper function to retrieve the current admin's user_id from the session."""
     return session.get('user_id')
@@ -131,12 +142,7 @@ def student_home():
 
     return render_template('student_home.html', active_exercises=exercises)
 
-
-
-
-
-
-
+# ฟังก์ชัน login ที่เพิ่มการตรวจสอบบทบาท admin_0
 @app.route('/', methods=['POST', 'GET'])
 def login():
     error = None
@@ -150,38 +156,91 @@ def login():
                 session['username'] = request.form['username']
                 session['role'] = login_user.get('role', 'user')
                 
-                if session['role'] == 'admin':
+                if session['role'] in ['admin']:
                     return redirect(url_for('admin'))
+                elif session['role'] == 'admin_0':
+                    return redirect(url_for('admin0'))
                 else:
                     return redirect(url_for('student_home'))
         error = 'Invalid username/password'
     return render_template('login.html', error=error)
 
 
+
+# ฟังก์ชัน register ที่อนุญาตให้ admin_0 เข้าถึงเท่านั้น
+
 @app.route('/register', methods=['POST', 'GET'])
+@admin_required_0  # ตรวจสอบบทบาท admin_0
 def register():
+    # ดึงข้อมูลผู้ใช้ที่มีบทบาทเป็น 'admin'
+    admins = users.find({'role': 'admin'})
+
     if request.method == 'POST':
-        existing_user = users.find_one({'username': request.form['username']})
+        # Handle user creation
+        if 'create_user' in request.form:
+            existing_user = users.find_one({'username': request.form['username']})
 
-        if existing_user is None:
-            hashpass = bcrypt.hashpw(request.form['password'].encode('utf-8'), bcrypt.gensalt())
-            users.insert_one({
-                'username': request.form['username'],
-                'password': hashpass,
-                'role': 'admin' if request.form.get('is_admin') else 'user'
-            })
-            session['username'] = request.form['username']
-            session['role'] = 'admin' if request.form.get('is_admin') else 'user'
-            return redirect(url_for('student_home'))
+            if existing_user is None:
+                # เข้ารหัสรหัสผ่าน
+                hashpass = bcrypt.hashpw(request.form['password'].encode('utf-8'), bcrypt.gensalt())
 
-        return 'That username already exists!'
-    return render_template('register.html')
+                # เพิ่มข้อมูลผู้ใช้ลงในฐานข้อมูล โดยระบุบทบาทเป็น 'admin'
+                users.insert_one({
+                    'username': request.form['username'],
+                    'password': hashpass,
+                    'role': 'admin',
+                    'first_name': request.form['first_name'],
+                    'last_name': request.form['last_name'],
+                    'subject': request.form['subject'],
+                    'subject_code': request.form['subject_code']
+                })
+                flash(f"Admin user {request.form['username']} created successfully.", 'success')
+            else:
+                flash('That username already exists!', 'error')
 
+        # Handle user edit
+        elif 'edit_user' in request.form:
+            user_id = request.form['user_id']
+            users.update_one(
+                {'_id': ObjectId(user_id)},
+                {
+                    '$set': {
+                        'username': request.form['username'],
+                        'first_name': request.form['first_name'],
+                        'last_name': request.form['last_name'],
+                        'subject': request.form['subject'],
+                        'subject_code': request.form['subject_code']
+                    }
+                }
+            )
+            flash(f"Admin user {request.form['username']} updated successfully.", 'success')
+
+        # Handle user deletion
+        elif 'delete_user' in request.form:
+            user_id = request.form['user_id']
+            users.delete_one({'_id': ObjectId(user_id)})
+            flash("Admin user deleted successfully.", 'success')
+
+        return redirect(url_for('register'))  # Redirect to the same page to refresh the admin list
+
+    return render_template('register.html', admins=admins)
+
+
+
+
+# ฟังก์ชัน admin ที่อนุญาตให้ทั้ง admin และ admin_0 เข้าถึง
 @app.route('/admin')
 def admin():
-    if 'username' in session and session['role'] == 'admin':
+    if 'username' in session and session['role'] in ['admin', 'admin_0']:
         return render_template('admin.html')
-    return redirect(url_for('login'))
+    return redirect(url_for('student_home'))
+
+@app.route('/admin0')
+def admin0():
+    if 'username' in session and session['role'] in ['admin_0']:
+        return render_template('admin0.html')
+    return redirect(url_for('student_home'))
+
 
 @app.route('/logout')
 def logout():

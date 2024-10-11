@@ -1,19 +1,162 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Register</title>
-</head>
-<body>
-    <h1>Register</h1>
-    <form method="POST">
-        <input type="text" name="username" placeholder="Username">
-        <input type="password" name="password" placeholder="Password">
-        <label>
-            <input type="checkbox" name="is_admin"> Register as Admin
-        </label>
-        <input type="submit" value="Register">
-    </form>
-    <a href="/login">Login</a>
-</body>
-</html>
+{% extends 'base_admin0.html' %}
+
+{% block title %}Register Admin{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <h1 class="mb-4">ผู้ใช้ในระบบ (Admins)</h1>
+
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>ลำดับ</th>
+                <th>ชื่อ</th>
+                <th>รหัสวิชา</th>
+                <th>วิชา</th>
+                <th>แก้ไขข้อมูล</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for admin in admins %}
+            <tr>
+                <td>{{ loop.index }}</td>
+                <td>{{ admin.first_name }} {{ admin.last_name }}</td>
+                <td>{{ admin.subject_code }}</td>
+                <td>{{ admin.subject }}</td>
+                <td>
+                    <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editAdminModal-{{ admin._id }}">แก้ไข</button>
+                    <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal" data-user-id="{{ admin._id }}">ลบ</button>
+                </td>   
+            </tr>
+
+            <!-- Edit Modal for Admin -->
+            <div class="modal fade" id="editAdminModal-{{ admin._id }}" tabindex="-1" aria-labelledby="editAdminModalLabel-{{ admin._id }}" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="editAdminModalLabel-{{ admin._id }}">Edit Admin</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form method="POST">
+                                <input type="hidden" name="user_id" value="{{ admin._id }}">
+                                <div class="mb-3">
+                                    <label for="username" class="form-label">Username:</label>
+                                    <input type="text" id="username" name="username" class="form-control" value="{{ admin.username }}" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="first_name" class="form-label">First Name:</label>
+                                    <input type="text" id="first_name" name="first_name" class="form-control" value="{{ admin.first_name }}" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="last_name" class="form-label">Last Name:</label>
+                                    <input type="text" id="last_name" name="last_name" class="form-control" value="{{ admin.last_name }}" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="subject" class="form-label">วิชา:</label>
+                                    <input type="text" id="subject" name="subject" class="form-control" value="{{ admin.subject }}" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="subject_code" class="form-label">รหัสวิชา:</label>
+                                    <input type="text" id="subject_code" name="subject_code" class="form-control" value="{{ admin.subject_code }}" required>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                    <input type="submit" name="edit_user" class="btn btn-primary" value="Save Changes">
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Button to open the modal for adding a new admin -->
+    <button type="button" class="btn btn-primary mt-4" data-bs-toggle="modal" data-bs-target="#createAdminModal">
+        เพิ่มผู้ใช้ (Admin)
+    </button>
+
+    <!-- Create Admin Modal -->
+    <div class="modal fade" id="createAdminModal" tabindex="-1" aria-labelledby="createAdminModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="createAdminModalLabel">Create New Admin</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form method="POST">
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Username:</label>
+                            <input type="text" id="username" name="username" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Password:</label>
+                            <input type="password" id="password" name="password" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="first_name" class="form-label">ชื่อจริง:</label>
+                            <input type="text" id="first_name" name="first_name" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="last_name" class="form-label">นามสกุล:</label>
+                            <input type="text" id="last_name" name="last_name" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="subject" class="form-label">วิชา:</label>
+                            <input type="text" id="subject" name="subject" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="subject" class="form-label">รหัสวิชา:</label>
+                            <input type="number" id="subject_code" name="subject_code" class="form-control" required>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <input type="submit" class="btn btn-primary" value="Create Admin">
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirm Delete Modal -->
+    <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmDeleteModalLabel">Confirm Delete</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to delete this user?
+                </div>
+                <div class="modal-footer">
+                    <form method="POST" id="deleteUserForm">
+                        <input type="hidden" name="user_id" id="deleteUserId">
+                        <input type="submit" name="delete_user" value="Delete" class="btn btn-danger">
+                    </form>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                </div>
+            </div>
+
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const deleteButtons = document.querySelectorAll("[data-user-id]");
+        const deleteUserForm = document.getElementById("deleteUserForm");
+        const deleteUserId = document.getElementById("deleteUserId");
+
+        deleteButtons.forEach(button => {
+            button.addEventListener("click", function () {
+                deleteUserId.value = this.getAttribute("data-user-id");
+            });
+        });
+    });
+</script>
+
+
+{% endblock %}

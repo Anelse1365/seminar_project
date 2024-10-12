@@ -41,17 +41,16 @@ def admin_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if 'username' not in session or session.get('role') not in ['admin']:
-            flash('You do not have permission to access this page.', 'error')
-            return redirect(url_for('student_home'))
+            abort(404)  # ใช้รหัสสถานะ 404 เพื่อแสดงข้อผิดพลาด
         return f(*args, **kwargs)
     return decorated_function
+from flask import abort
 
 def admin_required_0(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if 'username' not in session or session.get('role') not in ['admin_0']:
-            flash('You do not have permission to access this page.', 'error')
-            return redirect(url_for('admin'))
+            abort(403)  # ส่งรหัส 403 แทนการใช้ flash และ redirect
         return f(*args, **kwargs)
     return decorated_function
 
@@ -79,7 +78,6 @@ def add_header(response):
     return response
     
 
-
 @app.route('/student_home')
 @login_required  # ใช้ decorator เพื่อตรวจสอบการล็อกอิน
 def student_home():
@@ -92,12 +90,11 @@ def student_home():
 
     student_grade_level = student.get('grade_level', 'Unknown')
 
-    # ดึงข้อมูล active_exercises ที่มีสถานะ 'กำลังใช้งาน' และระดับชั้นตรงกับนักเรียน
+    # ดึงข้อมูล active_exercises ทั้งหมดที่ตรงกับระดับชั้นนักเรียน
     active_exercises = mydb['active_questions'].find({
-        'status': 'กำลังใช้งาน',
         'grade_level': student_grade_level
     })
-    
+
     # ดึงข้อมูลจาก answer_history โดยใช้ student_id
     completed_exercises = mydb['answer_history'].find({'student_id': student_id})
 
@@ -666,7 +663,7 @@ def create_exercise():
 @login_required
 def exercise(quiz_id):
     expired = False
-    
+    quiz_name = "Unknown"  # กำหนดค่าเริ่มต้น
 
     # ดึงข้อมูล active_exercise โดยใช้ quiz_id (ซึ่งเป็น _id ของ active_exercise)
     active_exercise = mydb['active_questions'].find_one({'_id': ObjectId(quiz_id)})
@@ -682,11 +679,13 @@ def exercise(quiz_id):
     # ดึงชุดข้อสอบจากคอลเล็กชัน 'ชุดข้อสอบ' โดยใช้ quiz_set_id
     selected_quiz_set = mydb['ชุดข้อสอบ'].find_one({'_id': quiz_set_id})
 
-    if not selected_quiz_set:
+    if selected_quiz_set:
+        quiz_name = selected_quiz_set.get('quiz_name', 'Unknown')  # กำหนดค่าที่นี่ถ้ามีข้อมูล
+    else:
         return "ไม่พบชุดข้อสอบที่คุณเลือก"
 
     # ดึง explanation จาก selected_quiz_set
-    explanation = selected_quiz_set.get('explanation', None)  # เพิ่มการดึง explanation
+    explanation = selected_quiz_set.get('explanation', None)
 
     # ดึงข้อมูลนักเรียนจาก session หรือฐานข้อมูล
     student_id = session.get('username')
@@ -741,38 +740,48 @@ def exercise(quiz_id):
     total_score = 0
     max_score = 0
     
-     # ดึงค่าระยะเวลา (เช่น 15 นาที) จาก active_exercise (เก็บเป็นนาที)
+    # ดึงค่าระยะเวลา (เช่น 15 นาที) จาก active_exercise (เก็บเป็นนาที)
     duration_minutes = active_exercise.get('duration_minutes', 0)
     remaining_time = duration_minutes * 60  # แปลงเป็นวินาที
-    
-    if selected_quiz_set and active_exercise:
-        raw_questions = selected_quiz_set.get('questions', [])
-        scores = active_exercise.get('scores', [])
-        quiz_name = selected_quiz_set.get('quiz_name', 'Unknown')
 
-        for index, question in enumerate(raw_questions):
-            question_template = question['question']
-            answer_template = question['answer']
-            choices_template = question.get('choices', [])
-            score = scores[index] if index < len(scores) else 1
+    # ตรวจสอบว่าในเซสชันมีคำถามอยู่แล้วหรือไม่
+    if 'questions' in session and session.get('quiz_id') == quiz_id:
+        questions = session['questions']  # ใช้คำถามจากเซสชัน
+        # คำนวณ max_score จากคำถามที่อยู่ในเซสชัน
+        max_score = sum(question['score'] for question in questions)
+    else:
+        # ดึงคำถามจากฐานข้อมูลตามปกติ
+        if selected_quiz_set and active_exercise:
+            raw_questions = selected_quiz_set.get('questions', [])
+            scores = active_exercise.get('scores', [])
 
-            # ประมวลผลคำถามและตัวเลือก
-            question_text, num_dict, opt_dict, person_dict, obj_dict, numbers = process_question_template(question_template)
-            eval_context = {**num_dict, **opt_dict, **person_dict, **obj_dict}
-            answer = evaluate_expression(answer_template, eval_context)
+            # ประมวลผลคำถาม
+            for index, question in enumerate(raw_questions):
+                question_template = question['question']
+                answer_template = question['answer']
+                choices_template = question.get('choices', [])
+                score = scores[index] if index < len(scores) else 1
 
-            choices = []
-            if choices_template:
-                for choice in choices_template:
-                    choices.append(evaluate_expression(choice, eval_context))
+                # ประมวลผลคำถามและตัวเลือก
+                question_text, num_dict, opt_dict, person_dict, obj_dict, numbers = process_question_template(question_template)
+                eval_context = {**num_dict, **opt_dict, **person_dict, **obj_dict}
+                answer = evaluate_expression(answer_template, eval_context)
 
-            questions.append({
-                'question': question_text,
-                'choices': choices,
-                'answer': str(answer),
-                'score': score
-            })
-            max_score += score
+                choices = []
+                if choices_template:
+                    for choice in choices_template:
+                        choices.append(evaluate_expression(choice, eval_context))
+
+                questions.append({
+                    'question': question_text,
+                    'choices': choices,
+                    'answer': str(answer),
+                    'score': score
+                })
+                max_score += score
+
+        session['questions'] = questions  # เก็บคำถามไว้ในเซสชัน
+        session['quiz_id'] = quiz_id  # เก็บ quiz_id ไว้ในเซสชันเพื่อตรวจสอบในครั้งถัดไป
 
     if request.method == 'POST':
         time_taken = request.form.get('time_taken', '0')  # รับเวลาที่ใช้ในการทำข้อสอบ
@@ -780,7 +789,6 @@ def exercise(quiz_id):
             take_time = int(time_taken)
         except ValueError:
             take_time = 0  # กรณีแปลงไม่ได้ให้ค่าเป็น 0
-            time_taken = request.form.get('time_taken', 0)  # รับเวลาที่ใช้ในการทำข้อสอบ
 
         for i, question in enumerate(questions, start=1):
             if question['choices']:
@@ -814,7 +822,7 @@ def exercise(quiz_id):
                 "total_score": total_score,
                 "max_score": max_score,
                 "results": results,
-                "time":duration_minutes * 60,
+                "time": duration_minutes * 60,
                 "take_time": take_time  # เวลาที่ใช้จริงในการทำข้อสอบ
             }
 
@@ -833,8 +841,10 @@ def exercise(quiz_id):
                            total_score=total_score,
                            duration_minutes=duration_minutes,
                            max_score=max_score,
-                           explanation=explanation,remaining_time=int(remaining_time)
+                           explanation=explanation,
+                           remaining_time=int(remaining_time)
                            )  # ส่ง explanation ไปยัง template
+
 
 
 @app.route('/submit_answer/<question_id>', methods=['POST'])
@@ -1060,25 +1070,29 @@ def view_user_score():
     # Create a dictionary to map each student's score for each quiz
     for score in all_scores:
         student_username = score['student_id']  # Use student_id (which is username in 'users')
-        active_questions_id = score['active_questions_id']
+        active_questions_id = str(score['active_questions_id'])  # Convert ObjectId to string
 
         # Initialize the student's score dictionary if not exists
         if student_username not in scores_by_student:
             scores_by_student[student_username] = {}
         
         # Store the score for the corresponding quiz
-        scores_by_student[student_username][str(active_questions_id)] = {
+        scores_by_student[student_username][active_questions_id] = {
             "total_score": score['total_score'],
             "max_score": score['max_score']
         }
 
-    # Group users by grade level
+    # Group users by grade level and sort by student number
     users_by_grade = {}
     for user in all_users:
         grade_level = user['grade_level']
         if grade_level not in users_by_grade:
             users_by_grade[grade_level] = []
         users_by_grade[grade_level].append(user)
+
+    # Sort students within each grade level by 'number'
+    for grade_level in users_by_grade:
+        users_by_grade[grade_level].sort(key=lambda x: x.get('number', 0))  # Sort by 'number', default to 0 if not present
 
     # Pass both users and quizzes to the template
     return render_template('view_user_score.html', 
@@ -1347,6 +1361,21 @@ def safe_eval(expression, eval_context):
     Evaluates the expression using the provided eval_context in a safe manner.
     """
     return eval(expression, {"__builtins__": None}, eval_context)
+
+
+
+@app.errorhandler(403)
+def forbidden_error(error):
+    return render_template('error.html', error_code=403, error_message='คุณไม่มีสิทธิ์ในการเข้าถึงหน้านี้'), 403
+
+@app.errorhandler(404)
+def not_found_error(error):
+    return render_template('error.html', error_code=404, error_message='ไม่พบหน้าที่คุณต้องการ'), 404
+
+@app.errorhandler(500)
+def internal_error(error):
+    return render_template('error.html', error_code=500, error_message='เกิดข้อผิดพลาดภายในระบบ'), 500
+
 
 
 

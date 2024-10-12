@@ -4,8 +4,33 @@
 
 {% block body %}
 <div class="container mt-5">
+                <!-- Flash Messages Section -->
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                  <div class="alert-container">
+                    {% for category, message in messages %}
+                      <div class="alert alert-{{ category }}" role="alert">
+                        {{ message }}
+                      </div>
+                    {% endfor %}
+                  </div>
+                {% endif %}
+              {% endwith %}
     <h1 class="mb-4">รายชื่อนักเรียนและคะแนน</h1>
 
+    <!-- Grade Level Filter Buttons -->
+    <ul class="nav nav-pills mb-3" id="grade-level-tabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="all-tab" data-grade="all" type="button">All</button>
+        </li>
+        {% for grade_level, users in users_by_grade.items() %}
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" data-grade="{{ grade_level }}" type="button">{{ grade_level }}</button>
+        </li>
+        {% endfor %}
+    </ul>
+
+    <!-- Table displaying students and scores -->
     <table class="table table-bordered">
         <thead>
             <tr>
@@ -19,25 +44,58 @@
         </thead>
         <tbody>
             {% for grade_level, students in users_by_grade.items() %}
+            <tr class="grade-level-row" data-grade="{{ grade_level }}">
                 {% for student in students %}
                 <tr>
                     <td>{{ student.number }}</td>
                     <td>{{ student.first_name }} {{ student.last_name }}</td>
                     <td>{{ grade_level }}</td>
                     {% for quiz in active_quizzes %}
-                        <td>
-                            {% if scores_by_student[student.username] and scores_by_student[student.username].get(quiz._id) %}
-                            {{ scores_by_student[student.username][quiz._id].total_score }}/{{ scores_by_student[student.username][quiz._id].max_score }}
+                    <td>
+                        {% if scores_by_student[student.username] and scores_by_student[student.username].get(quiz._id|string) %}
+                        <span class="text-success">{{ scores_by_student[student.username][quiz._id|string].total_score }}</span>/<span class="text-primary">{{ scores_by_student[student.username][quiz._id|string].max_score }}</span>
                         {% else %}
-                            -
+                        <span class="text-danger">-</span>
                         {% endif %}
-
-                        </td>
+                    </td>
                     {% endfor %}
                 </tr>
                 {% endfor %}
+            </tr>
             {% endfor %}
         </tbody>
     </table>
 </div>
+
+<!-- JavaScript to handle grade-level filtering -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const tabs = document.querySelectorAll('#grade-level-tabs button');
+        const rows = document.querySelectorAll('.grade-level-row');
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', function () {
+                // Remove the 'active' class from all tabs
+                tabs.forEach(t => t.classList.remove('active'));
+                // Add 'active' class to the clicked tab
+                this.classList.add('active');
+
+                const selectedGrade = this.getAttribute('data-grade');
+                rows.forEach(row => {
+                    // Show all rows if 'All' is selected
+                    if (selectedGrade === 'all') {
+                        row.style.display = '';
+                    } else {
+                        // Show only rows that match the selected grade
+                        if (row.getAttribute('data-grade') === selectedGrade) {
+                            row.style.display = '';
+                        } else {
+                            row.style.display = 'none';
+                        }
+                    }
+                });
+            });
+        });
+    });
+</script>
 {% endblock %}

@@ -84,6 +84,12 @@
                         <div class="mb-3">
                             <label for="quiz" class="form-label">{{ form.quiz.label }}</label>
                             {{ form.quiz(class="form-control", id="quiz", rows="3") }}
+                        
+                            <!-- ปุ่มเพิ่ม template แบบปกติ -->
+                            <button type="button" class="btn btn-outline-secondary mt-2" id="insert-template-btn">เลข</button>
+                            <!-- ปุ่มเพิ่ม template แบบสุ่ม -->
+                            <button type="button" class="btn btn-outline-secondary mt-2" id="insert-random-template-btn">สุ่มเลข</button>
+                            <!-- สามารถเพิ่มปุ่มอื่นๆ ได้ตามต้องการ -->
                         </div>
                         <div class="mb-3">
                             <label for="answer" class="form-label">{{ form.answer.label }}</label>
@@ -110,17 +116,21 @@
                         <button type="submit" class="btn btn-primary w-100">{{ form.submit.label }}</button>
                     </form>
                 </div>
+        <!-- Tab for multiple-choice questions -->
+        <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
+            <form method="POST" action="{{ url_for('index') }}">
+                {{ form.hidden_tag() }}
+                <div class="mb-3">
+                    <label for="quiz-mc" class="form-label">{{ form.quiz.label }}</label>
+                        {{ form.quiz(class="form-control", id="quiz-mc", rows="3") }}
+            
+                        <!-- ปุ่มเพิ่ม template แบบธรรมดา -->
+                        <button type="button" class="btn btn-outline-secondary mt-2" id="insert-template-btn-mc">เลข</button>
+                        <!-- ปุ่มเพิ่ม template แบบสุ่ม -->
+                        <button type="button" class="btn btn-outline-secondary mt-2" id="insert-random-template-btn-mc">สุ่มเลข</button>
 
-                <!-- Tab for multiple-choice questions -->
-                <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
-                    <form method="POST" action="{{ url_for('index') }}">
-                        {{ form.hidden_tag() }}
-                        <div class="mb-3">
-                            <label for="quiz" class="form-label">{{ form.quiz.label }}</label>
-                            {{ form.quiz(class="form-control", id="quiz", rows="3") }}
-                        </div>
-
-                        <div id="choices-container">
+                </div>
+                                <div id="choices-container">
                             <div class="mb-3">
                                 <label for="choice-1" class="form-label">Choice 1</label>
                                 <input type="text" name="choices[]" class="form-control" id="choice-1">
@@ -212,6 +222,85 @@
             newCategoryContainer.style.display = 'none';
         }
     });
+       // ฟังก์ชันเพิ่ม template ปกติ
+       document.getElementById('insert-template-btn').addEventListener('click', function() {
+        const quizInput = document.getElementById('quiz');
+        insertDynamicTemplate(quizInput); // ไม่มีค่า <r>
+    });
+
+    // ฟังก์ชันเพิ่ม template แบบสุ่ม
+    document.getElementById('insert-random-template-btn').addEventListener('click', function() {
+        const quizInput = document.getElementById('quiz');
+        insertDynamicTemplate(quizInput, '1,2,3'); // ใส่ค่า <r> ตามที่กำหนด
+
+    });
+
+    // ฟังก์ชันเพิ่ม template ที่เพิ่ม num โดยอัตโนมัติ
+    function insertDynamicTemplate(input, rValues = null) {
+        const currentText = input.value;
+
+        // ใช้ regex หา num ที่มีอยู่แล้ว
+        const regex = /<num(\d+),int>/g;
+        let maxNum = 0;
+        let match;
+
+        // หาค่า num ที่มีอยู่ในข้อความ
+        while ((match = regex.exec(currentText)) !== null) {
+            const num = parseInt(match[1], 10);
+            if (num > maxNum) {
+                maxNum = num;
+            }
+        }
+
+        // สร้าง numX ใหม่
+        const newNum = maxNum + 1;
+        let template;
+
+        // ตรวจสอบว่ามี rValues หรือไม่
+        if (rValues) {
+            // Template แบบสุ่ม
+            template = `<num${newNum},int><r>${rValues}</r></num${newNum}>`;
+        } else {
+            // Template ปกติ
+            template = `<num${newNum},int></num${newNum}>`;
+        }
+
+        // แทรก template เข้าไปในช่อง text
+        insertAtCursor(input, template);
+    }
+
+    // ฟังก์ชันแทรกข้อความในตำแหน่งเคอร์เซอร์
+    function insertAtCursor(input, textToInsert) {
+        const start = input.selectionStart;
+        const end = input.selectionEnd;
+        const textBefore = input.value.substring(0, start);
+        const textAfter  = input.value.substring(end, input.value.length);
+
+        input.value = textBefore + textToInsert + textAfter;
+        input.selectionStart = input.selectionEnd = start + textToInsert.length;
+        input.focus();
+    }
+
+    // ฟังก์ชันสุ่มค่าใน <r>
+    function generateRandomValues(count) {
+        const randomNumbers = [];
+        for (let i = 0; i < count; i++) {
+            randomNumbers.push(Math.floor(Math.random() * 100) + 1); // สุ่มเลขตั้งแต่ 1 ถึง 100
+        }
+        return randomNumbers.join(',');
+    }
+
+// ฟังก์ชันเพิ่ม template สำหรับ multiple-choice
+document.getElementById('insert-template-btn-mc').addEventListener('click', function() {
+        const quizInputMC = document.getElementById('quiz-mc');
+        insertDynamicTemplate(quizInputMC);
+    });
+
+    document.getElementById('insert-random-template-btn-mc').addEventListener('click', function() {
+        const quizInputMC = document.getElementById('quiz-mc');
+        insertDynamicTemplate(quizInputMC, '1,2,3');
+    });
+
 
 </script>
 {% endblock %}

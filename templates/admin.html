@@ -3,7 +3,6 @@
 {% block body %}
     <div style="text-align: center; margin-top: 50px;">
         <h1>Admin Dashboard</h1>
-        <p>สวัสดี, {{ session.username }}. นี่คือหน้า admin.</p>
     </div>
 
     <div style="display: flex; justify-content: center; flex-wrap: wrap; gap: 50px; margin-top: 50px;">
@@ -14,16 +13,10 @@
             <p style="text-align: center; margin-top: 10px;">สร้าง Template</p>
         </div>
         <div>
-            <a href="{{ url_for('view_templates') }}">
-                <img class="hover-img" src="{{ url_for('static', filename='img/2.png') }}" alt="ดูชุดข้อสอบ" style="width: 150px; height: 150px; border-radius: 20px;">
+            <a href="{{ url_for('quiz_maker') }}">
+                <img class="hover-img" src="{{ url_for('static', filename='img/19.png') }}" alt="สร้างชุดข้อสอบ" style="width: 150px; height: 150px; border-radius: 20px;">
             </a>
-            <p style="text-align: center; margin-top: 10px;">Templates ในระบบ</p>
-        </div>
-        <div>
-            <a href="{{ url_for('view_user') }}">
-                <img class="hover-img" src="{{ url_for('static', filename='img/13.png') }}" alt="นักเรียนในระบบ" style="width: 150px; height: 150px; border-radius: 20px;">
-            </a>
-            <p style="text-align: center; margin-top: 10px;">นักเรียนในระบบ</p>
+            <p style="text-align: center; margin-top: 10px;">สร้างชุดข้อสอบ</p>
         </div>
         <div>
             <a href="{{ url_for('create_exercise') }}">
@@ -32,16 +25,34 @@
             <p style="text-align: center; margin-top: 10px;">ออกข้อสอบ</p>
         </div>
         <div>
+            <a href="{{ url_for('active_exercise') }}">
+                <img class="hover-img" src="{{ url_for('static', filename='img/33.png') }}" alt="ดูคะแนน" style="width: 150px; height: 150px; border-radius: 20px;">
+            </a>
+            <p style="text-align: center; margin-top: 10px;">สถานะของข้อสอบ</p>
+        </div>
+        <div>
+            <a href="{{ url_for('view_templates') }}">
+                <img class="hover-img" src="{{ url_for('static', filename='img/2.png') }}" alt="ดูชุดข้อสอบ" style="width: 150px; height: 150px; border-radius: 20px;">
+            </a>
+            <p style="text-align: center; margin-top: 10px;">Templates ในระบบ</p>
+        </div>
+        <div>
             <a href="{{ url_for('quiz_storage') }}">
                 <img class="hover-img" src="{{ url_for('static', filename='img/11.jpg') }}" alt="คลังข้อสอบ" style="width: 150px; height: 150px; border-radius: 20px;">
             </a>
             <p style="text-align: center; margin-top: 10px;">คลังข้อสอบ</p>
         </div>
         <div>
-            <a href="{{ url_for('active_exercise') }}">
-                <img class="hover-img" src="{{ url_for('static', filename='img/33.png') }}" alt="ดูคะแนน" style="width: 150px; height: 150px; border-radius: 20px;">
+            <a href="{{ url_for('view_user') }}">
+                <img class="hover-img" src="{{ url_for('static', filename='img/13.png') }}" alt="นักเรียนในระบบ" style="width: 150px; height: 150px; border-radius: 20px;">
             </a>
-            <p style="text-align: center; margin-top: 10px;">สถานะข้อสอบ</p>
+            <p style="text-align: center; margin-top: 10px;">นักเรียนในระบบ</p>
+        </div>
+        <div>
+            <a href="{{ url_for('view_user_score') }}">
+                <img class="hover-img" src="{{ url_for('static', filename='img/17.png') }}" alt="นักเรียนในระบบ" style="width: 150px; height: 150px; border-radius: 20px;">
+            </a>
+            <p style="text-align: center; margin-top: 10px;">คะแนนของนักเรียน</p>
         </div>
     </div>
 

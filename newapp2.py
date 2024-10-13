@@ -13,6 +13,7 @@ from functools import wraps
 
 
 
+
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'mykey'
 app.secret_key = 'secretkey'
@@ -271,68 +272,80 @@ def index():
 
         admin_id = session.get('user_id')  # ดึง admin_id จาก session
 
-        # ตรวจสอบว่าเป็น Multiple-choice หรือ Written question
-        if 'correct_choice' in request.form:
-            # Multiple-choice question
-            choices = request.form.getlist('choices[]')
-            correct_choice_index = int(request.form.get('correct_choice'))
+        # ตรวจสอบสูตรก่อนดำเนินการ
+        try:
+            # ตรวจสอบว่าเป็น Multiple-choice หรือ Written question
+            if 'correct_choice' in request.form:
+                # Multiple-choice question
+                choices = request.form.getlist('choices[]')
+                correct_choice_index = int(request.form.get('correct_choice'))
 
-            # Process and save the choices
-            question_template = text
-            question_text, num_dict, opt_dict, person_dict, obj_dict, numbers = process_question_template(question_template)
-            eval_context = {**num_dict, **opt_dict, **person_dict, **obj_dict}
-            evaluated_choices = [evaluate_expression(choice, eval_context) for choice in choices]
-            correct_answer = evaluated_choices[correct_choice_index]
+                # Process and save the choices
+                question_template = text
+                question_text, num_dict, opt_dict, person_dict, obj_dict, numbers = process_question_template(question_template)
+                eval_context = {**num_dict, **opt_dict, **person_dict, **obj_dict}
+                evaluated_choices = [evaluate_expression(choice, eval_context) for choice in choices]
+                
+                # ตรวจสอบว่าค่า evaluated_choices มีความถูกต้อง
+                if evaluated_choices and len(evaluated_choices) > correct_choice_index:
+                    correct_answer = evaluated_choices[correct_choice_index]
+                else:
+                    raise ValueError("Choices are invalid or empty.")
 
-            try:
-                questions_template_collection.insert_one({
-                    'category': category,  # Save the category
-                    'question': question_text,
-                    'question_template': text,
-                    'question_type': 'multiple_choice',
-                    'choices_template': choices[:],
-                    'choices': evaluated_choices,
-                    'correct_answer': correct_answer,
-                    'answer_template': choices[correct_choice_index],
-                    'admin_id': ObjectId(admin_id)  # บันทึก admin_id ของ admin ที่สร้างคำถาม
-                })
-                flash('Multiple-choice question saved successfully!', 'success')
-            except Exception as e:
-                flash('An error occurred while saving the question. Please try again.', 'error')
+                try:
+                    questions_template_collection.insert_one({
+                        'category': category,  # Save the category
+                        'question': question_text,
+                        'question_template': text,
+                        'question_type': 'multiple_choice',
+                        'choices_template': choices[:],
+                        'choices': evaluated_choices,
+                        'correct_answer': correct_answer,
+                        'answer_template': choices[correct_choice_index],
+                        'admin_id': ObjectId(admin_id)  # บันทึก admin_id ของ admin ที่สร้างคำถาม
+                    })
+                    flash('Multiple-choice question saved successfully!', 'success')
+                except Exception as e:
+                    flash('An error occurred while saving the question. Please try again.', 'error')
 
-        else:
-            # Written question
-            answer = form.answer.data
-            if not answer:
-                flash('Answer is required for written questions.', 'error')
-                return render_template('index.html', form=form, existing_categories=existing_categories)
+            else:
+                # Written question
+                answer = form.answer.data
+                if not answer:
+                    flash('Answer is required for written questions.', 'error')
+                    return render_template('index.html', form=form, existing_categories=existing_categories)
 
-            question_template = text
-            question_text, num_dict, opt_dict, person_dict, obj_dict, numbers = process_question_template(question_template)
-            eval_context = {**num_dict, **opt_dict, **person_dict, **obj_dict}
-            evaluated_answer = evaluate_expression(answer, eval_context)
+                question_template = text
+                question_text, num_dict, opt_dict, person_dict, obj_dict, numbers = process_question_template(question_template)
+                eval_context = {**num_dict, **opt_dict, **person_dict, **obj_dict}
+                evaluated_answer = evaluate_expression(answer, eval_context)
 
-            try:
-                questions_template_collection.insert_one({
-                    'category': category,  # Save the category
-                    'question_template': question_template,
-                    'question_type': 'written',
-                    'question': question_text,
-                    'answer_template': answer,
-                    'answer': evaluated_answer,
-                    **num_dict,
-                    **opt_dict,
-                    **person_dict,
-                    **obj_dict,
-                    'admin_id': ObjectId(admin_id)  # บันทึก admin_id ของ admin ที่สร้างคำถาม
-                })
-                flash('Written question saved successfully!', 'success')
-            except Exception as e:
-                flash('An error occurred while saving the question. Please try again.', 'error')
+                try:
+                    questions_template_collection.insert_one({
+                        'category': category,  # Save the category
+                        'question_template': question_template,
+                        'question_type': 'written',
+                        'question': question_text,
+                        'answer_template': answer,
+                        'answer': evaluated_answer,
+                        **num_dict,
+                        **opt_dict,
+                        **person_dict,
+                        **obj_dict,
+                        'admin_id': ObjectId(admin_id)  # บันทึก admin_id ของ admin ที่สร้างคำถาม
+                    })
+                    flash('Written question saved successfully!', 'success')
+                except Exception as e:
+                    flash('An error occurred while saving the question. Please try again.', 'error')
+
+        except (TypeError, ValueError) as e:
+            flash(f'เกิดข้อผิดพลาด เนื่องจากมีการใช้ตัวแปรที่ไม่ได้ถูกกำหนดเอาไว้อย่างถูกต้อง โปรดตรวจสอบใหม่อีกครั้ง.', 'error')
+            return render_template('index.html', form=form, existing_categories=existing_categories)
 
         return redirect(url_for('index'))
 
     return render_template('index.html', form=form, existing_categories=existing_categories)
+
 
 
 @app.route('/quiz_maker', methods=['GET', 'POST'])
@@ -1092,13 +1105,31 @@ def view_user_score():
 
     # Sort students within each grade level by 'number'
     for grade_level in users_by_grade:
-        users_by_grade[grade_level].sort(key=lambda x: x.get('number', 0))  # Sort by 'number', default to 0 if not present
+        users_by_grade[grade_level].sort(key=lambda x: int(x.get('number', 0)) if x.get('number') is not None else 0)
 
     # Pass both users and quizzes to the template
     return render_template('view_user_score.html', 
                            users_by_grade=users_by_grade,  
                            active_quizzes=active_quizzes, 
                            scores_by_student=scores_by_student)
+
+@app.route('/update_score', methods=['POST'])
+@admin_required
+def update_score():
+    student_username = request.form.get('student_username')
+    quiz_id = request.form.get('quiz_id')
+    total_score = int(request.form.get('total_score'))
+    max_score = int(request.form.get('max_score'))
+
+    # ค้นหาและอัปเดตคะแนนใน answer_history
+    answer_history.update_one(
+        {"student_id": student_username, "active_questions_id": ObjectId(quiz_id)},
+        {"$set": {"total_score": total_score, "max_score": max_score}}
+    )
+
+    flash('อัปเดตคะแนนสำเร็จ!', 'success')
+    return redirect(url_for('view_user_score'))
+
 
 @app.route('/data_variables', methods=['GET'])
 def data_variables():

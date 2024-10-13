@@ -16,7 +16,7 @@
                   </div>
                 {% endif %}
               {% endwith %}
-    <h1 class="mb-4">รายชื่อนักเรียนและคะแนน</h1>
+    <h1 class="mb-4">ตรวจสอบคะแนน</h1>
 
     <!-- Grade Level Filter Buttons -->
     <ul class="nav nav-pills mb-3" id="grade-level-tabs" role="tablist">
@@ -38,64 +38,85 @@
                 <th>ชื่อ</th>
                 <th>ระดับชั้น</th>
                 {% for quiz in active_quizzes %}
-                    <th>{{ quiz.quiz_name }}</th>
+                    <th class="quiz-header" data-grade="{{ quiz.grade_level }}">{{ quiz.quiz_name }}</th>
                 {% endfor %}
             </tr>
         </thead>
+        
         <tbody>
             {% for grade_level, students in users_by_grade.items() %}
-            <tr class="grade-level-row" data-grade="{{ grade_level }}">
                 {% for student in students %}
-                <tr>
+                <tr class="grade-level-row" data-grade="{{ grade_level }}">
                     <td>{{ student.number }}</td>
                     <td>{{ student.first_name }} {{ student.last_name }}</td>
                     <td>{{ grade_level }}</td>
                     {% for quiz in active_quizzes %}
-                    <td>
-                        {% if scores_by_student[student.username] and scores_by_student[student.username].get(quiz._id|string) %}
-                        <span class="text-success">{{ scores_by_student[student.username][quiz._id|string].total_score }}</span>/<span class="text-primary">{{ scores_by_student[student.username][quiz._id|string].max_score }}</span>
-                        {% else %}
-                        <span class="text-danger">-</span>
-                        {% endif %}
-                    </td>
-                    {% endfor %}
-                </tr>
+<td class="quiz-score" data-grade="{{ quiz.grade_level }}">
+    {% if scores_by_student[student.username] and scores_by_student[student.username].get(quiz._id|string) %}
+    <span class="text-success">{{ scores_by_student[student.username][quiz._id|string].total_score }}</span>/<span class="text-primary">{{ scores_by_student[student.username][quiz._id|string].max_score }}</span>
+    {% else %}
+    <span class="text-danger">-</span>
+    {% endif %}
+</td>
+{% endfor %}
+
                 {% endfor %}
-            </tr>
             {% endfor %}
         </tbody>
+        
     </table>
 </div>
 
 <!-- JavaScript to handle grade-level filtering -->
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const tabs = document.querySelectorAll('#grade-level-tabs button');
-        const rows = document.querySelectorAll('.grade-level-row');
+   document.addEventListener('DOMContentLoaded', function () {
+    const tabs = document.querySelectorAll('#grade-level-tabs button');
+    const rows = document.querySelectorAll('.grade-level-row');
+    const quizHeaders = document.querySelectorAll('.quiz-header');
+    const quizScores = document.querySelectorAll('.quiz-score');
 
-        tabs.forEach(tab => {
-            tab.addEventListener('click', function () {
-                // Remove the 'active' class from all tabs
-                tabs.forEach(t => t.classList.remove('active'));
-                // Add 'active' class to the clicked tab
-                this.classList.add('active');
+    tabs.forEach(tab => {
+        tab.addEventListener('click', function () {
+            // Remove the 'active' class from all tabs
+            tabs.forEach(t => t.classList.remove('active'));
+            // Add 'active' class to the clicked tab
+            this.classList.add('active');
 
-                const selectedGrade = this.getAttribute('data-grade');
-                rows.forEach(row => {
-                    // Show all rows if 'All' is selected
-                    if (selectedGrade === 'all') {
+            const selectedGrade = this.getAttribute('data-grade');
+            rows.forEach(row => {
+                // Show all rows if 'All' is selected
+                if (selectedGrade === 'all') {
+                    row.style.display = '';
+                } else {
+                    // Show only rows that match the selected grade
+                    if (row.getAttribute('data-grade') === selectedGrade) {
                         row.style.display = '';
                     } else {
-                        // Show only rows that match the selected grade
-                        if (row.getAttribute('data-grade') === selectedGrade) {
-                            row.style.display = '';
-                        } else {
-                            row.style.display = 'none';
-                        }
+                        row.style.display = 'none';
                     }
-                });
+                }
+            });
+
+            // Show/hide quiz headers based on the selected grade
+            quizHeaders.forEach(header => {
+                if (selectedGrade === 'all' || header.getAttribute('data-grade') === selectedGrade) {
+                    header.style.display = '';
+                } else {
+                    header.style.display = 'none';
+                }
+            });
+
+            // Show/hide quiz score columns based on the selected grade
+            quizScores.forEach(score => {
+                if (selectedGrade === 'all' || score.getAttribute('data-grade') === selectedGrade) {
+                    score.style.display = '';
+                } else {
+                    score.style.display = 'none';
+                }
             });
         });
     });
+});
+
 </script>
 {% endblock %}

@@ -141,7 +141,7 @@
 
                         <!-- หมวดหมู่สำหรับตัวเลือก -->
                         <div class="mb-3">
-                            <label for="category" class="form-label">Category</label>
+                            <label for="category" class="form-label">หมวดหมู่</label>
                             <select name="existing_category" class="form-select" id="existing-category-multiple-choice">
                                 <option value="" selected>-- เลือกหมวดหมู่ --</option>
                                 {% for category in existing_categories %}
@@ -152,7 +152,7 @@
                         </div>
 
                         <div class="mb-3" id="new-category-container-multiple-choice" style="display: none;">
-                            <label for="new-category" class="form-label">New Category</label>
+                            <label for="new-category" class="form-label">สร้างหมวดหมู่ใหม่</label>
                             <input type="text" name="new_category" class="form-control" id="new-category-multiple-choice">
                         </div>
 
@@ -161,7 +161,7 @@
                 </div>
             </div>
 
-            <a href="/quiz_maker" class="btn btn-secondary w-100 mt-3">Next</a>
+            <a href="/quiz_maker" class="btn btn-secondary w-100 mt-3">ถัดไป</a>
             <a href="{{ url_for('view_templates') }}" class="btn btn-secondary w-100 mt-3">ดู Templates</a>
         </div>
     </div>

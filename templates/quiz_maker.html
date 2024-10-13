@@ -16,15 +16,15 @@
               {% endwith %}
     <div class="row justify-content-center">
         <div class="col-lg-6">
-            <h1 class="text-center">Create Quizzes</h1><br>
+            <h1 class="text-center">สร้างชุดข้อสอบ</h1><br>
             <form method="POST" action="{{ url_for('quiz_maker') }}" id="quiz-form">
                 <div class="card">
                     <div class="card-body">
-                        <h5 class="question-number">สร้างชุดคำถาม</h5>
+                        <h5 class="question-number">สร้างชุดข้อสอบ</h5>
 
                         <!-- Explanation Section -->
                         <div class="mb-3">
-                            <label for="explanation" class="form-label">คำอธิบายชุดคำถาม</label>
+                            <label for="explanation" class="form-label">คำอธิบายชุดข้อสอบ</label>
                             <textarea name="explanation" id="explanation" class="form-control" rows="3" placeholder="กรอกข้อความชี้แจง"></textarea>
                         </div>
 
@@ -45,7 +45,7 @@
                 <div class="mb-3">
                     <label for="category" class="form-label">เลือกหมวดหมู่</label>
                     <select name="category" id="category" class="form-select form-select-lg" aria-label="Select Category">
-                        <option selected>Select Category</option>
+                        <option selected>เลือกหมวดหมู่</option>
                         {% for category in categories %}
                             <option value="{{ category }}">{{ category }}</option>
                         {% endfor %}
@@ -56,9 +56,9 @@
                     <input type="text" name="new_category" class="form-control" id="new_category" placeholder="ระบุชื่อหมวดหมู่ใหม่">
                 </div>
 
-                <button type="submit" class="btn btn-primary w-100">Generate</button>
-                <a href="/create_exercise" class="btn btn-secondary w-100 mt-3">Next</a>
-                <a href="/index" class="btn btn-secondary w-100 mt-3">Back</a>
+                <button type="submit" class="btn btn-primary w-100">สร้างชุดข้อสอบ</button>
+                <a href="/create_exercise" class="btn btn-secondary w-100 mt-3">ถัดไป</a>
+                <a href="/index" class="btn btn-secondary w-100 mt-3">กลับ</a>
             </form>
         </div>
     </div>

@@ -1,0 +1,289 @@
+[{
+  "_id": {
+    "$oid": "66f5aa8ff061551b4d6cd1b3"
+  },
+  "quiz_set": {
+    "$oid": "66cb80457b3ed6e73c6a16c5"
+  },
+  "quiz_name": "โจทย์5",
+  "category": "คณิตศาสตร์",
+  "grade_level": "",
+  "created_date": {
+    "$date": "2024-09-27T01:40:15.288Z"
+  },
+  "expiration_date": {
+    "$date": "2024-10-04T01:40:00.000Z"
+  },
+  "status": "กำลังใช้งาน",
+  "scores": [
+    1,
+    1,
+    1
+  ],
+  "submissions": 0
+},
+{
+  "_id": {
+    "$oid": "66f5ab42f061551b4d6cd1b4"
+  },
+  "quiz_set": {
+    "$oid": "66c316f495b9a32e852d32a3"
+  },
+  "quiz_name": "ชุด3",
+  "category": "คณิตศาสตร์",
+  "grade_level": "ป.5",
+  "created_date": {
+    "$date": "2024-09-27T01:43:14.989Z"
+  },
+  "expiration_date": {
+    "$date": "2024-09-29T01:43:00.000Z"
+  },
+  "status": "หมดเวลา",
+  "scores": [
+    1,
+    1,
+    1
+  ],
+  "submissions": 0
+},
+{
+  "_id": {
+    "$oid": "66fd98c08d3a62e3eef6831b"
+  },
+  "quiz_set": {
+    "$oid": "66fd963becc4a47fb318cf12"
+  },
+  "quiz_name": "โคตรข้อสอบ",
+  "category": "คณิตศาตร์ ป.2",
+  "grade_level": "ป.5",
+  "created_date": {
+    "$date": "2024-10-03T02:02:24.812Z"
+  },
+  "expiration_date": {
+    "$date": "2024-10-25T02:02:00.000Z"
+  },
+  "status": "กำลังใช้งาน",
+  "scores": [
+    1,
+    1
+  ],
+  "submissions": 1
+},
+{
+  "_id": {
+    "$oid": "6706f36373f4c3d096055e1b"
+  },
+  "quiz_set": {
+    "$oid": "6706f26873f4c3d096055e19"
+  },
+  "quiz_name": "ทดสอบ",
+  "category": "คณิตศาสตร์พื้นฐาน",
+  "grade_level": "ป.4",
+  "created_date": {
+    "$date": "2024-10-10T04:19:31.414Z"
+  },
+  "expiration_date": {
+    "$date": "2024-10-17T04:19:00.000Z"
+  },
+  "status": "กำลังใช้งาน",
+  "scores": [
+    1,
+    1,
+    1,
+    1,
+    1
+  ],
+  "submissions": 1,
+  "duration_minutes": 60,
+  "created_by": "66c61bca2f0f8243a7fab4a9"
+},
+{
+  "_id": {
+    "$oid": "6706f50873f4c3d096055e1f"
+  },
+  "quiz_set": {
+    "$oid": "6706f4e473f4c3d096055e1e"
+  },
+  "quiz_name": "ทดสอบ",
+  "category": "คณิตศาสตร์พื้นฐาน",
+  "grade_level": "ป.4",
+  "created_date": {
+    "$date": "2024-10-10T04:26:32.291Z"
+  },
+  "expiration_date": {
+    "$date": "2024-10-17T04:26:00.000Z"
+  },
+  "status": "กำลังใช้งาน",
+  "scores": [
+    1,
+    1,
+    1,
+    1,
+    1
+  ],
+  "submissions": 1,
+  "duration_minutes": 0,
+  "created_by": "66c61bca2f0f8243a7fab4a9"
+},
+{
+  "_id": {
+    "$oid": "6708433b10afcb81c87f392c"
+  },
+  "quiz_set": {
+    "$oid": "6706f4e473f4c3d096055e1e"
+  },
+  "quiz_name": "ทดสอบ",
+  "category": "คณิตศาสตร์พื้นฐาน",
+  "grade_level": "ป.4",
+  "created_date": {
+    "$date": "2024-10-11T04:12:27.778Z"
+  },
+  "expiration_date": {
+    "$date": "2024-10-23T04:12:00.000Z"
+  },
+  "status": "กำลังใช้งาน",
+  "scores": [
+    1,
+    1,
+    1,
+    1,
+    1
+  ],
+  "submissions": 0,
+  "duration_minutes": 0,
+  "created_by": "66c61bca2f0f8243a7fab4a9"
+},
+{
+  "_id": {
+    "$oid": "670a36be245c5b5a7aac7217"
+  },
+  "quiz_set": {
+    "$oid": "6703fb91e12d46487fa0d790"
+  },
+  "quiz_name": "ช้อยกับเขียน",
+  "category": "คณิตศาตร์ ป.2",
+  "grade_level": "ป.6",
+  "created_date": {
+    "$date": "2024-10-12T15:43:42.770Z"
+  },
+  "expiration_date": {
+    "$date": "2024-10-11T15:43:00.000Z"
+  },
+  "status": "หมดเวลา",
+  "scores": [
+    4,
+    4
+  ],
+  "submissions": 2,
+  "duration_minutes": 1,
+  "created_by": "66c710eae22d5a0ca27b52c4"
+},
+{
+  "_id": {
+    "$oid": "670b79141bb0d28353c152a7"
+  },
+  "quiz_set": {
+    "$oid": "670b78a61bb0d28353c152a5"
+  },
+  "quiz_name": "แบบฝึกหัด วิชาคณิตศาสตร์ ป. 1 เรื่อง โจทย์ปัญหาการบวกและลบ",
+  "category": "คณิต ป.1",
+  "grade_level": "ป.1",
+  "created_date": {
+    "$date": "2024-10-13T14:39:00.385Z"
+  },
+  "expiration_date": {
+    "$date": "2024-10-25T14:38:00.000Z"
+  },
+  "status": "กำลังใช้งาน",
+  "scores": [
+    5,
+    5
+  ],
+  "submissions": 2,
+  "duration_minutes": 0,
+  "created_by": "66c710eae22d5a0ca27b52c4"
+},
+{
+  "_id": {
+    "$oid": "670cca9bf4904cad6b87b437"
+  },
+  "quiz_set": {
+    "$oid": "670cca6bf4904cad6b87b436"
+  },
+  "quiz_name": "ทดสอบ1",
+  "category": "คณิตศาสตร์พื้นฐาน",
+  "grade_level": "ป.4",
+  "created_date": {
+    "$date": "2024-10-14T14:39:07.707Z"
+  },
+  "expiration_date": {
+    "$date": "2024-10-18T14:38:00.000Z"
+  },
+  "status": "กำลังใช้งาน",
+  "scores": [
+    1,
+    1,
+    1
+  ],
+  "submissions": 0,
+  "duration_minutes": 60,
+  "created_by": "66c61bca2f0f8243a7fab4a9"
+},
+{
+  "_id": {
+    "$oid": "670ea46e77e7c06ae2d0ea2d"
+  },
+  "quiz_set": {
+    "$oid": "670ea0eb77e7c06ae2d0ea2c"
+  },
+  "quiz_name": "ข้อสอบ1",
+  "category": "คณิต ป.1",
+  "grade_level": "ป.1",
+  "created_date": {
+    "$date": "2024-10-16T00:20:46.199Z"
+  },
+  "expiration_date": {
+    "$date": "2024-10-18T00:10:00.000Z"
+  },
+  "status": "กำลังใช้งาน",
+  "scores": [
+    1,
+    1
+  ],
+  "submissions": 3,
+  "duration_minutes": 60,
+  "created_by": "66c710eae22d5a0ca27b52c4"
+},
+{
+  "_id": {
+    "$oid": "670f41536d0c120e28ef334b"
+  },
+  "quiz_set": {
+    "$oid": "670f3ebf6d0c120e28ef334a"
+  },
+  "quiz_name": "แบบทดสอบ บวก ลบ คูณ และ หาร",
+  "category": "คณิต ป.1",
+  "grade_level": "ป.1",
+  "created_date": {
+    "$date": "2024-10-16T11:30:11.421Z"
+  },
+  "expiration_date": {
+    "$date": "2024-10-23T11:30:00.000Z"
+  },
+  "status": "กำลังใช้งาน",
+  "scores": [
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1
+  ],
+  "submissions": 2,
+  "duration_minutes": 20,
+  "created_by": "66c710eae22d5a0ca27b52c4"
+}]

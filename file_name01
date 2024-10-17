@@ -1,0 +1,13 @@
+ Volume in drive C is OS
+ Volume Serial Number is A03C-56F0
+
+ Directory of C:\Users\Asus Tuf\Documents\GitHub\seminar_project
+
+[.]                     [..]                    .gitattributes
+01                      [mydb]                  newapp1.py
+newapp2.py              [node_modules]          package-lock.json
+package.json            README.md               scripted
+[static]                tempCodeRunnerFile.py   [templates]
+test                    
+              10 File(s)      1,330,400 bytes
+               6 Dir(s)  31,504,220,160 bytes free

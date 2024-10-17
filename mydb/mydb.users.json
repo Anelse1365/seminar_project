@@ -1,0 +1,658 @@
+[{
+  "_id": {
+    "$oid": "66c61bca2f0f8243a7fab4a9"
+  },
+  "username": "admin",
+  "password": {
+    "$binary": {
+      "base64": "JDJiJDEyJDBlaHprbk9VdU85a3l2RGJiYTlabC4xUGpHZ1lGcjVpL1FSVVJQbk1IS0V3LjdoY0ZUN04y",
+      "subType": "00"
+    }
+  },
+  "role": "admin",
+  "first_name": "ชาติชาย",
+  "last_name": "ชาตรี",
+  "subject": "คณิตศาสตร์",
+  "subject_code": "44522"
+},
+{
+  "_id": {
+    "$oid": "66c710eae22d5a0ca27b52c4"
+  },
+  "username": "admin2",
+  "password": {
+    "$binary": {
+      "base64": "JDJiJDEyJEcyd21nN3N3c0FyS1dOWGNhUm1iUE9FbjJWVVhLZFhCUFdKakw2NW5VMGZyMU1uenBMWDhT",
+      "subType": "00"
+    }
+  },
+  "role": "admin",
+  "first_name": "สมนึก",
+  "last_name": "ไม่นึก",
+  "subject": "คณิต",
+  "subject_code": "63000"
+},
+{
+  "_id": {
+    "$oid": "66cb47a09018707f928d9fdd"
+  },
+  "username": "64312550",
+  "password": {
+    "$binary": {
+      "base64": "JDJiJDEyJFlFa1E1OGF5ZnRUc1g5WmxIUmYxRGVZU3hvN294V0JRaUhJaE1nT0pxeUFRVzdjcWVKem5t",
+      "subType": "00"
+    }
+  },
+  "first_name": "เธียร",
+  "last_name": "รอดกนก",
+  "role": "user",
+  "grade_level": "ป.4/2"
+},
+{
+  "_id": {
+    "$oid": "66cb4c149018707f928d9fde"
+  },
+  "username": "64312551",
+  "password": {
+    "$binary": {
+      "base64": "JDJiJDEyJERKYS5YcDNmQW8yQWs0LnVadG5JS09mSklDZ0E1RU9RcEhaREYxOFBPalVCSWxpaVRVV1Rl",
+      "subType": "00"
+    }
+  },
+  "first_name": "ปฏิภาณ",
+  "last_name": "ทัดบ่าย",
+  "role": "user",
+  "grade_level": "ป.4"
+},
+{
+  "_id": {
+    "$oid": "66ccc939512645a916b8bef7"
+  },
+  "username": "64313731",
+  "password": {
+    "$binary": {
+      "base64": "JDJiJDEyJFh6VjRLajFCdUNIcTVwa2ZDT3dpamVyNDJFN3ZnS2IzTnVjNjdxRzd3VnFRanpOc29qaUxh",
+      "subType": "00"
+    }
+  },
+  "first_name": "พลากร",
+  "last_name": "อินทะแสง",
+  "grade_level": "ป.5",
+  "role": "user"
+},
+{
+  "_id": {
+    "$oid": "66d88130ed2a187b21775e90"
+  },
+  "username": "123",
+  "password": {
+    "$binary": {
+      "base64": "JDJiJDEyJHVHT3VVVHRmaTlTZHFsUW8uUzdhMi5pbVhrcEZndGJUelpNNVBtY29rMTVWaEN3bHF1Q3lt",
+      "subType": "00"
+    }
+  },
+  "first_name": "ปกป้อง",
+  "last_name": "ปกติ",
+  "grade_level": "ป.4",
+  "role": "user"
+},
+{
+  "_id": {
+    "$oid": "66da79a8fc39dff23ca18d57"
+  },
+  "username": "001",
+  "password": {
+    "$binary": {
+      "base64": "JDJiJDEyJHVIaTBNOTAuYmhuM2tiWXJxMVp2MWUuNTlxQXBOU1BtVlRmZ2hna0ViRXV2b2NZMGRrejVl",
+      "subType": "00"
+    }
+  },
+  "first_name": "แดง",
+  "last_name": "ดำ",
+  "grade_level": "ป.6",
+  "role": "user"
+},
+{
+  "_id": {
+    "$oid": "66da79b6fc39dff23ca18d58"
+  },
+  "username": "002",
+  "password": {
+    "$binary": {
+      "base64": "JDJiJDEyJEQ4MS9ZZktJOXhKbFh0dmtNcjlhTE9oS3JiUWhLOXpnd3Q4N3F0d2g3UlE4ZkpId05HMWd5",
+      "subType": "00"
+    }
+  },
+  "first_name": "เขียว",
+  "last_name": "ฟ้า",
+  "grade_level": "ป.6",
+  "role": "user"
+},
+{
+  "_id": {
+    "$oid": "66da79c4fc39dff23ca18d59"
+  },
+  "username": "003",
+  "password": {
+    "$binary": {
+      "base64": "JDJiJDEyJGs3Qi5SNmRuUVpjazBnSDNCU2JtZC5YeWVIaHJyM2Q1R3hBU09LOTVOTUxNanVFb1Bzd1JH",
+      "subType": "00"
+    }
+  },
+  "first_name": "เขียว",
+  "last_name": "ฟ้า",
+  "grade_level": "ป.5",
+  "role": "user"
+},
+{
+  "_id": {
+    "$oid": "66e9c87421323c1e5bf489ec"
+  },
+  "username": "004",
+  "password": {
+    "$binary": {
+      "base64": "JDJiJDEyJHA2cHZ3T3Ntazk4dGhweXpvMGNXOWVhTjRGa0ROT2puRG1yR3JGNjdTQzQuQ3g1MXRuMEcu",
+      "subType": "00"
+    }
+  },
+  "first_name": "สมชาย",
+  "last_name": "ปกติ",
+  "grade_level": "ป.6",
+  "role": "user"
+},
+{
+  "_id": {
+    "$oid": "66f92a6ac7f3724114da4b29"
+  },
+  "username": "088",
+  "password": {
+    "$binary": {
+      "base64": "JDJiJDEyJE91QlkxR2V0VlNNWi9hM1QwQmQvVnVYSnJ4bHZNL0V6cFRCLzZuNzR4a3FId3BRLmlOYVpH",
+      "subType": "00"
+    }
+  },
+  "first_name": "ปฏิพัน",
+  "last_name": "เมี่ยงคำ",
+  "grade_level": "ป.3",
+  "role": "user"
+},
+{
+  "_id": {
+    "$oid": "66f92a82c7f3724114da4b2a"
+  },
+  "username": "sir",
+  "password": {
+    "$binary": {
+      "base64": "JDJiJDEyJEIvc3BuSk50TURsRzF1anFvQlVBY3VzQTR4ZlQ1eHJXa3JJc2FOQnhtNjNXYUhhOHJsYzE2",
+      "subType": "00"
+    }
+  },
+  "first_name": "koon",
+  "last_name": "yotin",
+  "grade_level": "ป.3/2",
+  "role": "user"
+},
+{
+  "_id": {
+    "$oid": "66fb7fd202dc4858c183e38e"
+  },
+  "username": "666",
+  "password": {
+    "$binary": {
+      "base64": "JDJiJDEyJGM2Y0xoZTh4L3dscE1HWURzRGFPTmVuM0xaLmt5S1MyQXdlOXpCUGc1S0UuWDVPQVlrQkg2",
+      "subType": "00"
+    }
+  },
+  "first_name": "สหม",
+  "last_name": "เกเร",
+  "grade_level": "ป.6",
+  "role": "user"
+},
+{
+  "_id": {
+    "$oid": "66fd344b49dca7cfad83a284"
+  },
+  "username": "zzz",
+  "password": {
+    "$binary": {
+      "base64": "JDJiJDEyJC9NZHZIZDNmMzF5WTh4eVdOUk53aXVxSHJ3Ty9HdWJ5VFdlTi5Ca3RHY29GdFFNNjdXLzZT",
+      "subType": "00"
+    }
+  },
+  "first_name": "Zero",
+  "last_name": "Dop",
+  "grade_level": "ป.4",
+  "role": "user",
+  "admin_id": {
+    "$oid": "66fd344b49dca7cfad83a283"
+  }
+},
+{
+  "_id": {
+    "$oid": "66fd3cba663efd8c19dc4e2e"
+  },
+  "username": "643123",
+  "password": {
+    "$binary": {
+      "base64": "JDJiJDEyJDlXWHAwMmhJcC9pL01tbU9ma1V6UnUyb2d0Z1Z0aUFwNlRGMnZ4ZkF5eUpHWE5Lejd3d2Qy",
+      "subType": "00"
+    }
+  },
+  "first_name": "ชิน",
+  "last_name": "เอย์",
+  "grade_level": "ป.5",
+  "role": "user",
+  "admin_id": {
+    "$oid": "66fd3cba663efd8c19dc4e2d"
+  }
+},
+{
+  "_id": {
+    "$oid": "66ffa548353ffd3492324cd5"
+  },
+  "username": "qqq",
+  "password": {
+    "$binary": {
+      "base64": "JDJiJDEyJG56ckhPT2dzQjBqWjZRNTRXOXRmVE94L0FROHVyeURUZklwNmtLWjVzeENZSlJVWWFtenNT",
+      "subType": "00"
+    }
+  },
+  "first_name": "ปัญญากอน",
+  "last_name": "เอ",
+  "grade_level": "ป.6",
+  "number": "1",
+  "role": "user",
+  "admin_id": {
+    "$oid": "66c710eae22d5a0ca27b52c4"
+  }
+},
+{
+  "_id": {
+    "$oid": "66ffa809ac95d5713299b74d"
+  },
+  "username": "221",
+  "password": {
+    "$binary": {
+      "base64": "JDJiJDEyJDQybHlCMjVPcVhZUUlMZi9CTWtHTi5lTFRjVElOZ3dCREdkYm5yMEtIc0x4VWxoTkhndlNP",
+      "subType": "00"
+    }
+  },
+  "first_name": "ทักสน",
+  "last_name": "เกเก",
+  "grade_level": "ป.5",
+  "number": 1,
+  "role": "user",
+  "admin_id": {
+    "$oid": "66c710eae22d5a0ca27b52c4"
+  }
+},
+{
+  "_id": {
+    "$oid": "67000bbbcc19667ae35244a5"
+  },
+  "username": "simp",
+  "password": {
+    "$binary": {
+      "base64": "JDJiJDEyJGoudmdtazZteWJzc3RySEdVU21sUGVQb1hkRFBSeS5neDZjZVJxZ2VjS0Ntb1dLQnJjd0d5",
+      "subType": "00"
+    }
+  },
+  "first_name": "xin",
+  "last_name": "xiao",
+  "grade_level": "ป.6",
+  "number": 3,
+  "role": "user",
+  "admin_id": {
+    "$oid": "66c710eae22d5a0ca27b52c4"
+  }
+},
+{
+  "_id": {
+    "$oid": "67010e91615312a6a45dc348"
+  },
+  "username": "333",
+  "password": {
+    "$binary": {
+      "base64": "JDJiJDEyJENRZzBVVG5Cbm10a20uenhCYjlZeWVuL2pZRGJiekQ2b1VORWFBOXc2aFBDdWxqWW5vMGFt",
+      "subType": "00"
+    }
+  },
+  "first_name": "จู่โจม",
+  "last_name": "ปกติ",
+  "grade_level": "ป.6",
+  "number": "4",
+  "role": "user",
+  "admin_id": {
+    "$oid": "66c710eae22d5a0ca27b52c4"
+  }
+},
+{
+  "_id": {
+    "$oid": "67063030cfd6cdc43c783837"
+  },
+  "username": "dek1",
+  "password": {
+    "$binary": {
+      "base64": "JDJiJDEyJDNLYk1rUkFjTTlZYnJKaFpxUlV3Vk96QW5pN0xtSXNtR3NWSUhUd0dyY1ZoZkFCODJxWkpX",
+      "subType": "00"
+    }
+  },
+  "first_name": "ไปร์ท",
+  "last_name": "เห",
+  "grade_level": "ป.6",
+  "number": 5,
+  "role": "user",
+  "admin_id": {
+    "$oid": "66c710eae22d5a0ca27b52c4"
+  }
+},
+{
+  "_id": {
+    "$oid": "6706f33f73f4c3d096055e1a"
+  },
+  "username": "p1",
+  "password": {
+    "$binary": {
+      "base64": "JDJiJDEyJDd2MEdvano3OVMvdjhaQ0JFYkczSC55QnRPWUsudDRRQnpjaDhUajNnT0hZWXdwVE9uTm1t",
+      "subType": "00"
+    }
+  },
+  "first_name": "เอ",
+  "last_name": "สี่",
+  "grade_level": "ป.4",
+  "number": 1,
+  "role": "user",
+  "admin_id": {
+    "$oid": "66c61bca2f0f8243a7fab4a9"
+  }
+},
+{
+  "_id": {
+    "$oid": "6708447a10afcb81c87f392e"
+  },
+  "username": "p2",
+  "password": {
+    "$binary": {
+      "base64": "JDJiJDEyJENLTS4wZnMvdUhjclc2UlgxWHpJZk9TNzUwT2xycnBqWWdlVS4zLy5xMFFMdXFqOWFzNy42",
+      "subType": "00"
+    }
+  },
+  "first_name": "สอง",
+  "last_name": "บี",
+  "grade_level": "ป.4",
+  "number": 2,
+  "role": "user",
+  "admin_id": {
+    "$oid": "66c61bca2f0f8243a7fab4a9"
+  }
+},
+{
+  "_id": {
+    "$oid": "670844bd10afcb81c87f392f"
+  },
+  "username": "p3",
+  "password": {
+    "$binary": {
+      "base64": "JDJiJDEyJFFCdEhVTjJpUmFGVlU1aDhlbjcwMy5lSXFoUG9RbE1oOEl5RHBUQWRaa0dlU0dmb2RtOUpL",
+      "subType": "00"
+    }
+  },
+  "first_name": "อี",
+  "last_name": "สาม",
+  "grade_level": "ป.4",
+  "number": 3,
+  "role": "user",
+  "admin_id": {
+    "$oid": "66c61bca2f0f8243a7fab4a9"
+  }
+},
+{
+  "_id": {
+    "$oid": "670844db10afcb81c87f3930"
+  },
+  "username": "p4",
+  "password": {
+    "$binary": {
+      "base64": "JDJiJDEyJE5ITFhzTDFnTUIuSWxIVlVUNExqOGUxaTQuMGczWERaelQvWnhCMlBIR2hkZkFZZ1prNmxL",
+      "subType": "00"
+    }
+  },
+  "first_name": "ชาย",
+  "last_name": "สี่",
+  "grade_level": "ป.4",
+  "number": 4,
+  "role": "user",
+  "admin_id": {
+    "$oid": "66c61bca2f0f8243a7fab4a9"
+  }
+},
+{
+  "_id": {
+    "$oid": "6708456110afcb81c87f3931"
+  },
+  "username": "p5",
+  "password": {
+    "$binary": {
+      "base64": "JDJiJDEyJDZnRFJRVmR3TEFvVWt4bVgza2NNaGUwc040WXpLWUJYWkdFTWZWUC9RbWdackNIeXpBVXJP",
+      "subType": "00"
+    }
+  },
+  "first_name": "ห้า",
+  "last_name": "ร้อย",
+  "grade_level": "ป.4",
+  "number": 5,
+  "role": "user",
+  "admin_id": {
+    "$oid": "66c61bca2f0f8243a7fab4a9"
+  }
+},
+{
+  "_id": {
+    "$oid": "6708457d10afcb81c87f3932"
+  },
+  "username": "p6",
+  "password": {
+    "$binary": {
+      "base64": "JDJiJDEyJEZndEd3cTVJdUY0TGJ0Q3BEZGdEcy5xS1U0dEwyYkJRT2dnS2JhbWt6ZzRIaHZ4U2tsNGpt",
+      "subType": "00"
+    }
+  },
+  "first_name": "หก",
+  "last_name": "เก้า",
+  "grade_level": "ป.4",
+  "number": 6,
+  "role": "user",
+  "admin_id": {
+    "$oid": "66c61bca2f0f8243a7fab4a9"
+  }
+},
+{
+  "_id": {
+    "$oid": "67092b0e65359887c26578a4"
+  },
+  "username": "admin0",
+  "password": {
+    "$binary": {
+      "base64": "JDJiJDEyJFp3VHpYU3ptYTFDV01OeHJNYVBsbGVHVVVJS21ZZmhoN2RHRXUwaXE5VHRjdEdDRWJMMXFt",
+      "subType": "00"
+    }
+  },
+  "role": "admin_0"
+},
+{
+  "_id": {
+    "$oid": "670932aa1c4e40031f09c382"
+  },
+  "username": "admin3",
+  "password": {
+    "$binary": {
+      "base64": "JDJiJDEyJEZxV1lsZ29EUm5XZ2N1TlE0d05ZVS5zczNLblE3UzJaSGZna0JILzdOYlFOd2R1RXFMWGR1",
+      "subType": "00"
+    }
+  },
+  "role": "admin",
+  "first_name": "ปาร์ค",
+  "last_name": "จงกอน",
+  "subject": "คณิตศาสตร์",
+  "subject_code": "63000"
+},
+{
+  "_id": {
+    "$oid": "670a0a24011ddb626a063ba1"
+  },
+  "username": "222",
+  "password": {
+    "$binary": {
+      "base64": "JDJiJDEyJFZPUTNxaG9PS0FCLnhHaWlMZW5RSWVuLktLN2FFWHZ4aXo3UG1zazdLMk4yalN1akxBSUwu",
+      "subType": "00"
+    }
+  },
+  "first_name": "เอ",
+  "last_name": "บีซี",
+  "grade_level": "ป.5",
+  "number": "2",
+  "role": "user",
+  "admin_id": {
+    "$oid": "66c710eae22d5a0ca27b52c4"
+  }
+},
+{
+  "_id": {
+    "$oid": "670a0c1c011ddb626a063ba3"
+  },
+  "username": "444",
+  "password": {
+    "$binary": {
+      "base64": "JDJiJDEyJEZ3VGxmbXprbnN0QVdBbG9aOHVhWWVSMHFvbWVXZE1DNHlGSjZLd1Bqdi9BNTJZOWpBLmVD",
+      "subType": "00"
+    }
+  },
+  "first_name": "สหพัน",
+  "last_name": "สเตดอก",
+  "grade_level": "ป.5",
+  "number": "3",
+  "role": "user",
+  "admin_id": {
+    "$oid": "66c710eae22d5a0ca27b52c4"
+  }
+},
+{
+  "_id": {
+    "$oid": "670a219e1e7d5cecdae868b6"
+  },
+  "username": "tester",
+  "password": {
+    "$binary": {
+      "base64": "JDJiJDEyJHREOTF0R0lBdUhrU3JGREQ1TEdsUk8vOGtLMWo1VFI1WmwyVXc5Z2FjVUt6QXdCRHpLQzJp",
+      "subType": "00"
+    }
+  },
+  "first_name": "เธียร",
+  "last_name": "รอกนก",
+  "grade_level": "ป.6",
+  "number": 7,
+  "role": "user",
+  "admin_id": {
+    "$oid": "66c710eae22d5a0ca27b52c4"
+  }
+},
+{
+  "_id": {
+    "$oid": "670a30aaef3a6c23db519296"
+  },
+  "username": "01",
+  "password": {
+    "$binary": {
+      "base64": "JDJiJDEyJHpFTU9hd3VCRkNBY1JleFRGTVZ5VC5TbFZIQ2xxSDVVTEhyMDRHV0RuUzU1aG5yczJzOTdL",
+      "subType": "00"
+    }
+  },
+  "first_name": "ปป",
+  "last_name": "ปผผ",
+  "grade_level": "ป.6",
+  "number": 8,
+  "role": "user",
+  "admin_id": {
+    "$oid": "66c710eae22d5a0ca27b52c4"
+  }
+},
+{
+  "_id": {
+    "$oid": "670a3211af0420ba0dcbed89"
+  },
+  "username": "02",
+  "password": {
+    "$binary": {
+      "base64": "JDJiJDEyJEZhd3l2SXZLanVFWWxxamIvQ1cvS3VwaklLdWZ3Tnp2SzMuQUtUM3laRE80dGtCTE1GZE4u",
+      "subType": "00"
+    }
+  },
+  "first_name": "เซโร่",
+  "last_name": "ทู",
+  "grade_level": "ป.6",
+  "number": "2",
+  "role": "user",
+  "admin_id": {
+    "$oid": "66c710eae22d5a0ca27b52c4"
+  }
+},
+{
+  "_id": {
+    "$oid": "670b78fe1bb0d28353c152a6"
+  },
+  "username": "10001",
+  "password": {
+    "$binary": {
+      "base64": "JDJiJDEyJFdRRWxxb1ZvTU53elVzOE16b0tkYS54aVVuRzJSUXRaN3VGWFBqSVdMbTZTSGFLR0VNZkl1",
+      "subType": "00"
+    }
+  },
+  "first_name": "กระเบื้อง",
+  "last_name": "โต๊ะไม้",
+  "grade_level": "ป.1",
+  "number": 1,
+  "role": "user",
+  "admin_id": {
+    "$oid": "66c710eae22d5a0ca27b52c4"
+  }
+},
+{
+  "_id": {
+    "$oid": "670b9a721bb0d28353c152ab"
+  },
+  "username": "yes",
+  "password": {
+    "$binary": {
+      "base64": "JDJiJDEyJGh4SXdwSnlZeldMb1ZFeUMxeFZPa2U1NXZaZTIuejdSdVpMb0xOSmxWWTJzRXBzc1ZyVnoy",
+      "subType": "00"
+    }
+  },
+  "first_name": "Skibidi",
+  "last_name": "Dopdop",
+  "grade_level": "ป.1",
+  "number": 2,
+  "role": "user",
+  "admin_id": {
+    "$oid": "66c710eae22d5a0ca27b52c4"
+  }
+},
+{
+  "_id": {
+    "$oid": "670ee56077e7c06ae2d0ea2e"
+  },
+  "username": "stu01",
+  "password": {
+    "$binary": {
+      "base64": "JDJiJDEyJE5vUnNoUTE0SzRzeWJyQnFxcVFCeXU5alZCRTdhcHNvWjQ1aVBEblpTTG5GczducWNNZFVX",
+      "subType": "00"
+    }
+  },
+  "first_name": "ทด",
+  "last_name": "สอบ",
+  "grade_level": "ป.1",
+  "number": 3,
+  "role": "user",
+  "admin_id": {
+    "$oid": "66c710eae22d5a0ca27b52c4"
+  }
+}]

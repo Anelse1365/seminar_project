@@ -1,0 +1,1581 @@
+[{
+  "_id": {
+    "$oid": "66d600b701d9498c92152427"
+  },
+  "exercise_id": {
+    "$oid": "66c316f495b9a32e852d32a3"
+  },
+  "student_id": "64312550",
+  "student_name": "เธียร รอดกนก",
+  "grade_level": "ป.4",
+  "submission_date": "03/09/2024 01:15",
+  "total_score": 7,
+  "max_score": 10,
+  "results": [
+    {
+      "question": "80 + 30 =",
+      "user_answer": "110",
+      "correct_answer": "110",
+      "is_correct": true,
+      "score": 3
+    },
+    {
+      "question": "ผมมีเงิน 30 บาท พ่อมี 50 บาท \r\n",
+      "user_answer": "3",
+      "correct_answer": "3",
+      "is_correct": true,
+      "score": 4
+    },
+    {
+      "question": "คิม สมิธ บาส มีน้ำหนัก 18, 7, 1 ตามลำดับ น้ำหนักเฉลี่ยของเด็กทั้งกลุ่มเท่ากับกี่กิโลกรัม",
+      "user_answer": "55",
+      "correct_answer": "8.67",
+      "is_correct": false,
+      "score": 0
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "66d88097ed2a187b21775e8f"
+  },
+  "exercise_id": {
+    "$oid": "66c978f7839e5b17e8274c4a"
+  },
+  "student_id": "64312550",
+  "student_name": "เธียร รอดกนก",
+  "grade_level": "ป.4",
+  "submission_date": "04/09/2024 22:45",
+  "total_score": 1,
+  "max_score": 3,
+  "results": [
+    {
+      "question": "80 + 30 =",
+      "user_answer": "110",
+      "correct_answer": "110",
+      "is_correct": true,
+      "score": 1
+    },
+    {
+      "question": "80 + 30 =",
+      "user_answer": "20",
+      "correct_answer": "110",
+      "is_correct": false,
+      "score": 0
+    },
+    {
+      "question": "3 + 2 = ?",
+      "user_answer": "3",
+      "correct_answer": "5",
+      "is_correct": false,
+      "score": 0
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "66d8813ced2a187b21775e91"
+  },
+  "exercise_id": {
+    "$oid": "66c316f495b9a32e852d32a3"
+  },
+  "student_id": "123",
+  "student_name": "ปกป้อง ปกติ",
+  "grade_level": "ป.3",
+  "submission_date": "04/09/2024 22:48",
+  "total_score": 0,
+  "max_score": 3,
+  "results": [
+    {
+      "question": "80 + 30 =",
+      "user_answer": "20",
+      "correct_answer": "110",
+      "is_correct": false,
+      "score": 0
+    },
+    {
+      "question": "ผมมีเงิน 30 บาท พ่อมี 50 บาท \r\n",
+      "user_answer": "30",
+      "correct_answer": "3",
+      "is_correct": false,
+      "score": 0
+    },
+    {
+      "question": "สมปอง บาส โจ มีน้ำหนัก 16, 6, 7 ตามลำดับ น้ำหนักเฉลี่ยของเด็กทั้งกลุ่มเท่ากับกี่กิโลกรัม",
+      "user_answer": "22",
+      "correct_answer": "9.67",
+      "is_correct": false,
+      "score": 0
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "66d88147ed2a187b21775e92"
+  },
+  "exercise_id": {
+    "$oid": "66c978f7839e5b17e8274c4a"
+  },
+  "student_id": "123",
+  "student_name": "ปกป้อง ปกติ",
+  "grade_level": "ป.3",
+  "submission_date": "04/09/2024 22:48",
+  "total_score": 2,
+  "max_score": 3,
+  "results": [
+    {
+      "question": "80 + 30 =",
+      "user_answer": "110",
+      "correct_answer": "110",
+      "is_correct": true,
+      "score": 1
+    },
+    {
+      "question": "80 + 30 =",
+      "user_answer": "110",
+      "correct_answer": "110",
+      "is_correct": true,
+      "score": 1
+    },
+    {
+      "question": "3 + 2 = ?",
+      "user_answer": "10",
+      "correct_answer": "5",
+      "is_correct": false,
+      "score": 0
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "66d889f6fd1584646319a497"
+  },
+  "exercise_id": {
+    "$oid": "66cb80457b3ed6e73c6a16c5"
+  },
+  "quiz_name": "โจทย์5",
+  "student_id": "123",
+  "student_name": "ปกป้อง ปกติ",
+  "grade_level": "ป.3",
+  "submission_date": "04/09/2024 23:25",
+  "total_score": 0,
+  "max_score": 3,
+  "results": [
+    {
+      "question": "นำผลไม้ องุ่น มาจำนวน 1 ผล โดยให้แต่ละผลหนัก 20 กิโลกรัม คำนวณน้ำหนักรวมของผลไม้ทั้งหมด",
+      "user_answer": "20",
+      "correct_answer": "1",
+      "is_correct": false,
+      "score": 0
+    },
+    {
+      "question": "80 + 30 =",
+      "user_answer": "20",
+      "correct_answer": "110",
+      "is_correct": false,
+      "score": 0
+    },
+    {
+      "question": "เห้ยๆ ยังสร้างโจทย์ได้อยู่ไหมเนี่ย คิม บอกมาดิ 50+50 ได้เท่าไหร่",
+      "user_answer": "55",
+      "correct_answer": "100",
+      "is_correct": false,
+      "score": 0
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "66d952df53bf0dec1dc121f8"
+  },
+  "exercise_id": {
+    "$oid": "66cb80457b3ed6e73c6a16c5"
+  },
+  "quiz_name": "โจทย์5",
+  "student_id": "64312550",
+  "student_name": "เธียร รอดกนก",
+  "grade_level": "ป.4",
+  "submission_date": "05/09/2024 13:42",
+  "total_score": 0,
+  "max_score": 3,
+  "results": [
+    {
+      "question": "นำผลไม้ องุ่น มาจำนวน 2 ผล โดยให้แต่ละผลหนัก 20 กิโลกรัม คำนวณน้ำหนักรวมของผลไม้ทั้งหมด",
+      "user_answer": "20",
+      "correct_answer": "2",
+      "is_correct": false,
+      "score": 0
+    },
+    {
+      "question": "80 + 30 =",
+      "user_answer": "20",
+      "correct_answer": "110",
+      "is_correct": false,
+      "score": 0
+    },
+    {
+      "question": "เห้ยๆ ยังสร้างโจทย์ได้อยู่ไหมเนี่ย บาส บอกมาดิ 50+50 ได้เท่าไหร่",
+      "user_answer": "66",
+      "correct_answer": "100",
+      "is_correct": false,
+      "score": 0
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "66d9b9e0336a582e7fae621a"
+  },
+  "exercise_id": {
+    "$oid": "66c978f7839e5b17e8274c4a"
+  },
+  "quiz_name": "ชุด6",
+  "student_id": "64313731",
+  "student_name": "พลากร อินทะแสง",
+  "grade_level": "ป.5",
+  "submission_date": "05/09/2024 21:02",
+  "total_score": 3,
+  "max_score": 3,
+  "results": [
+    {
+      "question": "80 + 30 =",
+      "user_answer": "110",
+      "correct_answer": "110",
+      "is_correct": true,
+      "score": 1
+    },
+    {
+      "question": "80 + 30 =",
+      "user_answer": "110",
+      "correct_answer": "110",
+      "is_correct": true,
+      "score": 1
+    },
+    {
+      "question": "3 + 2 = ?",
+      "user_answer": "5",
+      "correct_answer": "5",
+      "is_correct": true,
+      "score": 1
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "66da79e4fc39dff23ca18d5a"
+  },
+  "exercise_id": {
+    "$oid": "66da78fdfc39dff23ca18d55"
+  },
+  "quiz_name": "ข้อสอบ00",
+  "student_id": "001",
+  "student_name": "แดง ดำ",
+  "grade_level": "ป.6",
+  "submission_date": "06/09/2024 10:41",
+  "total_score": 2,
+  "max_score": 10,
+  "results": [
+    {
+      "question": "โจ สมิธ คิม มีน้ำหนัก 2, 18, 11 ตามลำดับ น้ำหนักเฉลี่ยของเด็กทั้งกลุ่มเท่ากับกี่กิโลกรัม",
+      "user_answer": "00",
+      "correct_answer": "10.333333333333334",
+      "is_correct": false,
+      "score": 0
+    },
+    {
+      "question": "80 + 30 =",
+      "user_answer": "110",
+      "correct_answer": "110",
+      "is_correct": true,
+      "score": 2
+    },
+    {
+      "question": "3 + 2 = ?",
+      "user_answer": "60",
+      "correct_answer": "5",
+      "is_correct": false,
+      "score": 0
+    },
+    {
+      "question": "คิม มีเงิน 30 บาท พ่อมี 50 บาท \r\n",
+      "user_answer": "30",
+      "correct_answer": "3",
+      "is_correct": false,
+      "score": 0
+    },
+    {
+      "question": "80 + 30 =",
+      "user_answer": "20",
+      "correct_answer": "110",
+      "is_correct": false,
+      "score": 0
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "66da7a03fc39dff23ca18d5b"
+  },
+  "exercise_id": {
+    "$oid": "66da78fdfc39dff23ca18d55"
+  },
+  "quiz_name": "ข้อสอบ00",
+  "student_id": "002",
+  "student_name": "เขียว ฟ้า",
+  "grade_level": "ป.3",
+  "submission_date": "06/09/2024 10:41",
+  "total_score": 6,
+  "max_score": 10,
+  "results": [
+    {
+      "question": "สมิธ บาส โจ มีน้ำหนัก 14, 4, 11 ตามลำดับ น้ำหนักเฉลี่ยของเด็กทั้งกลุ่มเท่ากับกี่กิโลกรัม",
+      "user_answer": "11",
+      "correct_answer": "9.666666666666666",
+      "is_correct": false,
+      "score": 0
+    },
+    {
+      "question": "80 + 30 =",
+      "user_answer": "50",
+      "correct_answer": "110",
+      "is_correct": false,
+      "score": 0
+    },
+    {
+      "question": "3 + 2 = ?",
+      "user_answer": "5",
+      "correct_answer": "5",
+      "is_correct": true,
+      "score": 2
+    },
+    {
+      "question": "สมิธ มีเงิน 30 บาท พ่อมี 50 บาท \r\n",
+      "user_answer": "3",
+      "correct_answer": "3",
+      "is_correct": true,
+      "score": 2
+    },
+    {
+      "question": "80 + 30 =",
+      "user_answer": "110",
+      "correct_answer": "110",
+      "is_correct": true,
+      "score": 2
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "66da7a13fc39dff23ca18d5c"
+  },
+  "exercise_id": {
+    "$oid": "66da78fdfc39dff23ca18d55"
+  },
+  "quiz_name": "ข้อสอบ00",
+  "student_id": "003",
+  "student_name": "เขียว ฟ้า",
+  "grade_level": "ป.5",
+  "submission_date": "06/09/2024 10:42",
+  "total_score": 4,
+  "max_score": 10,
+  "results": [
+    {
+      "question": "โจ บาส สมปอง มีน้ำหนัก 11, 18, 2 ตามลำดับ น้ำหนักเฉลี่ยของเด็กทั้งกลุ่มเท่ากับกี่กิโลกรัม",
+      "user_answer": "44",
+      "correct_answer": "10.333333333333334",
+      "is_correct": false,
+      "score": 0
+    },
+    {
+      "question": "80 + 30 =",
+      "user_answer": "20",
+      "correct_answer": "110",
+      "is_correct": false,
+      "score": 0
+    },
+    {
+      "question": "3 + 2 = ?",
+      "user_answer": "5",
+      "correct_answer": "5",
+      "is_correct": true,
+      "score": 2
+    },
+    {
+      "question": "สมปอง มีเงิน 30 บาท พ่อมี 50 บาท \r\n",
+      "user_answer": "3",
+      "correct_answer": "3",
+      "is_correct": true,
+      "score": 2
+    },
+    {
+      "question": "80 + 30 =",
+      "user_answer": "50",
+      "correct_answer": "110",
+      "is_correct": false,
+      "score": 0
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "66ddf535ad9daae2b8303a22"
+  },
+  "exercise_id": {
+    "$oid": "66cc8be1bcbe5fdd055f4829"
+  },
+  "quiz_name": "โจทย์7",
+  "student_id": "64313731",
+  "student_name": "พลากร อินทะแสง",
+  "grade_level": "ป.5",
+  "submission_date": "09/09/2024 02:04",
+  "total_score": 1,
+  "max_score": 1,
+  "results": [
+    {
+      "question": "โจ มีเงิน 30 บาท พ่อมี 50 บาท \r\n",
+      "user_answer": "3",
+      "correct_answer": "3",
+      "is_correct": true,
+      "score": 1
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "66de04ff89cc7ee461d3d465"
+  },
+  "exercise_id": {
+    "$oid": "66de045189cc7ee461d3d463"
+  },
+  "quiz_name": "ลองของ",
+  "student_id": "64313731",
+  "student_name": "พลากร อินทะแสง",
+  "grade_level": "ป.5",
+  "submission_date": "09/09/2024 03:11",
+  "total_score": 1,
+  "max_score": 1,
+  "results": [
+    {
+      "question": "25+25 เท่ากับ?",
+      "user_answer": "50",
+      "correct_answer": "50",
+      "is_correct": true,
+      "score": 1
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "66de08573b8efc2af471aba7"
+  },
+  "exercise_id": {
+    "$oid": "66de08153b8efc2af471aba5"
+  },
+  "quiz_name": "ลองของ",
+  "student_id": "64313731",
+  "student_name": "พลากร อินทะแสง",
+  "grade_level": "ป.5",
+  "submission_date": "09/09/2024 03:25",
+  "total_score": 1,
+  "max_score": 1,
+  "results": [
+    {
+      "question": "25+25 เท่ากับ?",
+      "user_answer": "50",
+      "correct_answer": "50",
+      "is_correct": true,
+      "score": 1
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "66deb4cd5dd724cc473100d0"
+  },
+  "exercise_id": {
+    "$oid": "66deb2c15dd724cc473100cd"
+  },
+  "quiz_name": "ลองของ",
+  "student_id": "64313731",
+  "student_name": "พลากร อินทะแสง",
+  "grade_level": "ป.5",
+  "submission_date": "09/09/2024 15:41",
+  "total_score": 1,
+  "max_score": 1,
+  "results": [
+    {
+      "question": "25+25 เท่ากับ?",
+      "user_answer": "50",
+      "correct_answer": "50",
+      "is_correct": true,
+      "score": 1
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "66dee2893b190380938f00f3"
+  },
+  "exercise_id": {
+    "$oid": "66dee2523b190380938f00f1"
+  },
+  "quiz_name": "ลองของ",
+  "student_id": "64313731",
+  "student_name": "พลากร อินทะแสง",
+  "grade_level": "ป.5",
+  "submission_date": "09/09/2024 18:56",
+  "total_score": 1,
+  "max_score": 1,
+  "results": [
+    {
+      "question": "25+25 เท่ากับ?",
+      "user_answer": "50",
+      "correct_answer": "50",
+      "is_correct": true,
+      "score": 1
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "66dee31a3a7d605917da8127"
+  },
+  "exercise_id": {
+    "$oid": "66dee2523b190380938f00f1"
+  },
+  "quiz_name": "ลองของ",
+  "student_id": "64312550",
+  "student_name": "เธียร รอดกนก",
+  "grade_level": "ป.4",
+  "submission_date": "09/09/2024 18:59",
+  "total_score": 0,
+  "max_score": 1,
+  "results": [
+    {
+      "question": "25+25 เท่ากับ?",
+      "user_answer": "66",
+      "correct_answer": "50",
+      "is_correct": false,
+      "score": 0
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "66dfc3065fcb2ba2c6790edc"
+  },
+  "exercise_id": {
+    "$oid": "66c316f495b9a32e852d32a3"
+  },
+  "quiz_name": "ชุด3",
+  "student_id": "64313731",
+  "student_name": "พลากร อินทะแสง",
+  "grade_level": "ป.5",
+  "submission_date": "10/09/2024 10:54",
+  "total_score": 2,
+  "max_score": 3,
+  "results": [
+    {
+      "question": "80 + 30 =",
+      "user_answer": "110",
+      "correct_answer": "110",
+      "is_correct": true,
+      "score": 1
+    },
+    {
+      "question": "ผมมีเงิน 30 บาท พ่อมี 50 บาท \r\n",
+      "user_answer": "3",
+      "correct_answer": "3",
+      "is_correct": true,
+      "score": 1
+    },
+    {
+      "question": "โจ คิม สมปอง มีน้ำหนัก 9, 12, 13 ตามลำดับ น้ำหนักเฉลี่ยของเด็กทั้งกลุ่มเท่ากับกี่กิโลกรัม",
+      "user_answer": "15",
+      "correct_answer": "11.33",
+      "is_correct": false,
+      "score": 0
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "66e71cc2877a7d8532d9ec67"
+  },
+  "exercise_id": {
+    "$oid": "66cb7f7c4d4d579f8a3481de"
+  },
+  "quiz_name": "โจทย์9",
+  "student_id": "001",
+  "student_name": "แดง ดำ",
+  "grade_level": "ป.6",
+  "submission_date": "16/09/2024 00:43",
+  "total_score": 1,
+  "max_score": 1,
+  "results": [
+    {
+      "question": "เห้ยๆ ยังสร้างโจทย์ได้อยู่ไหมเนี่ย บาส บอกมาดิ 50+50 ได้เท่าไหร่",
+      "user_answer": "100",
+      "correct_answer": "100",
+      "is_correct": true,
+      "score": 1
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "66e724fb5641f9f890936e9b"
+  },
+  "exercise_id": {
+    "$oid": "66cb7f7c4d4d579f8a3481de"
+  },
+  "quiz_name": "โจทย์9",
+  "student_id": "003",
+  "student_name": "เขียว ฟ้า",
+  "grade_level": "ป.5",
+  "submission_date": "16/09/2024 01:18",
+  "total_score": 1,
+  "max_score": 1,
+  "results": [
+    {
+      "question": "เห้ยๆ ยังสร้างโจทย์ได้อยู่ไหมเนี่ย บาส บอกมาดิ 50+50 ได้เท่าไหร่",
+      "user_answer": "100",
+      "correct_answer": "100",
+      "is_correct": true,
+      "score": 1
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "66e731f6e119e1ec1f6f054c"
+  },
+  "exercise_id": {
+    "$oid": "66cb7f7c4d4d579f8a3481de"
+  },
+  "active_questions_id": {
+    "$oid": "66e6e319aaeb9416ee7b26e4"
+  },
+  "quiz_name": "โจทย์9",
+  "student_id": "002",
+  "student_name": "เขียว ฟ้า",
+  "grade_level": "ป.6",
+  "submission_date": "16/09/2024 02:13",
+  "total_score": 1,
+  "max_score": 1,
+  "results": [
+    {
+      "question": "เห้ยๆ ยังสร้างโจทย์ได้อยู่ไหมเนี่ย โจ บอกมาดิ 50+50 ได้เท่าไหร่",
+      "user_answer": "100",
+      "correct_answer": "100",
+      "is_correct": true,
+      "score": 1
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "66e9c88921323c1e5bf489ed"
+  },
+  "exercise_id": {
+    "$oid": "66cb7f7c4d4d579f8a3481de"
+  },
+  "active_questions_id": {
+    "$oid": "66e6e319aaeb9416ee7b26e4"
+  },
+  "quiz_name": "โจทย์9",
+  "student_id": "004",
+  "student_name": "สมชาย ปกติ",
+  "grade_level": "ป.6",
+  "submission_date": "18/09/2024 01:20",
+  "total_score": 0,
+  "max_score": 1,
+  "results": [
+    {
+      "question": "เห้ยๆ ยังสร้างโจทย์ได้อยู่ไหมเนี่ย คิม บอกมาดิ 50+50 ได้เท่าไหร่",
+      "user_answer": "33",
+      "correct_answer": "100",
+      "is_correct": false,
+      "score": 0
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "66e9c8fd21323c1e5bf489ef"
+  },
+  "exercise_id": {
+    "$oid": "66cc8be1bcbe5fdd055f4829"
+  },
+  "active_questions_id": {
+    "$oid": "66e6e0a5a6eef32fd54fe38d"
+  },
+  "quiz_name": "โจทย์7",
+  "student_id": "004",
+  "student_name": "สมชาย ปกติ",
+  "grade_level": "ป.6",
+  "submission_date": "18/09/2024 01:22",
+  "total_score": 1,
+  "max_score": 1,
+  "results": [
+    {
+      "question": "สมิธ มีเงิน 30 บาท พ่อมี 50 บาท \r\n",
+      "user_answer": "3",
+      "correct_answer": "3",
+      "is_correct": true,
+      "score": 1
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "66e9c90f21323c1e5bf489f0"
+  },
+  "exercise_id": {
+    "$oid": "66cc8be1bcbe5fdd055f4829"
+  },
+  "active_questions_id": {
+    "$oid": "66e6e0a5a6eef32fd54fe38d"
+  },
+  "quiz_name": "โจทย์7",
+  "student_id": "002",
+  "student_name": "เขียว ฟ้า",
+  "grade_level": "ป.6",
+  "submission_date": "18/09/2024 01:23",
+  "total_score": 0,
+  "max_score": 1,
+  "results": [
+    {
+      "question": "คิม มีเงิน 30 บาท พ่อมี 50 บาท \r\n",
+      "user_answer": "25",
+      "correct_answer": "3",
+      "is_correct": false,
+      "score": 0
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "66eda11cac1f7c019ef6e79d"
+  },
+  "exercise_id": {
+    "$oid": "66c978f7839e5b17e8274c4a"
+  },
+  "active_questions_id": {
+    "$oid": "66ed46228a37263b085f35bf"
+  },
+  "quiz_name": "ชุด6",
+  "student_id": "002",
+  "student_name": "เขียว ฟ้า",
+  "grade_level": "ป.6",
+  "submission_date": "20/09/2024 23:21",
+  "total_score": 3,
+  "max_score": 3,
+  "results": [
+    {
+      "question": "80 + 30 =",
+      "user_answer": "110",
+      "correct_answer": "110",
+      "is_correct": true,
+      "score": 1
+    },
+    {
+      "question": "80 + 30 =",
+      "user_answer": "110",
+      "correct_answer": "110",
+      "is_correct": true,
+      "score": 1
+    },
+    {
+      "question": "3 + 2 = ?",
+      "user_answer": "5",
+      "correct_answer": "5",
+      "is_correct": true,
+      "score": 1
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "66eda68f0b9147f718d68c98"
+  },
+  "exercise_id": {
+    "$oid": "66c978f7839e5b17e8274c4a"
+  },
+  "active_questions_id": {
+    "$oid": "66eda354be4831b7dff8f7d2"
+  },
+  "quiz_name": "ชุด6",
+  "student_id": "006",
+  "student_name": "กากังกุ กากากัง",
+  "grade_level": "ป.5",
+  "submission_date": "20/09/2024 23:45",
+  "total_score": 2,
+  "max_score": 3,
+  "results": [
+    {
+      "question": "80 + 30 =",
+      "user_answer": "110",
+      "correct_answer": "110",
+      "is_correct": true,
+      "score": 1
+    },
+    {
+      "question": "80 + 30 =",
+      "user_answer": "110",
+      "correct_answer": "110",
+      "is_correct": true,
+      "score": 1
+    },
+    {
+      "question": "3 + 2 = ?",
+      "user_answer": "10",
+      "correct_answer": "5",
+      "is_correct": false,
+      "score": 0
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "66f3ec0cf0fa6f82ea179b63"
+  },
+  "exercise_id": {
+    "$oid": "66f29d9f13a97a7c9a5cc1fa"
+  },
+  "active_questions_id": {
+    "$oid": "66f3ebe5f0fa6f82ea179b62"
+  },
+  "quiz_name": "บวกลบคูณหาร",
+  "student_id": "002",
+  "student_name": "เขียว ฟ้า",
+  "grade_level": "ป.6",
+  "submission_date": "25/09/2024 17:55",
+  "total_score": 1,
+  "max_score": 2,
+  "results": [
+    {
+      "question": "เห้ยๆ ยังสร้างโจทย์ได้อยู่ไหมเนี่ย บาส บอกมาดิ 50+50 ได้เท่าไหร่",
+      "user_answer": "ไม่บอก",
+      "correct_answer": "100",
+      "is_correct": false,
+      "score": 0
+    },
+    {
+      "question": "80 + 30 =",
+      "user_answer": "110",
+      "correct_answer": "110",
+      "is_correct": true,
+      "score": 1
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "66fb7f3902dc4858c183e38d"
+  },
+  "exercise_id": {
+    "$oid": "66f29d9f13a97a7c9a5cc1fa"
+  },
+  "active_questions_id": {
+    "$oid": "66f3ebe5f0fa6f82ea179b62"
+  },
+  "quiz_name": "บวกลบคูณหาร",
+  "student_id": "001",
+  "student_name": "แดง ดำ",
+  "grade_level": "ป.6",
+  "submission_date": "01/10/2024 11:48",
+  "total_score": 2,
+  "max_score": 2,
+  "results": [
+    {
+      "question": "เห้ยๆ ยังสร้างโจทย์ได้อยู่ไหมเนี่ย โจ บอกมาดิ 50+50 ได้เท่าไหร่",
+      "user_answer": "100",
+      "correct_answer": "100",
+      "is_correct": true,
+      "score": 1
+    },
+    {
+      "question": "80 + 30 =",
+      "user_answer": "110",
+      "correct_answer": "110",
+      "is_correct": true,
+      "score": 1
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "66fb80b602dc4858c183e38f"
+  },
+  "exercise_id": {
+    "$oid": "66f29d9f13a97a7c9a5cc1fa"
+  },
+  "active_questions_id": {
+    "$oid": "66f3ebe5f0fa6f82ea179b62"
+  },
+  "quiz_name": "บวกลบคูณหาร",
+  "student_id": "666",
+  "student_name": "สหม เกเร",
+  "grade_level": "ป.6",
+  "submission_date": "01/10/2024 11:55",
+  "total_score": 1,
+  "max_score": 2,
+  "results": [
+    {
+      "question": "เห้ยๆ ยังสร้างโจทย์ได้อยู่ไหมเนี่ย โจ บอกมาดิ 50+50 ได้เท่าไหร่",
+      "user_answer": "123",
+      "correct_answer": "100",
+      "is_correct": false,
+      "score": 0
+    },
+    {
+      "question": "80 + 30 =",
+      "user_answer": "110",
+      "correct_answer": "110",
+      "is_correct": true,
+      "score": 1
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "670014cacc19667ae35244ab"
+  },
+  "exercise_id": {
+    "$oid": "66cb7f7c4d4d579f8a3481de"
+  },
+  "active_questions_id": {
+    "$oid": "66e6e319aaeb9416ee7b26e4"
+  },
+  "quiz_name": "โจทย์9",
+  "student_id": "simp",
+  "student_name": "xin xiao",
+  "grade_level": "ป.6",
+  "submission_date": "04/10/2024 23:16",
+  "total_score": 0,
+  "max_score": 1,
+  "time_taken": 0,
+  "results": [
+    {
+      "question": "เห้ยๆ ยังสร้างโจทย์ได้อยู่ไหมเนี่ย คิม บอกมาดิ 50+50 ได้เท่าไหร่",
+      "user_answer": "",
+      "correct_answer": "100",
+      "is_correct": false,
+      "score": 0
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "67001724dc36c928d34d05d3"
+  },
+  "exercise_id": {
+    "$oid": "66cb7f7c4d4d579f8a3481de"
+  },
+  "active_questions_id": {
+    "$oid": "66e6e319aaeb9416ee7b26e4"
+  },
+  "quiz_name": "โจทย์9",
+  "student_id": "qqq",
+  "student_name": "ปัญญากอน เอ",
+  "grade_level": "ป.6",
+  "submission_date": "04/10/2024 23:26",
+  "total_score": 0,
+  "max_score": 1,
+  "results": [
+    {
+      "question": "เห้ยๆ ยังสร้างโจทย์ได้อยู่ไหมเนี่ย คิม บอกมาดิ 50+50 ได้เท่าไหร่",
+      "user_answer": "",
+      "correct_answer": "100",
+      "is_correct": false,
+      "score": 0
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "67062f7acfd6cdc43c783836"
+  },
+  "exercise_id": {
+    "$oid": "66fd963becc4a47fb318cf12"
+  },
+  "active_questions_id": {
+    "$oid": "66fd98c08d3a62e3eef6831b"
+  },
+  "quiz_name": "โคตรข้อสอบ",
+  "student_id": "64313731",
+  "student_name": "พลากร อินทะแสง",
+  "grade_level": "ป.5",
+  "submission_date": "09/10/2024 14:23",
+  "total_score": 2,
+  "max_score": 2,
+  "results": [
+    {
+      "question": "เจด หิวก๋วยเตี๋ยวเลยไปซื้อก๋วยเตี๋ยวมา 25 บาท ถ้า เจด มีเงิน 50 บาท เจด จะเหลือเงินเท่าไหร่",
+      "user_answer": "25",
+      "correct_answer": "25",
+      "is_correct": true,
+      "score": 1
+    },
+    {
+      "question": "คิม มีเงิน 30 บาท พ่อมี 50 บาท \r\n",
+      "user_answer": "3",
+      "correct_answer": "3",
+      "is_correct": true,
+      "score": 1
+    }
+  ],
+  "time": 0,
+  "take_time": 0
+},
+{
+  "_id": {
+    "$oid": "6706f3ba73f4c3d096055e1c"
+  },
+  "exercise_id": {
+    "$oid": "6706f26873f4c3d096055e19"
+  },
+  "active_questions_id": {
+    "$oid": "6706f36373f4c3d096055e1b"
+  },
+  "quiz_name": "ทดสอบ",
+  "student_id": "p1",
+  "student_name": "เอ สี่",
+  "grade_level": "ป.4",
+  "submission_date": "10/10/2024 04:20",
+  "total_score": 0,
+  "max_score": 5,
+  "results": [
+    {
+      "question": "1 สัปดาห์มี 7 วัน แล้ว 52 วัน เป็นกี่สัปดาห์ (ไม่มีทศนิยม)",
+      "user_answer": "10",
+      "correct_answer": "7.428571428571429",
+      "is_correct": false,
+      "score": 0
+    },
+    {
+      "question": "เจ็ค มีเงิน 48 คิม มีเงิน 38 และบาส มีเงิน 79 หากทั้ง 3 รวมเงินทั้งหมดด้วยกันจะมีเงินเฉลี่ยเท่าไหร่(มีทศนิยม 2 ตำแหน่ง)",
+      "user_answer": "25.12",
+      "correct_answer": "55.00",
+      "is_correct": false,
+      "score": 0
+    },
+    {
+      "question": "ถ้า บาส มีเงิน 182 แล้ว ซื้อปลามาจำนวน 5 ตัว ราคาตัวละ 28 บาส จะเหลือเงินกี่บาท",
+      "user_answer": "54",
+      "correct_answer": "42",
+      "is_correct": false,
+      "score": 0
+    },
+    {
+      "question": "พ่อมีเงิน 180แบ่งให้ลูกทั้ง 3 คนเท่าๆกัน จะได้เงินคนละเท่าไหร่",
+      "user_answer": "70",
+      "correct_answer": "60.0",
+      "is_correct": false,
+      "score": 0
+    },
+    {
+      "question": "<obj1.a>ราคา<obj1.last>ละ 8 มีลูกค้าต้องการซื้อจำนวน 19 <obj1.last> คิดเป็นเงินเท่าไหร่",
+      "user_answer": "135",
+      "correct_answer": "152",
+      "is_correct": false,
+      "score": 0
+    }
+  ],
+  "time": 3600,
+  "take_time": 41
+},
+{
+  "_id": {
+    "$oid": "6706f56273f4c3d096055e20"
+  },
+  "exercise_id": {
+    "$oid": "6706f4e473f4c3d096055e1e"
+  },
+  "active_questions_id": {
+    "$oid": "6706f50873f4c3d096055e1f"
+  },
+  "quiz_name": "ทดสอบ",
+  "student_id": "p1",
+  "student_name": "เอ สี่",
+  "grade_level": "ป.4",
+  "submission_date": "10/10/2024 04:28",
+  "total_score": 0,
+  "max_score": 5,
+  "results": [
+    {
+      "question": "1 สัปดาห์มี 7 วัน แล้ว 75 วัน เป็นกี่สัปดาห์ (ไม่มีทศนิยม)",
+      "user_answer": "10",
+      "correct_answer": "11",
+      "is_correct": false,
+      "score": 0
+    },
+    {
+      "question": "<obj1.a>ราคา<obj1.last>ละ 10 มีลูกค้าต้องการซื้อจำนวน 14 <obj1.last> คิดเป็นเงินเท่าไหร่",
+      "user_answer": "168",
+      "correct_answer": "140",
+      "is_correct": false,
+      "score": 0
+    },
+    {
+      "question": "สมิธ มีเงิน 46 บาส มีเงิน 39 และโจ มีเงิน 52 หากทั้ง 3 รวมเงินทั้งหมดด้วยกันจะมีเงินเฉลี่ยเท่าไหร่(มีทศนิยม 2 ตำแหน่ง)",
+      "user_answer": "50.55",
+      "correct_answer": "45.67",
+      "is_correct": false,
+      "score": 0
+    },
+    {
+      "question": "สมิธ มี <obj1.a> อยู่ 10<obj1.last> ราคา 34 บาท และมี <obj2.a> อยู่ 7<obj2.last> ราคา 36 หากรวมผลไม้ด้วยกันและคิดราคาทั้งหมดจะรวมเป็นกี่บาท",
+      "user_answer": "70",
+      "correct_answer": "592",
+      "is_correct": false,
+      "score": 0
+    },
+    {
+      "question": "พ่อมีเงิน 150แบ่งให้ลูกทั้ง 3 คนเท่าๆกัน จะได้เงินคนละเท่าไหร่",
+      "user_answer": "60",
+      "correct_answer": "50.0",
+      "is_correct": false,
+      "score": 0
+    }
+  ],
+  "time": 0,
+  "take_time": 0
+},
+{
+  "_id": {
+    "$oid": "670a36c9245c5b5a7aac7218"
+  },
+  "exercise_id": {
+    "$oid": "6703fb91e12d46487fa0d790"
+  },
+  "active_questions_id": {
+    "$oid": "670a36be245c5b5a7aac7217"
+  },
+  "quiz_name": "ช้อยกับเขียน",
+  "student_id": "qqq",
+  "student_name": "ปัญญากอน เอ",
+  "grade_level": "ป.6",
+  "submission_date": "12/10/2024 15:43",
+  "total_score": 4,
+  "max_score": 8,
+  "results": [
+    {
+      "question": "ให้ x = 14 และ y = 5 คำตอบของ x+y เท่ากับเท่าไหร่?",
+      "user_answer": "19",
+      "correct_answer": "19",
+      "is_correct": true,
+      "score": 4
+    },
+    {
+      "question": "สมปง หิวก๋วยเตี๋ยวเลยไปซื้อก๋วยเตี๋ยวมา 25 บาท ถ้า สมปง มีเงิน 50 บาท สมปง จะเหลือเงินเท่าไหร่",
+      "user_answer": "4",
+      "correct_answer": "25",
+      "is_correct": false,
+      "score": 0
+    }
+  ],
+  "time": 60,
+  "take_time": 3
+},
+{
+  "_id": {
+    "$oid": "670a386d245c5b5a7aac7219"
+  },
+  "exercise_id": {
+    "$oid": "6703fb91e12d46487fa0d790"
+  },
+  "active_questions_id": {
+    "$oid": "670a36be245c5b5a7aac7217"
+  },
+  "quiz_name": "ช้อยกับเขียน",
+  "student_id": "02",
+  "student_name": "เซโร่ ทู",
+  "grade_level": "ป.6",
+  "submission_date": "12/10/2024 15:50",
+  "total_score": 4,
+  "max_score": 8,
+  "results": [
+    {
+      "question": "ให้ x = 14 และ y = 5 คำตอบของ x+y เท่ากับเท่าไหร่?",
+      "user_answer": "19",
+      "correct_answer": "19",
+      "is_correct": true,
+      "score": 4
+    },
+    {
+      "question": "สมปง หิวก๋วยเตี๋ยวเลยไปซื้อก๋วยเตี๋ยวมา 25 บาท ถ้า สมปง มีเงิน 50 บาท สมปง จะเหลือเงินเท่าไหร่",
+      "user_answer": "",
+      "correct_answer": "25",
+      "is_correct": false,
+      "score": 0
+    }
+  ],
+  "time": 60,
+  "take_time": 0
+},
+{
+  "_id": {
+    "$oid": "670b79381bb0d28353c152a8"
+  },
+  "exercise_id": {
+    "$oid": "670b78a61bb0d28353c152a5"
+  },
+  "active_questions_id": {
+    "$oid": "670b79141bb0d28353c152a7"
+  },
+  "quiz_name": "แบบฝึกหัด วิชาคณิตศาสตร์ ป. 1 เรื่อง โจทย์ปัญหาการบวกและลบ",
+  "student_id": "10001",
+  "student_name": "กระเบื้อง โต๊ะไม้",
+  "grade_level": "ป.1",
+  "submission_date": "13/10/2024 14:39",
+  "total_score": 10,
+  "max_score": 10,
+  "results": [
+    {
+      "question": "สมชาย มีเพื่อนผู้หญิง 6 คน เพื่อนผู้ชาย 6 คน สมชายมีเพื่อนทั้งหมดกี่คน",
+      "user_answer": "12",
+      "correct_answer": "12",
+      "is_correct": true,
+      "score": 5
+    },
+    {
+      "question": "มี ส้ม 2 ผล และ สัปปะรด 10 ผล มีผลไม้ทั้งหมดกี่ผล",
+      "user_answer": "12",
+      "correct_answer": "12",
+      "is_correct": true,
+      "score": 5
+    }
+  ],
+  "time": 0,
+  "take_time": 0
+},
+{
+  "_id": {
+    "$oid": "670b9aa01bb0d28353c152ac"
+  },
+  "exercise_id": {
+    "$oid": "670b78a61bb0d28353c152a5"
+  },
+  "active_questions_id": {
+    "$oid": "670b79141bb0d28353c152a7"
+  },
+  "quiz_name": "แบบฝึกหัด วิชาคณิตศาสตร์ ป. 1 เรื่อง โจทย์ปัญหาการบวกและลบ",
+  "student_id": "yes",
+  "student_name": "Skibidi Dopdop",
+  "grade_level": "ป.1",
+  "submission_date": "13/10/2024 17:02",
+  "total_score": 5,
+  "max_score": 10,
+  "results": [
+    {
+      "question": "สมชาย มีเพื่อนผู้หญิง 6 คน เพื่อนผู้ชาย 6 คน สมชายมีเพื่อนทั้งหมดกี่คน",
+      "user_answer": "12",
+      "correct_answer": "12",
+      "is_correct": true,
+      "score": 5
+    },
+    {
+      "question": "มี ส้ม 2 ผล และ สัปปะรด 10 ผล มีผลไม้ทั้งหมดกี่ผล",
+      "user_answer": "3",
+      "correct_answer": "12",
+      "is_correct": false,
+      "score": 0
+    }
+  ],
+  "time": 0,
+  "take_time": 0
+},
+{
+  "_id": {
+    "$oid": "670ee82177e7c06ae2d0ea31"
+  },
+  "exercise_id": {
+    "$oid": "670ea0eb77e7c06ae2d0ea2c"
+  },
+  "active_questions_id": {
+    "$oid": "670ea46e77e7c06ae2d0ea2d"
+  },
+  "quiz_name": "ข้อสอบ1",
+  "student_id": "stu01",
+  "student_name": "ทด สอบ",
+  "grade_level": "ป.1",
+  "submission_date": "16/10/2024 05:09",
+  "total_score": 2,
+  "max_score": 2,
+  "results": [
+    {
+      "question": "50 × 7",
+      "user_answer": "350",
+      "correct_answer": "350",
+      "is_correct": true,
+      "score": 1
+    },
+    {
+      "question": "20 + 10  ÷ 5",
+      "user_answer": "6.0",
+      "correct_answer": "6.0",
+      "is_correct": true,
+      "score": 1
+    }
+  ],
+  "time": 3600,
+  "take_time": 82
+},
+{
+  "_id": {
+    "$oid": "670f37266d0c120e28ef3344"
+  },
+  "exercise_id": {
+    "$oid": "670ea0eb77e7c06ae2d0ea2c"
+  },
+  "active_questions_id": {
+    "$oid": "670ea46e77e7c06ae2d0ea2d"
+  },
+  "quiz_name": "ข้อสอบ1",
+  "student_id": "10001",
+  "student_name": "กระเบื้อง โต๊ะไม้",
+  "grade_level": "ป.1",
+  "submission_date": "16/10/2024 10:46",
+  "total_score": 1,
+  "max_score": 2,
+  "results": [
+    {
+      "question": "50 × 6",
+      "user_answer": "300",
+      "correct_answer": "300",
+      "is_correct": true,
+      "score": 1
+    },
+    {
+      "question": "20 + 10  ÷ 5",
+      "user_answer": "8",
+      "correct_answer": "6.0",
+      "is_correct": false,
+      "score": 0
+    }
+  ],
+  "time": 3600,
+  "take_time": 23
+},
+{
+  "_id": {
+    "$oid": "670f37b06d0c120e28ef3345"
+  },
+  "exercise_id": {
+    "$oid": "670ea0eb77e7c06ae2d0ea2c"
+  },
+  "active_questions_id": {
+    "$oid": "670ea46e77e7c06ae2d0ea2d"
+  },
+  "quiz_name": "ข้อสอบ1",
+  "student_id": "yes",
+  "student_name": "Skibidi Dopdop",
+  "grade_level": "ป.1",
+  "submission_date": "16/10/2024 10:49",
+  "total_score": 0,
+  "max_score": 2,
+  "results": [
+    {
+      "question": "50 × 6",
+      "user_answer": "",
+      "correct_answer": "300",
+      "is_correct": false,
+      "score": 0
+    },
+    {
+      "question": "20 + 10  ÷ 5",
+      "user_answer": "8",
+      "correct_answer": "6.0",
+      "is_correct": false,
+      "score": 0
+    }
+  ],
+  "time": 3600,
+  "take_time": 22
+},
+{
+  "_id": {
+    "$oid": "670f42bd6d0c120e28ef334c"
+  },
+  "exercise_id": {
+    "$oid": "670f3ebf6d0c120e28ef334a"
+  },
+  "active_questions_id": {
+    "$oid": "670f41536d0c120e28ef334b"
+  },
+  "quiz_name": "แบบทดสอบ บวก ลบ คูณ และ หาร",
+  "student_id": "yes",
+  "student_name": "Skibidi Dopdop",
+  "grade_level": "ป.1",
+  "submission_date": "16/10/2024 11:36",
+  "total_score": 3,
+  "max_score": 10,
+  "results": [
+    {
+      "question": "2435 + 1777",
+      "user_answer": "4212",
+      "correct_answer": "4212",
+      "is_correct": true,
+      "score": 1
+    },
+    {
+      "question": "721 + 953",
+      "user_answer": "820",
+      "correct_answer": "1674",
+      "is_correct": false,
+      "score": 0
+    },
+    {
+      "question": "2332 + 1320",
+      "user_answer": "3652",
+      "correct_answer": "3652",
+      "is_correct": true,
+      "score": 1
+    },
+    {
+      "question": "87 - 126",
+      "user_answer": "-41",
+      "correct_answer": "-39",
+      "is_correct": false,
+      "score": 0
+    },
+    {
+      "question": "103 - 50",
+      "user_answer": "57",
+      "correct_answer": "53",
+      "is_correct": false,
+      "score": 0
+    },
+    {
+      "question": "148 × 21 ",
+      "user_answer": "12",
+      "correct_answer": "3108",
+      "is_correct": false,
+      "score": 0
+    },
+    {
+      "question": "76 × 56 ",
+      "user_answer": "55",
+      "correct_answer": "4256",
+      "is_correct": false,
+      "score": 0
+    },
+    {
+      "question": "21 × 253 ",
+      "user_answer": "20",
+      "correct_answer": "5313",
+      "is_correct": false,
+      "score": 0
+    },
+    {
+      "question": "399 ÷ 15",
+      "user_answer": "27",
+      "correct_answer": "27",
+      "is_correct": true,
+      "score": 1
+    },
+    {
+      "question": "268 ÷ 25",
+      "user_answer": "18",
+      "correct_answer": "11",
+      "is_correct": false,
+      "score": 0
+    }
+  ],
+  "time": 1200,
+  "take_time": 348
+},
+{
+  "_id": {
+    "$oid": "670f83386d0c120e28ef334f"
+  },
+  "exercise_id": {
+    "$oid": "670f3ebf6d0c120e28ef334a"
+  },
+  "active_questions_id": {
+    "$oid": "670f41536d0c120e28ef334b"
+  },
+  "quiz_name": "แบบทดสอบ บวก ลบ คูณ และ หาร",
+  "student_id": "stu01",
+  "student_name": "ทด สอบ",
+  "grade_level": "ป.1",
+  "submission_date": "16/10/2024 16:11",
+  "total_score": 0,
+  "max_score": 10,
+  "results": [
+    {
+      "question": "2435 + 1777",
+      "user_answer": "66",
+      "correct_answer": "4212",
+      "is_correct": false,
+      "score": 0
+    },
+    {
+      "question": "721 + 953",
+      "user_answer": "44",
+      "correct_answer": "1674",
+      "is_correct": false,
+      "score": 0
+    },
+    {
+      "question": "2332 + 1320",
+      "user_answer": "33",
+      "correct_answer": "3652",
+      "is_correct": false,
+      "score": 0
+    },
+    {
+      "question": "87 - 126",
+      "user_answer": "33",
+      "correct_answer": "-39",
+      "is_correct": false,
+      "score": 0
+    },
+    {
+      "question": "103 - 50",
+      "user_answer": "3",
+      "correct_answer": "53",
+      "is_correct": false,
+      "score": 0
+    },
+    {
+      "question": "148 × 21 ",
+      "user_answer": "3",
+      "correct_answer": "3108",
+      "is_correct": false,
+      "score": 0
+    },
+    {
+      "question": "76 × 56 ",
+      "user_answer": "66",
+      "correct_answer": "4256",
+      "is_correct": false,
+      "score": 0
+    },
+    {
+      "question": "21 × 253 ",
+      "user_answer": "33",
+      "correct_answer": "5313",
+      "is_correct": false,
+      "score": 0
+    },
+    {
+      "question": "399 ÷ 15",
+      "user_answer": "55",
+      "correct_answer": "27",
+      "is_correct": false,
+      "score": 0
+    },
+    {
+      "question": "268 ÷ 25",
+      "user_answer": "55",
+      "correct_answer": "11",
+      "is_correct": false,
+      "score": 0
+    }
+  ],
+  "time": 1200,
+  "take_time": 57
+}]

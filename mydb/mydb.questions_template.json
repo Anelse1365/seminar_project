@@ -1,0 +1,840 @@
+[{
+  "_id": {
+    "$oid": "66a725347013b80bc983e246"
+  },
+  "question_template": "<num1,int><r.odd>1-9</r></num1>",
+  "question": "1",
+  "answer_template": "<num1>",
+  "answer": "1",
+  "num1": 1
+},
+{
+  "_id": {
+    "$oid": "66a728a97013b80bc983e248"
+  },
+  "question_template": "ค่าเฉลี่ยของ <num1,int><r>10-20</r></num1>, <num2,int><r>10-30</r></num2>, <num3,int><r>10-30</r></num3> และ <num4,int><r>10-30</r></num4> คือเท่าไหร่",
+  "question": "ค่าเฉลี่ยของ 17, 28, 16 และ 11 คือเท่าไหร่",
+  "answer_template": "<(num1+num2+num3+num4)/4)",
+  "answer": "<(num1+num2+num3+num4)/4)",
+  "num1": 17,
+  "num2": 28,
+  "num3": 16,
+  "num4": 11
+},
+{
+  "_id": {
+    "$oid": "66a737b77013b80bc983e255"
+  },
+  "question_template": "ค่าเฉลี่ยของ <num1,int><r>10-20</r></num1>, <num2,int><r>10-30</r></num2>, <num3,int><r>10-30</r></num3> และ <num4,int><r>10-30</r></num4> คือเท่าไหร่ (ใส่ทศนิยม 2 ตำแหน่ง)",
+  "question": "ค่าเฉลี่ยของ 14, 20, 21 และ 13 คือเท่าไหร่ (ใส่ทศนิยม 2 ตำแหน่ง)",
+  "answer_template": "<nf(2)><(num1+num2+num3+num4)/4></nf>",
+  "answer": "17.00",
+  "num1": 14,
+  "num2": 20,
+  "num3": 21,
+  "num4": 13
+},
+{
+  "1": {
+    "_id": {
+      "$oid": "669d3ca5006e59a4b7f14684"
+    },
+    "name": "สัปปะรด",
+    "unit": "ผล",
+    "type": "a"
+  },
+  "_id": {
+    "$oid": "66a739ae7013b80bc983e258"
+  },
+  "question_template": "<person1>มี <obj1,a> <num1,int><r>6,8,10</r></num1> <obj1.last>\r\nถ้า <person2> มี <obj1,a> เป็นจำนวน <num2,int><r>2-4</r></num2> เท่าของ <person1> จงหาว่า <person2> มี <obj1,a> กี่ <obj1.last>",
+  "question": "โจมี สัปปะรด 6 ผล\r\nถ้า สมปอง มี สัปปะรด เป็นจำนวน 2 เท่าของ โจ จงหาว่า สมปอง มี สัปปะรด กี่ ผล",
+  "answer_template": "<num1*num2>",
+  "answer": "12",
+  "num1": 6,
+  "num2": 2,
+  "person1": "โจ",
+  "person2": "สมปอง"
+},
+{
+  "_id": {
+    "$oid": "66b1a4bd892641eec00cc6c4"
+  },
+  "question_template": "<person1> <person2> <person3> มีน้ำหนัก <num1,int><r>1-20</r></num1>, <num2,int><r>1-20</r></num2>, <num3,int><r>1-20</r></num3> ตามลำดับ น้ำหนักเฉลี่ยของเด็กทั้งกลุ่มเท่ากับกี่กิโลกรัม",
+  "question": "สมิธ สมปอง คิม มีน้ำหนัก 8, 2, 8 ตามลำดับ น้ำหนักเฉลี่ยของเด็กทั้งกลุ่มเท่ากับกี่กิโลกรัม",
+  "answer_template": "<(num1+num2+num3)/3>",
+  "answer": "6.0",
+  "num1": 8,
+  "num2": 2,
+  "num3": 8,
+  "person1": "สมิธ",
+  "person2": "สมปอง",
+  "person3": "คิม"
+},
+{
+  "_id": {
+    "$oid": "66ba38afd20fd9998ca1dcc9"
+  },
+  "question_template": "<num1,int>5</num1>",
+  "question_type": "written",
+  "question": "5",
+  "answer_template": "<num1>",
+  "answer": "5",
+  "num1": 5
+},
+{
+  "1": {
+    "_id": {
+      "$oid": "669d3ae5006e59a4b7f1467d"
+    },
+    "name": "แอปเปิ้ล",
+    "unit": "ผล",
+    "type": "a"
+  },
+  "_id": {
+    "$oid": "66c0bdeea4e944e07af71f48"
+  },
+  "question_template": "นำผลไม้ <obj1,a> มาจำนวน <num1,int><r>1-5</r></num1> ผล โดยให้แต่ละผลหนัก <num2,int><r>20,30</r></num2> กิโลกรัม คำนวณน้ำหนักรวมของผลไม้ทั้งหมด",
+  "question_type": "written",
+  "question": "นำผลไม้ แอปเปิ้ล มาจำนวน 5 ผล โดยให้แต่ละผลหนัก 30 กิโลกรัม คำนวณน้ำหนักรวมของผลไม้ทั้งหมด",
+  "answer_template": "<num1>",
+  "answer": "5",
+  "num1": 5,
+  "num2": 30
+},
+{
+  "_id": {
+    "$oid": "66c1a895570290b0b7574fd4"
+  },
+  "question": "3 + 2 = ?",
+  "question_template": "<num1,int>3</num1> + <num2,int>2</num2> = ?",
+  "question_type": "multiple_choice",
+  "choices_template": [
+    "<num1+num2>",
+    "<num1>",
+    "<10>",
+    "<60>"
+  ],
+  "choices": [],
+  "correct_answer": "5",
+  "answer_template": "<num1+num2>"
+},
+{
+  "_id": {
+    "$oid": "66c1ff7c797a04dd569d8f17"
+  },
+  "question": "ผมมีเงิน 30 บาท พ่อมี 50 บาท \r\n",
+  "question_template": "<person1> มีเงิน <num1,int>30</num1> บาท พ่อมี <num2,int>50</num2> บาท \r\n",
+  "question_type": "multiple_choice",
+  "choices_template": [
+    "<num1>",
+    "<num2>",
+    "<num1-5>",
+    "<53-num2>"
+  ],
+  "choices": [],
+  "correct_answer": "3",
+  "answer_template": "<53-num2>",
+  "admin_id": {
+    "$oid": "66c710eae22d5a0ca27b52c4"
+  }
+},
+{
+  "_id": {
+    "$oid": "66c316d995b9a32e852d32a2"
+  },
+  "question": "80 + 30 =",
+  "question_template": "<num1,int>80</num1> + <num2,int>30</num2> =",
+  "question_type": "multiple_choice",
+  "choices_template": [
+    "<20>",
+    "<num1+num2>",
+    "<50>"
+  ],
+  "choices": [
+    "20",
+    "110",
+    "50"
+  ],
+  "correct_answer": "110",
+  "answer_template": "<num1+num2>"
+},
+{
+  "_id": {
+    "$oid": "66cc7a11a1ed5fa66e3689c7"
+  },
+  "category": "คณิตพื้นฐาน",
+  "question_template": "test",
+  "question_type": "written",
+  "question": "test",
+  "answer_template": "<2>",
+  "answer": "2"
+},
+{
+  "_id": {
+    "$oid": "66cc7e55d3d29c6c8ff80922"
+  },
+  "category": "คณิต ป.4",
+  "question_template": "25+25 เท่ากับ?",
+  "question_type": "written",
+  "question": "25+25 เท่ากับ?",
+  "answer_template": "<50>",
+  "answer": "50"
+},
+{
+  "_id": {
+    "$oid": "66fb81f302dc4858c183e390"
+  },
+  "category": "คณิต ป.4",
+  "question_template": "<num1000,int>50</num1000>",
+  "question_type": "written",
+  "question": "50",
+  "answer_template": "<num1000>",
+  "answer": "50",
+  "num1000": 50
+},
+{
+  "1": {
+    "_id": {
+      "$oid": "669d4135006e59a4b7f14697"
+    },
+    "name": "ไก่",
+    "unit": "ตัว",
+    "type": "a"
+  },
+  "_id": {
+    "$oid": "66fd53c0df5152c7f9451103"
+  },
+  "category": "คณิต ป.4",
+  "question_template": "นำ<obj1,a>มาจำนวน <num1,int><r>1-5</r></num1> <obj1.last> โดยให้แต่ละ<obj1.last>หนัก <num2,int><r>20,30</r></num2> กิโลกรัม คำนวณน้ำหนักรวมของผลไม้ทั้งหมด",
+  "question_type": "written",
+  "question": "นำผลไม้ ไก่ มาจำนวน 1 ผล โดยให้แต่ละผลหนัก 30 กิโลกรัม คำนวณน้ำหนักรวมของผลไม้ทั้งหมด",
+  "answer_template": "<num1>+20",
+  "answer": "1+20",
+  "num1": 1,
+  "num2": 30,
+  "admin_id": {
+    "$oid": "66c61bca2f0f8243a7fab4a9"
+  },
+  "choices": [],
+  "choices_template": []
+},
+{
+  "_id": {
+    "$oid": "6703fb19e12d46487fa0d78f"
+  },
+  "category": "คณิต ป.4",
+  "question": "ให้ x = 2 และ y = 6 คำตอบของ x+y เท่ากับเท่าไหร่?",
+  "question_template": "ให้ x = <num1,int><r>1-20</r></num1> และ y = <num2,int><r>1-20</r></num2> คำตอบของ x+y เท่ากับเท่าไหร่?",
+  "question_type": "multiple_choice",
+  "choices_template": [
+    "<num1>",
+    "<num2>",
+    "<num1+num2>"
+  ],
+  "choices": [
+    "2",
+    "6",
+    "8"
+  ],
+  "correct_answer": "8",
+  "answer_template": "<num1+num2>",
+  "admin_id": {
+    "$oid": "66c710eae22d5a0ca27b52c4"
+  }
+},
+{
+  "_id": {
+    "$oid": "6704dce94afe1f5dcb88d392"
+  },
+  "category": "คณิต ป.4",
+  "question_template": "<person1> มีเงิน <num1,int>20</num1> บาท ถ้า <person1> เก็บวันทุกวันตั้งแต่วันนี้ ผ่านไป<num2,int><r>3-10</r></num2> วัน\r\nอยากทราบว่า <person1> จะมีเงินกี่บาทหลังผ่านไป <num2,int><r>3-10</r></num2> วัน",
+  "question_type": "written",
+  "question": "50 + 50",
+  "answer_template": "<num1+(num1*num2)>",
+  "answer": "100",
+  "num1": 50,
+  "num2": 50,
+  "admin_id": {
+    "$oid": "66c710eae22d5a0ca27b52c4"
+  },
+  "choices": [],
+  "choices_template": []
+},
+{
+  "_id": {
+    "$oid": "6706e22173f4c3d096055e12"
+  },
+  "category": "คณิตพื้นฐาน",
+  "question_template": "แม่มีเงิน <num1,int><r>100-200</r></num1> ให้พ่อยืมไป <num2,int><r>30-80</r></num2> แม่จะมีเงินเหลือเท่าไหร่",
+  "question_type": "written",
+  "question": "แม่มีเงิน 161 ให้พ่อยืมไป 44 แม่จะมีเงินเหลือเท่าไหร่",
+  "answer_template": "<num1-num2>",
+  "answer": "117",
+  "num1": 161,
+  "num2": 44,
+  "admin_id": {
+    "$oid": "66c61bca2f0f8243a7fab4a9"
+  }
+},
+{
+  "_id": {
+    "$oid": "6706e76273f4c3d096055e13"
+  },
+  "category": "คณิตพื้นฐาน",
+  "question_template": "ถ้า <person1> มีเงิน <num1,int><r>170-220</r></num1> แล้ว ซื้อปลามาจำนวน <num2,int><r>3-5</r></num2> ตัว ราคาตัวละ <num3,int><r>25-30</r></num3> <person1> จะเหลือเงินกี่บาท",
+  "question_type": "written",
+  "question": "ถ้า บาส มีเงิน 180 แล้ว ซื้อปลามาจำนวน 3 ตัว ราคาตัวละ 30 บาส จะเหลือเงินกี่บาท",
+  "answer_template": "<num1-(num2*num3)>",
+  "answer": "90",
+  "num1": 180,
+  "num2": 3,
+  "num3": 30,
+  "person1": "บาส",
+  "admin_id": {
+    "$oid": "66c61bca2f0f8243a7fab4a9"
+  }
+},
+{
+  "_id": {
+    "$oid": "6706e88e73f4c3d096055e14"
+  },
+  "category": "คณิตพื้นฐาน",
+  "question_template": "พ่อมีเงิน <num1,int><r>90,120,150,180,210</r></num1>แบ่งให้ลูกทั้ง 3 คนเท่าๆกัน จะได้เงินคนละเท่าไหร่",
+  "question_type": "written",
+  "question": "พ่อมีเงิน 180แบ่งให้ลูกทั้ง 3 คนเท่าๆกัน จะได้เงินคนละเท่าไหร่",
+  "answer_template": "<num1/3>",
+  "answer": "60.0",
+  "num1": 180,
+  "admin_id": {
+    "$oid": "66c61bca2f0f8243a7fab4a9"
+  }
+},
+{
+  "_id": {
+    "$oid": "6706ea4e73f4c3d096055e15"
+  },
+  "category": "คณิตพื้นฐาน",
+  "question_template": "<person1> มี <obj1,a> อยู่ <num1,int><r>5-10</r></num1><obj1.last> ราคา <num2,int><r>25-35</r></num2> บาท และมี <obj2,a> อยู่ <num3,int><r>6-11</r></num3><obj2.last> ราคา <num4,int><r>30-40</r></num4> หากรวมผลไม้ด้วยกันและคิดราคาทั้งหมดจะรวมเป็นกี่บาท",
+  "question_type": "written",
+  "question": "เจด มี <obj1.a> อยู่ 8<obj1.last> ราคา 25 บาท และมี <obj2.a> อยู่ 11<obj2.last> ราคา 36 หากรวมผลไม้ด้วยกันและคิดราคาทั้งหมดจะรวมเป็นกี่บาท",
+  "answer_template": "<(num1*num2)+(num3*num4)>",
+  "answer": "596",
+  "num1": 8,
+  "num2": 25,
+  "num3": 11,
+  "num4": 36,
+  "person1": "เจด",
+  "admin_id": {
+    "$oid": "66c61bca2f0f8243a7fab4a9"
+  },
+  "choices": [],
+  "choices_template": []
+},
+{
+  "_id": {
+    "$oid": "6706ebf473f4c3d096055e16"
+  },
+  "category": "คณิตพื้นฐาน",
+  "question_template": "<person1> มีเงิน <num1,int><r>45-50</r></num1> <person2> มีเงิน <num2,int><r>30-40</r></num2> และ<person3> มีเงิน <num3,int><r>40-80</r></num3> หากทั้ง 3 รวมเงินทั้งหมดด้วยกันจะมีเงินเฉลี่ยเท่าไหร่(มีทศนิยม 2 ตำแหน่ง)",
+  "question_type": "written",
+  "question": "เจด มีเงิน 50 สมปอง มีเงิน 38 และบาส มีเงิน 62 หากทั้ง 3 รวมเงินทั้งหมดด้วยกันจะมีเงินเฉลี่ยเท่าไหร่(มีทศนิยม 2 ตำแหน่ง)",
+  "answer_template": "<nf(2)><(num1+num2+num3)/3></nf>",
+  "answer": "50.00",
+  "num1": 50,
+  "num2": 38,
+  "num3": 62,
+  "person1": "เจด",
+  "person2": "สมปอง",
+  "person3": "บาส",
+  "admin_id": {
+    "$oid": "66c61bca2f0f8243a7fab4a9"
+  }
+},
+{
+  "_id": {
+    "$oid": "6706ef6373f4c3d096055e17"
+  },
+  "category": "คณิตพื้นฐาน",
+  "question": "<obj1.a>ราคา<obj1.last>ละ 12 มีลูกค้าต้องการซื้อจำนวน 15 <obj1.last> คิดเป็นเงินเท่าไหร่",
+  "question_template": "<obj1,a>ราคา<obj1.last>ละ <num1,int><r>7-15</r></num1> มีลูกค้าต้องการซื้อจำนวน <num2,int><r>10-20</r></num2> <obj1.last> คิดเป็นเงินเท่าไหร่",
+  "question_type": "multiple_choice",
+  "choices_template": [
+    "<(num1*num2)+3>",
+    "<num1*num2>",
+    "<(num1*num2)+2>",
+    "<(num1*num2)-3>"
+  ],
+  "choices": [],
+  "correct_answer": "180",
+  "answer_template": "<num1*num2>",
+  "admin_id": {
+    "$oid": "66c61bca2f0f8243a7fab4a9"
+  }
+},
+{
+  "_id": {
+    "$oid": "6706f49673f4c3d096055e1d"
+  },
+  "category": "คณิตพื้นฐาน",
+  "question": "1 สัปดาห์มี 7 วัน แล้ว 74 วัน เป็นกี่สัปดาห์ (ไม่มีทศนิยม)",
+  "question_template": "1 สัปดาห์มี 7 วัน แล้ว <num1,int><r>40-80</r></num1> วัน เป็นกี่สัปดาห์ (ไม่มีทศนิยม)",
+  "question_type": "multiple_choice",
+  "choices_template": [
+    "<nf(0)><num1/7></nf>",
+    "<nf(0)><(num1/7)+2></nf>",
+    "<nf(0)><(num1/7)-1></nf>",
+    "<nf(0)><(num1/7)+1></nf>"
+  ],
+  "choices": [
+    "11",
+    "13",
+    "10",
+    "12"
+  ],
+  "correct_answer": "11",
+  "answer_template": "<nf(0)><num1/7></nf>",
+  "admin_id": {
+    "$oid": "66c61bca2f0f8243a7fab4a9"
+  }
+},
+{
+  "1": {
+    "_id": {
+      "$oid": "669d3d56006e59a4b7f1468b"
+    },
+    "name": "องุ่น",
+    "unit": "พวง",
+    "type": "a"
+  },
+  "_id": {
+    "$oid": "6706fd4e94bc17b0fb8c34df"
+  },
+  "category": "คณิต ป.4",
+  "question_template": "<obj1,a><num1,int>1</num1><obj1.last>",
+  "question_type": "written",
+  "question": "องุ่น1พวง",
+  "answer_template": "<num1>",
+  "answer": "1",
+  "num1": 1,
+  "admin_id": {
+    "$oid": "66c61bca2f0f8243a7fab4a9"
+  }
+},
+{
+  "_id": {
+    "$oid": "670a0929011ddb626a063b9d"
+  },
+  "category": "คณิต ป.4",
+  "question": "จาก 123, 234, 345, 456, . . . จำนวนที่ 5 ตรงกับข้อใด",
+  "question_template": "จาก 123, 234, 345, 456, . . . จำนวนที่ <num1,int><r>5-10</r></num1> ตรงกับข้อใด",
+  "question_type": "multiple_choice",
+  "choices_template": [
+    "<123+(111*num1)>",
+    "<123+(111*(num1-1))>",
+    "<123+(111*(num1-2))>"
+  ],
+  "choices": [
+    "678",
+    "567",
+    "456"
+  ],
+  "correct_answer": "678",
+  "answer_template": "<123+(111*num1)>",
+  "admin_id": {
+    "$oid": "66c710eae22d5a0ca27b52c4"
+  }
+},
+{
+  "_id": {
+    "$oid": "670a86a8aa87f92c20c6f932"
+  },
+  "category": "คณิต ป.4",
+  "question_template": "ถ้ามี <person1> มี <obj,a> จำนวน <num1,int><r>144,15,18</r></num1> แล้วหายไป <num2,int><r>10,20,30</r></num2> <person1> จะ เหลือ <obj,a> เท่าไหร่",
+  "question_type": "written",
+  "question": "ถ้ามี สมปง มี <obj,a> จำนวน 15 แล้วหายไป 10 สมปง จะ เหลือ <obj,a> เท่าไหร่",
+  "answer_template": "<num1-num2>",
+  "answer": "5",
+  "num1": 15,
+  "num2": 10,
+  "person1": "สมปง",
+  "admin_id": {
+    "$oid": "66c710eae22d5a0ca27b52c4"
+  }
+},
+{
+  "_id": {
+    "$oid": "670a9664aa87f92c20c6f933"
+  },
+  "category": "คณิตยากพิเศษ",
+  "question": "มีหมา 1 ตัว หายไป 3 ตัว เหลือหมากี่ตัว",
+  "question_template": "มีหมา <num1,int><r>6-10</r></num1> ตัว หายไป <num2,int><r>1-6</r></num2> ตัว เหลือหมากี่ตัว",
+  "question_type": "multiple_choice",
+  "choices_template": [
+    "<num1>",
+    "<num1-num2>",
+    "<num1-num2-2>"
+  ],
+  "choices": [],
+  "correct_answer": "-2",
+  "answer_template": "<num1-num2>",
+  "admin_id": {
+    "$oid": "66c710eae22d5a0ca27b52c4"
+  }
+},
+{
+  "_id": {
+    "$oid": "670b743426c70f5fd51a3871"
+  },
+  "category": "คณิตศาสตร์ ป. 1",
+  "question_template": "<person1> มีเพื่อนผู้หญิง <num1,int><r>1-10</r></num1> คน เพื่อนผู้ชาย <num2,int><r>2-10</r></num2> คน <person1>มีเพื่อนทั้งหมดกี่คน",
+  "question_type": "written",
+  "question": "สมปง มีเพื่อนผู้หญิง 6 คน เพื่อนผู้ชาย 3 คน สมปงมีเพื่อนทั้งหมดกี่คน",
+  "answer_template": "<num1+num2>",
+  "answer": "9",
+  "num1": 6,
+  "num2": 3,
+  "person1": "สมปง",
+  "admin_id": {
+    "$oid": "66c710eae22d5a0ca27b52c4"
+  }
+},
+{
+  "1": {
+    "_id": {
+      "$oid": "669d39b7006e59a4b7f1467b"
+    },
+    "name": "ส้ม",
+    "unit": "ผล",
+    "type": "a"
+  },
+  "2": {
+    "_id": {
+      "$oid": "669d3d56006e59a4b7f1468b"
+    },
+    "name": "องุ่น",
+    "unit": "พวง",
+    "type": "a"
+  },
+  "_id": {
+    "$oid": "670b751826c70f5fd51a3872"
+  },
+  "category": "คณิตศาสตร์ ป. 1",
+  "question_template": "มี <obj1,a> <num1,int><r>1-5</r></num1> <obj1.last> และ <obj2,a> <num2,int><r>3-10</r></num2> <obj2.last> มีผลไม้ทั้งหมดกี่ผล",
+  "question_type": "written",
+  "question": "มี ส้ม 1 ผล และ องุ่น 10 พวง มีผลไม้ทั้งหมดกี่ผล",
+  "answer_template": "<num1+num2>",
+  "answer": "11",
+  "num1": 1,
+  "num2": 10,
+  "admin_id": {
+    "$oid": "66c710eae22d5a0ca27b52c4"
+  }
+},
+{
+  "_id": {
+    "$oid": "670cca80e378de85f382d5f0"
+  },
+  "category": "คณิต ป.4",
+  "question_template": "ข้าวสาร <num1,int><r>125,150,175</r></num1> กิโลกรัม แบ่งใส่ถุงละ 5 กิโลกรัมจะแบ่งข้างสารได้กี่ถุง",
+  "question_type": "written",
+  "question": "ข้าวสาร 125 กิโลกรัม แบ่งใส่ถุงละ 5 กิโลกรัมจะแบ่งข้างสารได้กี่ถุง",
+  "answer_template": "<num1/5>",
+  "answer": "25.0",
+  "num1": 125,
+  "admin_id": {
+    "$oid": "66c710eae22d5a0ca27b52c4"
+  }
+},
+{
+  "_id": {
+    "$oid": "670ccfa1e378de85f382d5f8"
+  },
+  "category": "การคูณ",
+  "question_template": "<num1,int><r>100-500</r></num1> × <num2,int><r>10-60</r></num2> = ",
+  "question_type": "written",
+  "question": "400 × 37 = ",
+  "answer_template": "<num1*num2>",
+  "answer": "14800",
+  "num1": 400,
+  "num2": 37,
+  "admin_id": {
+    "$oid": "66c710eae22d5a0ca27b52c4"
+  }
+},
+{
+  "_id": {
+    "$oid": "670d59f2c7909d8bdb7d9358"
+  },
+  "category": "คณิตยากพิเศษ",
+  "question_template": "ค่าเฉลี่ยของ <num1,int><r>10-20</r></num1>, <num2,int><r>10-30</r></num2>, <num3,int><r>10-30</r></num3> และ <num4,int><r>10-30</r></num4> คือเท่าไหร่",
+  "question_type": "written",
+  "question": "ค่าเฉลี่ยของ 16, 13, 19 และ 13 คือเท่าไหร่",
+  "answer_template": "<nf(2)><(num1+num2+num3+num4)/4></nf>",
+  "answer": "15.25",
+  "num1": 16,
+  "num2": 13,
+  "num3": 19,
+  "num4": 13,
+  "admin_id": {
+    "$oid": "66c710eae22d5a0ca27b52c4"
+  }
+},
+{
+  "_id": {
+    "$oid": "670d5a06c7909d8bdb7d9359"
+  },
+  "category": "คณิตยากพิเศษ",
+  "question_template": "ค่าเฉลี่ยของ <num1,int><r>10-20</r></num1>, <num2,int><r>10-30</r></num2>, <num3,int><r>10-30</r></num3> และ <num4,int><r>10-30</r></num4> คือเท่าไหร่",
+  "question_type": "written",
+  "question": "ค่าเฉลี่ยของ 11, 24, 11 และ 21 คือเท่าไหร่",
+  "answer_template": "<nf(1)><(num1+num2+num3+num4)/4></nf>",
+  "answer": "16.8",
+  "num1": 11,
+  "num2": 24,
+  "num3": 11,
+  "num4": 21,
+  "admin_id": {
+    "$oid": "66c710eae22d5a0ca27b52c4"
+  }
+},
+{
+  "_id": {
+    "$oid": "670d5ad3c7909d8bdb7d935a"
+  },
+  "category": "คณิตยากพิเศษ",
+  "question_template": "ค่าเฉลี่ยของ <num1,int><r>10-20</r></num1>, <num2,int><r>10-30</r></num2>, <num3,int><r>10-30</r></num3> และ <num4,int><r>10-30</r></num4> คือเท่าไหร่",
+  "question_type": "written",
+  "question": "ค่าเฉลี่ยของ 17, 19, 15 และ 11 คือเท่าไหร่",
+  "answer_template": "<nf(0)><(num1+num2+num3+num4)/4></nf>",
+  "answer": "16",
+  "num1": 17,
+  "num2": 19,
+  "num3": 15,
+  "num4": 11,
+  "admin_id": {
+    "$oid": "66c710eae22d5a0ca27b52c4"
+  }
+},
+{
+  "1": {
+    "_id": {
+      "$oid": "669d3ae5006e59a4b7f1467d"
+    },
+    "name": "แอปเปิ้ล",
+    "unit": "ผล",
+    "type": "a"
+  },
+  "2": {
+    "_id": {
+      "$oid": "670e0b4b75187f6aeafc42be"
+    },
+    "name": "เล็ก",
+    "type": "size",
+    "unit": "ตัว"
+  },
+  "3": {
+    "_id": {
+      "$oid": "670e0bf075187f6aeafc42c0"
+    },
+    "name": "บ้าน",
+    "type": "place",
+    "unit": "หลัง"
+  },
+  "_id": {
+    "$oid": "670e0c8275187f6aeafc42c3"
+  },
+  "category": "คณิตยากพิเศษ",
+  "question_template": "<person1> เจอ <obj1,a> ขนาด <obj2,size> ใน <obj3,place> <person1> ประหลาดใจจึงถาม <person2> ว่าทำไมถึงมี <obj1,a> ใน <obj3,place> ได้ <person2> บอกเป็นฝีมือของ <person3> คำถามคือ เป็นฝีมือใคร ",
+  "question_type": "written",
+  "question": "สมิธ เจอ แอปเปิ้ล ขนาด เล็ก ใน บ้าน สมิธ ประหลาดใจจึงถาม สมเป ว่าทำไมถึงมี แอปเปิ้ล ใน บ้าน ได้ สมเป บอกเป็นฝีมือของ บาส คำถามคือ เป็นฝีมือใคร ",
+  "answer_template": "<person3>",
+  "answer": "บาส",
+  "person1": "สมิธ",
+  "person2": "สมเป",
+  "person3": "บาส",
+  "admin_id": {
+    "$oid": "66c710eae22d5a0ca27b52c4"
+  }
+},
+{
+  "_id": {
+    "$oid": "670e246275187f6aeafc42c5"
+  },
+  "category": "คณิตศาสตร์ ป. 1",
+  "question": "20 + 20  ÷ 5",
+  "question_template": "(<num1,int><r>20,30,40</r></num1> + <num2,int><r>10,20</r></num2>)  ÷ <num3,int>5</num3>",
+  "question_type": "multiple_choice",
+  "choices_template": [
+    "<(num1+num2)/5>",
+    "<(num1+num2+10)/5>",
+    "<(num1+num2-10)/5>"
+  ],
+  "choices": [],
+  "correct_answer": "8.0",
+  "answer_template": "<(num1+num2)/5>",
+  "admin_id": {
+    "$oid": "66c710eae22d5a0ca27b52c4"
+  }
+},
+{
+  "_id": {
+    "$oid": "670e2e5b75187f6aeafc42c6"
+  },
+  "category": "คณิตยากพิเศษ",
+  "question_template": "ค่าเฉลี่ยของ <num1,int><r>10,15,20</r></num1>, <num2,int><r>10-30</r></num2>, <num3,int><r.odd>1-20</r></num3> และ <num4,int><r.even>1-20</r></num4> คือเท่าไหร่",
+  "question_type": "written",
+  "question": "ค่าเฉลี่ยของ 10, 12, 13 และ 12 คือเท่าไหร่",
+  "answer_template": "<nf(1)><(num1+num2+num3+num4)/4></nf>",
+  "answer": "11.8",
+  "num1": 10,
+  "num2": 12,
+  "num3": 13,
+  "num4": 12,
+  "admin_id": {
+    "$oid": "66c710eae22d5a0ca27b52c4"
+  }
+},
+{
+  "1": {
+    "_id": {
+      "$oid": "669d3ae5006e59a4b7f1467d"
+    },
+    "name": "แอปเปิ้ล",
+    "unit": "ผล",
+    "type": "a"
+  },
+  "_id": {
+    "$oid": "670e8d159ae7962878f2ee0e"
+  },
+  "category": "คณิตยากพิเศษ",
+  "question_template": "<person1>ซื้อ<obj1,a>มา 3,000 บาท โดยใช้บัตรส่วนลด<num1,int><r>10,15,20,30</r></num1>% อยากทราบว่าราคาเต็มของ<obj1,a>คือเท่าไหร่",
+  "question_type": "written",
+  "question": "บาสซื้อแอปเปิ้ลมา 3,000 บาท โดยใช้บัตรส่วนลด30% อยากทราบว่าราคาเต็มของแอปเปิ้ลคือเท่าไหร่",
+  "answer_template": "<3000/((100-num1)/100)>",
+  "answer": "(3, 0.0)",
+  "num1": 30,
+  "person1": "บาส",
+  "admin_id": {
+    "$oid": "66c710eae22d5a0ca27b52c4"
+  },
+  "choices": [],
+  "choices_template": []
+},
+{
+  "_id": {
+    "$oid": "670e98fd77e7c06ae2d0ea2b"
+  },
+  "category": "คณิตศาสตร์ ป. 1",
+  "question_template": "<num1,int>50</num1> × <num2,int><r>4-9</r></num2>",
+  "question_type": "written",
+  "question": "50 × 4",
+  "answer_template": "<num1*num2>",
+  "answer": "200",
+  "num1": 50,
+  "num2": 4,
+  "admin_id": {
+    "$oid": "66c710eae22d5a0ca27b52c4"
+  }
+},
+{
+  "_id": {
+    "$oid": "670eaa289ae7962878f2ee11"
+  },
+  "category": "คณิตพื้นฐาน",
+  "question_template": "<person1> <person2> <person3> <person4> <person5> <person6>\r\n<person7> <person8>",
+  "question_type": "written",
+  "question": "บาส สมเป สมชาย สมปง สมิธ คิม\r\nUnknown Unknown",
+  "answer_template": "person7",
+  "answer": "person7",
+  "person1": "บาส",
+  "person2": "สมเป",
+  "person3": "สมชาย",
+  "person4": "สมปง",
+  "person5": "สมิธ",
+  "person6": "คิม",
+  "person7": "Unknown",
+  "person8": "Unknown",
+  "admin_id": {
+    "$oid": "66c710eae22d5a0ca27b52c4"
+  }
+},
+{
+  "_id": {
+    "$oid": "670eb1c69ae7962878f2ee13"
+  },
+  "category": "คณิต ป.4",
+  "question_template": "<person1> ทักทาย <person2> ",
+  "question_type": "written",
+  "question": "สมปง ทักทาย สมชาย ",
+  "answer_template": "person2",
+  "answer": "person2",
+  "person1": "สมปง",
+  "person2": "สมชาย",
+  "admin_id": {
+    "$oid": "66c710eae22d5a0ca27b52c4"
+  }
+},
+{
+  "_id": {
+    "$oid": "670f38586d0c120e28ef3346"
+  },
+  "category": "ข้อสอบจริง",
+  "question_template": "<num1,int><r>1-200</r></num1> × <num2,int><r>1-300</r></num2> ",
+  "question_type": "written",
+  "question": "54 × 222 ",
+  "answer_template": "<num1*num2>",
+  "answer": "11988",
+  "num1": 54,
+  "num2": 222,
+  "admin_id": {
+    "$oid": "66c710eae22d5a0ca27b52c4"
+  }
+},
+{
+  "_id": {
+    "$oid": "670f38d96d0c120e28ef3347"
+  },
+  "category": "ข้อสอบจริง",
+  "question_template": "<num1,int><r>200-2500</r></num1> + <num2,int><r>200-2500</r></num2>",
+  "question_type": "written",
+  "question": "2230 + 2390",
+  "answer_template": "<num1+num2>",
+  "answer": "4620",
+  "num1": 2230,
+  "num2": 2390,
+  "admin_id": {
+    "$oid": "66c710eae22d5a0ca27b52c4"
+  }
+},
+{
+  "_id": {
+    "$oid": "670f39826d0c120e28ef3348"
+  },
+  "category": "ข้อสอบจริง",
+  "question_template": "<num1,int><r>50-500</r></num1> ÷ <num2,int><r>5-25</r></num2>",
+  "question_type": "written",
+  "question": "279 ÷ 21",
+  "answer_template": "<nf(0)><num1/num2></nf>",
+  "answer": "13",
+  "num1": 279,
+  "num2": 21,
+  "admin_id": {
+    "$oid": "66c710eae22d5a0ca27b52c4"
+  }
+},
+{
+  "_id": {
+    "$oid": "670f3e636d0c120e28ef3349"
+  },
+  "category": "ข้อสอบจริง",
+  "question_template": "<num1,int><r>30-150</r></num1> - <num2,int><r>20-150</r></num2>",
+  "question_type": "written",
+  "question": "94 - 68",
+  "answer_template": "<num1-num2>",
+  "answer": "26",
+  "num1": 94,
+  "num2": 68,
+  "admin_id": {
+    "$oid": "66c710eae22d5a0ca27b52c4"
+  }
+}]

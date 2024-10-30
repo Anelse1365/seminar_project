@@ -1,0 +1,1350 @@
+[{
+  "_id": {
+    "$oid": "66c236a5636164845a1cf292"
+  },
+  "quiz_name": "ชุดที่2",
+  "category": "คณิตศาสตร์",
+  "questions": [
+    {
+      "question": "ผมมีเงิน <num1,int>30</num1> บาท พ่อมี <num2,int>50</num2> บาท \r\n",
+      "answer": "<53-num2>",
+      "choices": [
+        "<num1>",
+        "<num2>",
+        "<num1-5>",
+        "<53-num2>"
+      ],
+      "score": 1
+    },
+    {
+      "question": "<person1> <person2> <person3> มีน้ำหนัก <num1,int><r>1-20</r></num1>, <num2,int><r>1-20</r></num2>, <num3,int><r>1-20</r></num3> ตามลำดับ น้ำหนักเฉลี่ยของเด็กทั้งกลุ่มเท่ากับกี่กิโลกรัม",
+      "answer": "<nf(2)><(num1+num2+num3)/3></nf>",
+      "choices": [],
+      "score": 1
+    },
+    {
+      "question": "<person1> <person2> <person3> มีน้ำหนัก <num1,int><r>1-20</r></num1>, <num2,int><r>1-20</r></num2>, <num3,int><r>1-20</r></num3> ตามลำดับ น้ำหนักเฉลี่ยของเด็กทั้งกลุ่มเท่ากับกี่กิโลกรัม",
+      "answer": "<(num1+num2+num3)/3>",
+      "choices": [],
+      "score": 1
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "66c316f495b9a32e852d32a3"
+  },
+  "quiz_name": "ชุด3",
+  "category": "คณิตศาสตร์",
+  "questions": [
+    {
+      "question": "<num1,int>80</num1> + <num2,int>30</num2> =",
+      "answer": "<num1+num2>",
+      "choices": [
+        "<20>",
+        "<num1+num2>"
+      ]
+    },
+    {
+      "question": "ผมมีเงิน <num1,int>30</num1> บาท พ่อมี <num2,int>50</num2> บาท \r\n",
+      "answer": "<53-num2>",
+      "choices": [
+        "<num1>",
+        "<num2>",
+        "<num1-5>",
+        "<53-num2>"
+      ]
+    },
+    {
+      "question": "<person1> <person2> <person3> มีน้ำหนัก <num1,int><r>1-20</r></num1>, <num2,int><r>1-20</r></num2>, <num3,int><r>1-20</r></num3> ตามลำดับ น้ำหนักเฉลี่ยของเด็กทั้งกลุ่มเท่ากับกี่กิโลกรัม",
+      "answer": "<nf(2)><(num1+num2+num3)/3></nf>",
+      "choices": []
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "66c8816d7029345ef894adbb"
+  },
+  "quiz_name": "ชุดที่4",
+  "category": "คณิตศาสตร์",
+  "questions": [
+    {
+      "question": "เห้ยๆ ยังสร้างโจทย์ได้อยู่ไหมเนี่ย <person1> บอกมาดิ 50+50 ได้เท่าไหร่",
+      "answer": "<50+50>"
+    },
+    {
+      "question": "<num1,int>80</num1> + <num2,int>30</num2> =",
+      "answer": "<num1+num2>",
+      "choices": [
+        "<20>",
+        "<num1+num2>"
+      ]
+    },
+    {
+      "question": "ผมมีเงิน <num1,int>30</num1> บาท พ่อมี <num2,int>50</num2> บาท \r\n",
+      "answer": "<53-num2>",
+      "choices": [
+        "<num1>",
+        "<num2>",
+        "<num1-5>",
+        "<53-num2>"
+      ]
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "66c978f7839e5b17e8274c4a"
+  },
+  "quiz_name": "ชุด6",
+  "category": "คณิตศาสตร์",
+  "questions": [
+    {
+      "question": "<num1,int>80</num1> + <num2,int>30</num2> =",
+      "answer": "<num1+num2>",
+      "choices": [
+        "<20>",
+        "<num1+num2>"
+      ],
+      "score": 1
+    },
+    {
+      "question": "<num1,int>80</num1> + <num2,int>30</num2> =",
+      "answer": "<num1+num2>",
+      "choices": [
+        "<20>",
+        "<num1+num2>"
+      ],
+      "score": 1
+    },
+    {
+      "question": "<num1,int>3</num1> + <num2,int>2</num2> = ?",
+      "answer": "<num1+num2>",
+      "choices": [
+        "<num1+num2>",
+        "<num1>",
+        "<10>"
+      ],
+      "score": 1
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "66ca16b4e1a6f4a60175702e"
+  },
+  "quiz_name": "ลองของ",
+  "category": "คณิต ป.5",
+  "questions": [
+    {
+      "question": "เห้ยๆ ยังสร้างโจทย์ได้อยู่ไหมเนี่ย <person1> บอกมาดิ 50+50 ได้เท่าไหร่",
+      "answer": "<50+50>",
+      "score": 1
+    },
+    {
+      "question": "<num1,int>80</num1> + <num2,int>30</num2> =",
+      "answer": "<num1+num2>",
+      "choices": [
+        "<20>",
+        "<num1+num2>"
+      ],
+      "score": 1
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "66ca17bae1a6f4a60175702f"
+  },
+  "quiz_name": "ลองของ2",
+  "category": "Select Category",
+  "questions": [
+    {
+      "question": "<num1,int>80</num1> + <num2,int>30</num2> =",
+      "answer": "<num1+num2>",
+      "choices": [
+        "<20>",
+        "<num1+num2>"
+      ],
+      "score": 1
+    },
+    {
+      "question": "เห้ยๆ ยังสร้างโจทย์ได้อยู่ไหมเนี่ย <person1> บอกมาดิ 50+50 ได้เท่าไหร่",
+      "answer": "<50+50>",
+      "score": 1
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "66cb7f7c4d4d579f8a3481de"
+  },
+  "quiz_name": "โจทย์9",
+  "category": "คณิตศาสตร์",
+  "questions": [
+    {
+      "question": "เห้ยๆ ยังสร้างโจทย์ได้อยู่ไหมเนี่ย <person1> บอกมาดิ 50+50 ได้เท่าไหร่",
+      "answer": "<50+50>",
+      "score": 1
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "66cb80457b3ed6e73c6a16c5"
+  },
+  "quiz_name": "โจทย์5",
+  "category": "คณิตศาสตร์",
+  "questions": [
+    {
+      "question": "นำผลไม้ <obj1,a> มาจำนวน <num1,int><r>1-5</r></num1> ผล โดยให้แต่ละผลหนัก <num2,int><r>20,30</r></num2> กิโลกรัม คำนวณน้ำหนักรวมของผลไม้ทั้งหมด",
+      "answer": "<num1>",
+      "choices": [
+        "<num1>",
+        "<num2>"
+      ],
+      "score": 1
+    },
+    {
+      "question": "<num1,int>80</num1> + <num2,int>30</num2> =",
+      "answer": "<num1+num2>",
+      "choices": [
+        "<20>",
+        "<num1+num2>"
+      ],
+      "score": 1
+    },
+    {
+      "question": "เห้ยๆ ยังสร้างโจทย์ได้อยู่ไหมเนี่ย <person1> บอกมาดิ 50+50 ได้เท่าไหร่",
+      "answer": "<50+50>",
+      "score": 1
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "66cc8be1bcbe5fdd055f4829"
+  },
+  "quiz_name": "โจทย์7",
+  "category": "คณิตศาสตร์",
+  "questions": [
+    {
+      "question": "<person1> มีเงิน <num1,int>30</num1> บาท พ่อมี <num2,int>50</num2> บาท \r\n",
+      "answer": "<53-num2>",
+      "choices": [
+        "<num1>",
+        "<num2>",
+        "<num1-5>",
+        "<53-num2>"
+      ]
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "66cc9de15f2ba7da2f13ff20"
+  },
+  "quiz_name": "โจทย์เทส",
+  "category": "คณิตศาสตร์",
+  "questions": [
+    {
+      "question": "<num1,int>3</num1> + <num2,int>2</num2> = ?",
+      "answer": "<num1+num2>",
+      "choices": [
+        "<num1+num2>",
+        "<num1>",
+        "<10>",
+        "<60>"
+      ],
+      "score": 1
+    },
+    {
+      "question": "<person1> หิวก๋วยเตี๋ยวเลยไปซื้อก๋วยเตี๋ยวมา 25 บาท ถ้า <person1> มีเงิน 50 บาท <person1> จะเหลือเงินเท่าไหร่",
+      "answer": "<25>",
+      "score": 1
+    }
+  ],
+  "created_at": "26/08/2024 22:23"
+},
+{
+  "_id": {
+    "$oid": "66ccdce65f610849f173bb78"
+  },
+  "quiz_name": "เวลา",
+  "category": "คณิต ป.5",
+  "questions": [
+    {
+      "question": "25+25 เท่ากับ?",
+      "answer": "<50>",
+      "score": 1
+    }
+  ],
+  "created_at": "27/08/2024 02:52"
+},
+{
+  "_id": {
+    "$oid": "66da78fdfc39dff23ca18d55"
+  },
+  "quiz_name": "ข้อสอบ00",
+  "category": "ฟิสิกส์",
+  "questions": [
+    {
+      "question": "<person1> <person2> <person3> มีน้ำหนัก <num1,int><r>1-20</r></num1>, <num2,int><r>1-20</r></num2>, <num3,int><r>1-20</r></num3> ตามลำดับ น้ำหนักเฉลี่ยของเด็กทั้งกลุ่มเท่ากับกี่กิโลกรัม",
+      "answer": "<(num1+num2+num3)/3>",
+      "choices": []
+    },
+    {
+      "question": "<num1,int>80</num1> + <num2,int>30</num2> =",
+      "answer": "<num1+num2>",
+      "choices": [
+        "<20>",
+        "<num1+num2>",
+        "<50>"
+      ]
+    },
+    {
+      "question": "<num1,int>3</num1> + <num2,int>2</num2> = ?",
+      "answer": "<num1+num2>",
+      "choices": [
+        "<num1+num2>",
+        "<num1>",
+        "<10>",
+        "<60>"
+      ]
+    },
+    {
+      "question": "<person1> มีเงิน <num1,int>30</num1> บาท พ่อมี <num2,int>50</num2> บาท \r\n",
+      "answer": "<53-num2>",
+      "choices": [
+        "<num1>",
+        "<num2>",
+        "<num1-5>",
+        "<53-num2>"
+      ]
+    },
+    {
+      "question": "<num1,int>80</num1> + <num2,int>30</num2> =",
+      "answer": "<num1+num2>",
+      "choices": [
+        "<20>",
+        "<num1+num2>",
+        "<50>"
+      ]
+    }
+  ],
+  "created_at": "06/09/2024 10:37"
+},
+{
+  "_id": {
+    "$oid": "66dfc5bb5fcb2ba2c6790ede"
+  },
+  "quiz_name": "ลองของ",
+  "category": "คณิตศาสตร์",
+  "questions": [
+    {
+      "question": "25+25 เท่ากับ?",
+      "answer": "<50>"
+    }
+  ],
+  "created_at": "10/09/2024 11:06"
+},
+{
+  "_id": {
+    "$oid": "66efeb16deef04c99eab21f5"
+  },
+  "quiz_name": "หกห",
+  "category": "คณิตศาสตร์",
+  "questions": [
+    {
+      "type": "explanation",
+      "content": "ไม่ๆๆๆๆๆ"
+    },
+    {
+      "type": "question",
+      "question": "test",
+      "answer": "<2>"
+    },
+    {
+      "type": "question",
+      "question": "test",
+      "answer": "<2>"
+    },
+    {
+      "type": "explanation",
+      "content": "ไม่บอก"
+    },
+    {
+      "type": "question",
+      "question": "<person1>มี <obj1,a> <num1,int><r>6,8,10</r></num1> <obj1.last>\r\nถ้า <person2> มี <obj1,a> เป็นจำนวน <num2,int><r>2-4</r></num2> เท่าของ <person1> จงหาว่า <person2> มี <obj1,a> กี่ <obj1.last>",
+      "answer": "<num1*num2>",
+      "choices": []
+    }
+  ],
+  "created_at": "22/09/2024 17:01"
+},
+{
+  "_id": {
+    "$oid": "66f2739daacf70452f152b46"
+  },
+  "quiz_name": "โจทย์สุดหิน",
+  "category": "คณิตศาสตร์",
+  "questions": [
+    {
+      "type": "question",
+      "question": "เห้ยๆ ยังสร้างโจทย์ได้อยู่ไหมเนี่ย <person1> บอกมาดิ 50+50 ได้เท่าไหร่",
+      "answer": "<50+50>"
+    },
+    {
+      "type": "question",
+      "question": "<person1> มีเงิน <num1,int>30</num1> บาท พ่อมี <num2,int>50</num2> บาท \r\n",
+      "answer": "<53-num2>",
+      "choices": [
+        "<num1>",
+        "<num2>",
+        "<num1-5>",
+        "<53-num2>"
+      ]
+    },
+    {
+      "type": "question",
+      "question": "<num1,int>80</num1> + <num2,int>30</num2> =",
+      "answer": "<num1+num2>",
+      "choices": [
+        "<20>",
+        "<num1+num2>",
+        "<50>"
+      ]
+    },
+    {
+      "type": "question",
+      "question": "<num1,int>80</num1> + <num2,int>30</num2> =",
+      "answer": "<num1+num2>",
+      "choices": [
+        "<20>",
+        "<num1+num2>",
+        "<50>"
+      ]
+    }
+  ],
+  "created_at": "24/09/2024 15:09"
+},
+{
+  "_id": {
+    "$oid": "66f29d9f13a97a7c9a5cc1fa"
+  },
+  "quiz_name": "บวกลบคูณหาร",
+  "category": "ฟิสิกส์",
+  "explanation": "ทำๆไป",
+  "questions": [
+    {
+      "type": "question",
+      "question": "เห้ยๆ ยังสร้างโจทย์ได้อยู่ไหมเนี่ย <person1> บอกมาดิ 50+50 ได้เท่าไหร่",
+      "answer": "<50+50>"
+    },
+    {
+      "type": "question",
+      "question": "<num1,int>80</num1> + <num2,int>30</num2> =",
+      "answer": "<num1+num2>",
+      "choices": [
+        "<20>",
+        "<num1+num2>",
+        "<50>"
+      ]
+    }
+  ],
+  "created_at": "24/09/2024 18:08"
+},
+{
+  "_id": {
+    "$oid": "66fd963becc4a47fb318cf12"
+  },
+  "quiz_name": "โคตรข้อสอบ",
+  "category": "คณิตศาตร์ ป.2",
+  "explanation": "ทำไปจนเที่ยง",
+  "questions": [
+    {
+      "type": "question",
+      "question": "<person1> หิวก๋วยเตี๋ยวเลยไปซื้อก๋วยเตี๋ยวมา 25 บาท ถ้า <person1> มีเงิน 50 บาท <person1> จะเหลือเงินเท่าไหร่",
+      "answer": "<25>"
+    },
+    {
+      "type": "question",
+      "question": "<person1> มีเงิน <num1,int>30</num1> บาท พ่อมี <num2,int>50</num2> บาท \r\n",
+      "answer": "<53-num2>",
+      "choices": [
+        "<num1>",
+        "<num2>",
+        "<num1-5>",
+        "<53-num2>"
+      ]
+    }
+  ],
+  "created_at": "03/10/2024 01:51",
+  "admin_id": {
+    "$oid": "66c710eae22d5a0ca27b52c4"
+  }
+},
+{
+  "_id": {
+    "$oid": "67001751dc36c928d34d05d4"
+  },
+  "quiz_name": "โจทย์5",
+  "category": "คณิตศาตร์ ป.2",
+  "explanation": "เทสเทสเทสเทสเทสเทสเทสเทสเทสเทสเทสเทสเทสเทส",
+  "questions": [
+    {
+      "type": "question",
+      "question": "เห้ยๆ ยังสร้างโจทย์ได้อยู่ไหมเนี่ย <person1> บอกมาดิ 50+50 ได้เท่าไหร่",
+      "answer": "<50>"
+    },
+    {
+      "type": "question",
+      "question": "<person1> มีเงิน <num1,int>30</num1> บาท พ่อมี <num2,int>50</num2> บาท ",
+      "answer": "<53-num2>",
+      "choices": [
+        "<num2>"
+      ]
+    },
+    {
+      "type": "question",
+      "question": "เห้ยๆ ยังสร้างโจทย์ได้อยู่ไหมเนี่ย <person1> บอกมาดิ 500+50 ได้เท่าไหร่",
+      "answer": "<500>"
+    }
+  ],
+  "created_at": "04/10/2024 23:26",
+  "admin_id": {
+    "$oid": "66c710eae22d5a0ca27b52c4"
+  }
+},
+{
+  "_id": {
+    "$oid": "6703fb91e12d46487fa0d790"
+  },
+  "quiz_name": "ช้อยกับเขียน",
+  "category": "คณิตศาตร์ ป.2",
+  "explanation": "วิชาความรู้และลักษณะการเป็นข้าราชการที่ดี จะมีข้อสอบทั้งหมด 25 ข้อ คะแนนเต็ม 50 คะแนน\r\n",
+  "questions": [
+    {
+      "type": "question",
+      "question": "ให้ x = <num1,int><r>1-20</r></num1> และ y = <num2,int><r>1-20</r></num2> คำตอบของ x+y เท่ากับเท่าไหร่?",
+      "answer": "<num1+num2>",
+      "choices": [
+        "<num1>",
+        "<num2>",
+        "<num1+num2>"
+      ]
+    },
+    {
+      "type": "question",
+      "question": "<person1> หิวก๋วยเตี๋ยวเลยไปซื้อก๋วยเตี๋ยวมา 25 บาท ถ้า <person1> มีเงิน 50 บาท <person1> จะเหลือเงินเท่าไหร่",
+      "answer": "<25>"
+    }
+  ],
+  "created_at": "07/10/2024 22:17",
+  "admin_id": {
+    "$oid": "66c710eae22d5a0ca27b52c4"
+  }
+},
+{
+  "_id": {
+    "$oid": "6704dd094afe1f5dcb88d393"
+  },
+  "quiz_name": "เทส",
+  "category": "คณิตศาตร์ ป.2",
+  "explanation": "ทดสอบ",
+  "questions": [
+    {
+      "type": "question",
+      "question": "<person1> หิวก๋วยเตี๋ยวเลยไปซื้อก๋วยเตี๋ยวมา 255 บาท ถ้า <person1> มีเงิน 50 บาท <person1> จะเหลือเงินเท่าไหร่",
+      "answer": "<255>"
+    },
+    {
+      "type": "question",
+      "question": "<person1> มีเงิน <num1,int>30</num1> บาท พ่อมี <num2,int>50</num2> บาท ",
+      "answer": "<53-num2>",
+      "choices": [
+        "<num2>"
+      ]
+    }
+  ],
+  "created_at": "08/10/2024 14:19",
+  "admin_id": {
+    "$oid": "66c710eae22d5a0ca27b52c4"
+  }
+},
+{
+  "_id": {
+    "$oid": "6706f4e473f4c3d096055e1e"
+  },
+  "quiz_name": "ทดสอบ",
+  "category": "คณิตศาสตร์พื้นฐาน",
+  "explanation": "test",
+  "questions": [
+    {
+      "type": "question",
+      "question": "1 สัปดาห์มี 7 วัน แล้ว <num1,int><r>40-80</r></num1> วัน เป็นกี่สัปดาห์ (ไม่มีทศนิยม)",
+      "answer": "<nf(0)><num1/7></nf>",
+      "choices": [
+        "<nf(0)><num1/7></nf>",
+        "<nf(0)><(num1/7)+2></nf>"
+      ]
+    },
+    {
+      "type": "question",
+      "question": "<obj1,a>ราคา<obj1.last>ละ <num1,int><r>7-15</r></num1> มีลูกค้าต้องการซื้อจำนวน <num2,int><r>10-20</r></num2> <obj1.last> คิดเป็นเงินเท่าไหร่",
+      "answer": "<num1*num2>",
+      "choices": [
+        "<(num1*num2)+3>",
+        "<num1*num2>"
+      ]
+    },
+    {
+      "type": "question",
+      "question": "<person1> มีเงิน <num1,int><r>45-50</r></num1> <person2> มีเงิน <num2,int><r>30-40</r></num2> และ<person3> มีเงิน <num3,int><r>40-80</r></num3> หากทั้ง 3 รวมเงินทั้งหมดด้วยกันจะมีเงินเฉลี่ยเท่าไหร่(มีทศนิยม 2 ตำแหน่ง)",
+      "answer": "<nf(2)><(num1+num2+num3)/3></nf>"
+    },
+    {
+      "type": "question",
+      "question": "<person1> มี <obj1,a> อยู่ <num1,int><r>5-10</r></num1><obj1.last> ราคา <num2,int><r>25-35</r></num2> บาท และมี <obj2,a> อยู่ <num3,int><r>6-11</r></num3><obj2.last> ราคา <num4,int><r>30-40</r></num4> หากรวมผลไม้ด้วยกันและคิดราคาทั้งหมดจะรวมเป็นกี่บาท",
+      "answer": "<(num1*num2)+(num3*num4)>"
+    },
+    {
+      "type": "question",
+      "question": "พ่อมีเงิน <num1,int><r>90,120,150,180,210</r></num1>แบ่งให้ลูกทั้ง 3 คนเท่าๆกัน จะได้เงินคนละเท่าไหร่",
+      "answer": "<num1/3>"
+    }
+  ],
+  "created_at": "10/10/2024 04:25",
+  "admin_id": {
+    "$oid": "66c61bca2f0f8243a7fab4a9"
+  }
+},
+{
+  "_id": {
+    "$oid": "67077f9b000ec30887f51efc"
+  },
+  "quiz_name": "ข้อสอบ",
+  "category": "คณิตศาสตร์พื้นฐาน",
+  "explanation": "ทำๆไป",
+  "questions": [
+    {
+      "type": "question",
+      "question": "<obj1,a><num1,int>1</num1><obj1.last>",
+      "answer": "<num1>"
+    },
+    {
+      "type": "question",
+      "question": "1 สัปดาห์มี 7 วัน แล้ว <num1,int><r>40-80</r></num1> วัน เป็นกี่สัปดาห์ (ไม่มีทศนิยม)",
+      "answer": "<nf(0)><num1/7></nf>",
+      "choices": [
+        "<nf(0)><num1/7></nf>",
+        "<nf(0)><(num1/7)+2></nf>",
+        "<nf(0)><(num1/7)-1></nf>",
+        "<nf(0)><(num1/7)+1></nf>"
+      ]
+    }
+  ],
+  "created_at": "10/10/2024 14:17",
+  "admin_id": {
+    "$oid": "66c61bca2f0f8243a7fab4a9"
+  }
+},
+{
+  "_id": {
+    "$oid": "670a0965011ddb626a063b9e"
+  },
+  "quiz_name": "แบบทดสอบ",
+  "category": "คณิตศาตร์ ป.2",
+  "explanation": "10 คะแนน ส่งก่อน 12:00",
+  "questions": [
+    {
+      "type": "question",
+      "question": "จาก 123, 234, 345, 456, . . . จำนวนที่ <num1,int><r>5-10</r></num1> ตรงกับข้อใด",
+      "answer": "<123+(111*num1)>",
+      "choices": [
+        "<123+(111*num1)>",
+        "<123+(111*(num1-1))>",
+        "<123+(111*(num1-2))>"
+      ]
+    },
+    {
+      "type": "question",
+      "question": "ถ้า <person1> ถูก <person2> กระทืบ \r\nคำถามคือใครเจ็บ",
+      "answer": "<person1>"
+    }
+  ],
+  "created_at": "12/10/2024 12:30",
+  "admin_id": {
+    "$oid": "66c710eae22d5a0ca27b52c4"
+  }
+},
+{
+  "_id": {
+    "$oid": "670a122b7454f2f096c7609e"
+  },
+  "quiz_name": "แบบฝึกหัดชั้นปีที่ 2",
+  "category": "คณิตศาตร์ ป.2",
+  "explanation": "sds",
+  "questions": [
+    {
+      "type": "question",
+      "question": "จาก 123, 234, 345, 456, . . . จำนวนที่ <num1,int><r>5-10</r></num1> ตรงกับข้อใด",
+      "answer": "<123+(111*num1)>",
+      "choices": [
+        "<123+(111*num1)>",
+        "<123+(111*(num1-1))>",
+        "<123+(111*(num1-2))>"
+      ]
+    }
+  ],
+  "created_at": "12/10/2024 13:07",
+  "admin_id": {
+    "$oid": "66c710eae22d5a0ca27b52c4"
+  }
+},
+{
+  "_id": {
+    "$oid": "670a9687aa87f92c20c6f934"
+  },
+  "quiz_name": "แบบฝึกหัดชั้นปีที่ 6",
+  "category": "ยากพิเศษ",
+  "explanation": "โจทย์ตึงๆ",
+  "questions": [
+    {
+      "type": "question",
+      "question": "มีหมา <num1,int><r>1,2,3</r></num1> ตัว หายไป <num2,int><r>1,2,3</r></num2> ตัว เหลือหมากี่ตัว",
+      "answer": "<num1-num2>",
+      "choices": [
+        "<num1>",
+        "<num1-num2>",
+        "<num2>"
+      ]
+    }
+  ],
+  "created_at": "12/10/2024 22:32",
+  "admin_id": {
+    "$oid": "66c710eae22d5a0ca27b52c4"
+  }
+},
+{
+  "_id": {
+    "$oid": "670b78a61bb0d28353c152a5"
+  },
+  "quiz_name": "แบบฝึกหัด วิชาคณิตศาสตร์ ป. 1 เรื่อง โจทย์ปัญหาการบวกและลบ",
+  "category": "คณิต ป.1",
+  "explanation": "โจทย์ปัญหาการบวกและลบ ทั้งหมด 2 ข้อเต็ม 10 คะแนน (ข้อละ 5 คะแนน)",
+  "questions": [
+    {
+      "type": "question",
+      "question": "<person1> มีเพื่อนผู้หญิง <num1,int><r>1-10</r></num1> คน เพื่อนผู้ชาย <num2,int><r>2-10</r></num2> คน <person1>มีเพื่อนทั้งหมดกี่คน",
+      "answer": "<num1+num2>"
+    },
+    {
+      "type": "question",
+      "question": "มี <obj1,a> <num1,int><r>1-5</r></num1> <obj1.last> และ <obj2,a> <num2,int><r>3-10</r></num2> <obj2.last> มีผลไม้ทั้งหมดกี่ผล",
+      "answer": "<num1+num2>"
+    }
+  ],
+  "created_at": "13/10/2024 14:37",
+  "admin_id": {
+    "$oid": "66c710eae22d5a0ca27b52c4"
+  }
+},
+{
+  "_id": {
+    "$oid": "670b951e1bb0d28353c152a9"
+  },
+  "quiz_name": "โจทย์8",
+  "category": "ยากพิเศษ",
+  "explanation": "เทส",
+  "questions": [
+    {
+      "type": "question",
+      "question": "มี <obj1,a> <num1,int><r>1-5</r></num1> <obj1.last> และ <obj2,a> <num2,int><r>3-10</r></num2> <obj2.last> มีผลไม้ทั้งหมดกี่ผล",
+      "answer": "<num1+num2>"
+    }
+  ],
+  "created_at": "13/10/2024 16:38",
+  "admin_id": {
+    "$oid": "66c710eae22d5a0ca27b52c4"
+  }
+},
+{
+  "_id": {
+    "$oid": "670b955f1bb0d28353c152aa"
+  },
+  "quiz_name": "เก็บเงิน",
+  "category": "คณิต ป.1",
+  "explanation": "เทส",
+  "questions": [
+    {
+      "type": "question",
+      "question": "<person1> มีเงิน <num1,int>20</num1> บาท ถ้า <person1> เก็บวันทุกวันตั้งแต่วันนี้ ผ่านไป<num2,int><r>3-10</r></num2> วัน\r\nอยากทราบว่า <person1> จะมีเงินกี่บาทหลังผ่านไป <num2,int><r>3-10</r></num2> วัน",
+      "answer": "<num1+(num1*num2)>"
+    }
+  ],
+  "created_at": "13/10/2024 16:39",
+  "admin_id": {
+    "$oid": "66c710eae22d5a0ca27b52c4"
+  }
+},
+{
+  "_id": {
+    "$oid": "670cc21ae378de85f382d5ed"
+  },
+  "quiz_name": "แบบฝึกหัดบทที่ 2",
+  "category": "คณิตศาตร์ ป.2",
+  "explanation": "แบบทดสอบจาก แบบฝึกหัดบทที่ 2 จำนวน 5 ข้อ (เต็ม 10 คะแนน)\r\nปรนัย 2 ข้อ และ อัตนัย 3 ข้อ  ",
+  "questions": [
+    {
+      "type": "question",
+      "question": "มีหมา <num1,int><r>5-10</r></num1> ตัว หายไป <num2,int><r>1,2,3</r></num2> ตัว เหลือหมากี่ตัว",
+      "answer": "<num1-num2>",
+      "choices": [
+        "<num1>",
+        "<123+(111*num1)>"
+      ]
+    },
+    {
+      "type": "question",
+      "question": "จาก 123, 234, 345, 456, . . . จำนวนที่ <num1,int><r>5-10</r></num1> ตรงกับข้อใด",
+      "answer": "<123+(111*num1)>",
+      "choices": [
+        "<num1-num2>",
+        "<123+(111*(num1-1))>"
+      ]
+    },
+    {
+      "type": "question",
+      "question": "<person1> มีเพื่อนผู้หญิง <num1,int><r>1-10</r></num1> คน เพื่อนผู้ชาย <num2,int><r>2-10</r></num2> คน <person1>มีเพื่อนทั้งหมดกี่คน",
+      "answer": "<num1+num2>"
+    },
+    {
+      "type": "question",
+      "question": "มี <obj1,a> <num1,int><r>1-5</r></num1> <obj1.last> และ <obj2,a> <num2,int><r>3-10</r></num2> <obj2.last> มีผลไม้ทั้งหมดกี่ผล",
+      "answer": "<num1+num2>"
+    },
+    {
+      "type": "question",
+      "question": "<person1> มีเงิน <num1,int>20</num1> บาท ถ้า <person1> เก็บวันทุกวันตั้งแต่วันนี้ ผ่านไป<num2,int><r>3-10</r></num2> วันอยากทราบว่า <person1> จะมีเงินกี่บาทหลังผ่านไป <num2,int><r>3-10</r></num2> วัน",
+      "answer": "<num1+(num1*num2)>"
+    }
+  ],
+  "created_at": "14/10/2024 14:02",
+  "admin_id": {
+    "$oid": "66c710eae22d5a0ca27b52c4"
+  }
+},
+{
+  "_id": {
+    "$oid": "670cca6bf4904cad6b87b436"
+  },
+  "quiz_name": "ทดสอบ1",
+  "category": "คณิตศาสตร์พื้นฐาน",
+  "explanation": "ทดสอบ",
+  "questions": [
+    {
+      "type": "question",
+      "question": "1 สัปดาห์มี 7 วัน แล้ว <num1,int><r>40-80</r></num1> วัน เป็นกี่สัปดาห์ (ไม่มีทศนิยม)",
+      "answer": "<nf(0)><num1/7></nf>",
+      "choices": [
+        "<nf(0)><num1/7></nf>",
+        "<nf(0)><(num1/7)+2></nf>",
+        "<nf(0)><(num1/7)-1></nf>",
+        "<nf(0)><(num1/7)+1></nf>"
+      ]
+    },
+    {
+      "type": "question",
+      "question": "<person1> มี <obj1,a> อยู่ <num1,int><r>5-10</r></num1><obj1.last> ราคา <num2,int><r>25-35</r></num2> บาท และมี <obj2,a> อยู่ <num3,int><r>6-11</r></num3><obj2.last> ราคา <num4,int><r>30-40</r></num4> หากรวมผลไม้ด้วยกันและคิดราคาทั้งหมดจะรวมเป็นกี่บาท",
+      "answer": "<(num1*num2)+(num3*num4)>"
+    },
+    {
+      "type": "question",
+      "question": "พ่อมีเงิน <num1,int><r>90,120,150,180,210</r></num1>แบ่งให้ลูกทั้ง 3 คนเท่าๆกัน จะได้เงินคนละเท่าไหร่",
+      "answer": "<num1/3>"
+    }
+  ],
+  "created_at": "14/10/2024 14:38",
+  "admin_id": {
+    "$oid": "66c61bca2f0f8243a7fab4a9"
+  }
+},
+{
+  "_id": {
+    "$oid": "670cccf0e378de85f382d5f1"
+  },
+  "quiz_name": "โจทย์5",
+  "category": "ยากพิเศษ",
+  "explanation": "wsw",
+  "questions": [
+    {
+      "type": "question",
+      "question": "ข้าวสาร <num1,int><r>125,150,175</r></num1> กิโลกรัม แบ่งใส่ถุงละ 5 กิโลกรัมจะแบ่งข้างสารได้กี่ถุง",
+      "answer": "<nf(0)><num1/5></nf>"
+    },
+    {
+      "type": "question",
+      "question": "มีหมา <num1,int><r>6-10</r></num1> ตัว หายไป <num2,int><r>1-6</r></num2> ตัว เหลือหมากี่ตัว",
+      "answer": "<num1-num2>",
+      "choices": [
+        "<num1-num2>"
+      ]
+    }
+  ],
+  "created_at": "14/10/2024 14:49",
+  "admin_id": {
+    "$oid": "66c710eae22d5a0ca27b52c4"
+  }
+},
+{
+  "_id": {
+    "$oid": "670cce10e378de85f382d5f5"
+  },
+  "quiz_name": "sads",
+  "category": "คณิตศาตร์ ป.2",
+  "explanation": "sds",
+  "questions": [
+    {
+      "type": "question",
+      "question": "ข้าวสาร <num1,int><r>125,150,175</r></num1> กิโลกรัม แบ่งใส่ถุงละ 5 กิโลกรัมจะแบ่งข้างสารได้กี่ถุง",
+      "answer": "<num1/5>"
+    },
+    {
+      "type": "question",
+      "question": "มี <obj1,a> <num1,int><r>1-5</r></num1> <obj1.last> และ <obj2,a> <num2,int><r>3-10</r></num2> <obj2.last> มีผลไม้ทั้งหมดกี่ผล",
+      "answer": "<num1+num2>"
+    }
+  ],
+  "created_at": "14/10/2024 14:53",
+  "admin_id": {
+    "$oid": "66c710eae22d5a0ca27b52c4"
+  }
+},
+{
+  "_id": {
+    "$oid": "670ccfc8e378de85f382d5f9"
+  },
+  "quiz_name": "การคูณ",
+  "category": "ยากพิเศษ",
+  "explanation": "จงตอบคำถามต่อไปนี้",
+  "questions": [
+    {
+      "type": "question",
+      "question": "<num1,int><r>100-500</r></num1> × <num2,int><r>10-60</r></num2> = ",
+      "answer": "<num1*num2>"
+    },
+    {
+      "type": "question",
+      "question": "<num1,int><r>100-500</r></num1> × <num2,int><r>10-60</r></num2> = ",
+      "answer": "<num1*num2>"
+    },
+    {
+      "type": "question",
+      "question": "<num1,int><r>100-500</r></num1> × <num2,int><r>10-60</r></num2> = ",
+      "answer": "<num1*num2>"
+    },
+    {
+      "type": "question",
+      "question": "<num1,int><r>100-500</r></num1> × <num2,int><r>10-60</r></num2> = ",
+      "answer": "<num1*num2>"
+    },
+    {
+      "type": "question",
+      "question": "<num1,int><r>100-500</r></num1> × <num2,int><r>10-60</r></num2> = ",
+      "answer": "<num1*num2>"
+    }
+  ],
+  "created_at": "14/10/2024 15:01",
+  "admin_id": {
+    "$oid": "66c710eae22d5a0ca27b52c4"
+  }
+},
+{
+  "_id": {
+    "$oid": "670d5afcc7909d8bdb7d935b"
+  },
+  "quiz_name": "ทดสอบการแสดงทศนิยม",
+  "category": "คณิต ป.6",
+  "explanation": "ทดสอบทศนิยม",
+  "questions": [
+    {
+      "type": "question",
+      "question": "ค่าเฉลี่ยของ <num1,int><r>10-20</r></num1>, <num2,int><r>10-30</r></num2>, <num3,int><r>10-30</r></num3> และ <num4,int><r>10-30</r></num4> คือเท่าไหร่",
+      "answer": "<nf(0)><(num1+num2+num3+num4)/4></nf>"
+    },
+    {
+      "type": "question",
+      "question": "ค่าเฉลี่ยของ <num1,int><r>10-20</r></num1>, <num2,int><r>10-30</r></num2>, <num3,int><r>10-30</r></num3> และ <num4,int><r>10-30</r></num4> คือเท่าไหร่",
+      "answer": "<nf(1)><(num1+num2+num3+num4)/4></nf>"
+    },
+    {
+      "type": "question",
+      "question": "ค่าเฉลี่ยของ <num1,int><r>10-20</r></num1>, <num2,int><r>10-30</r></num2>, <num3,int><r>10-30</r></num3> และ <num4,int><r>10-30</r></num4> คือเท่าไหร่",
+      "answer": "<nf(2)><(num1+num2+num3+num4)/4></nf>"
+    }
+  ],
+  "created_at": "15/10/2024 00:55",
+  "admin_id": {
+    "$oid": "66c710eae22d5a0ca27b52c4"
+  }
+},
+{
+  "_id": {
+    "$oid": "670e0c9975187f6aeafc42c4"
+  },
+  "quiz_name": "เทสคน",
+  "category": "ยากพิเศษ",
+  "explanation": "ทดสอบคน",
+  "questions": [
+    {
+      "type": "question",
+      "question": "<person1> เจอ <obj1,a> ขนาด <obj2,size> ใน <obj3,place> <person1> ประหลาดใจจึงถาม <person2> ว่าทำไมถึงมี <obj1,a> ใน <obj3,place> ได้ <person2> บอกเป็นฝีมือของ <person3> คำถามคือ เป็นฝีมือใคร ",
+      "answer": "<person3>"
+    }
+  ],
+  "created_at": "15/10/2024 13:32",
+  "admin_id": {
+    "$oid": "66c710eae22d5a0ca27b52c4"
+  }
+},
+{
+  "_id": {
+    "$oid": "670e2e7875187f6aeafc42c7"
+  },
+  "quiz_name": "ทดสอบการออกข้อสอบ",
+  "category": "ยากพิเศษ",
+  "explanation": "เทส",
+  "questions": [
+    {
+      "type": "question",
+      "question": "ค่าเฉลี่ยของ <num1,int><r>10,15,20</r></num1>, <num2,int><r>10-30</r></num2>, <num3,int><r.odd>1-20</r></num3> และ <num4,int><r.even>1-20</r></num4> คือเท่าไหร่",
+      "answer": "<nf(1)><(num1+num2+num3+num4)/4></nf>"
+    }
+  ],
+  "created_at": "15/10/2024 15:57",
+  "admin_id": {
+    "$oid": "66c710eae22d5a0ca27b52c4"
+  }
+},
+{
+  "_id": {
+    "$oid": "670e857a9ae7962878f2ee0d"
+  },
+  "quiz_name": "36",
+  "category": "ยากพิเศษ",
+  "explanation": "33",
+  "questions": [
+    {
+      "type": "question",
+      "question": "ถ้าเงิน <num1,int><r>1-5</r></num1> บาท แล้วเงินทั้ง <num1>",
+      "answer": "<num1>"
+    }
+  ],
+  "created_at": "15/10/2024 22:08",
+  "admin_id": {
+    "$oid": "66c710eae22d5a0ca27b52c4"
+  }
+},
+{
+  "_id": {
+    "$oid": "670e8d359ae7962878f2ee0f"
+  },
+  "quiz_name": "ลดราคา",
+  "category": "ยากพิเศษ",
+  "explanation": "ทำข้อสอบ",
+  "questions": [
+    {
+      "type": "question",
+      "question": "<person1>ซื้อ<obj1,a>มา 3,000 บาท โดยใช้บัตรส่วนลด<num1,int><r>10,15,20,30</r></num1>% อยากทราบว่าราคาเต็มของ<obj1,a>คือเท่าไหร่",
+      "answer": "<3,000/((100-num1)/100)>"
+    }
+  ],
+  "created_at": "15/10/2024 22:41",
+  "admin_id": {
+    "$oid": "66c710eae22d5a0ca27b52c4"
+  }
+},
+{
+  "_id": {
+    "$oid": "670e8d6c9ae7962878f2ee10"
+  },
+  "quiz_name": "คูปองลดราคา",
+  "category": "ยากพิเศษ",
+  "explanation": "ทดสอบ",
+  "questions": [
+    {
+      "type": "question",
+      "question": "<person1>ซื้อ<obj1,a>มา 3,000 บาท โดยใช้บัตรส่วนลด<num1,int><r>10,15,20,30</r></num1>% อยากทราบว่าราคาเต็มของ<obj1,a>คือเท่าไหร่",
+      "answer": "<nf(0)><3000/((100-num1)/100)></nf>"
+    }
+  ],
+  "created_at": "15/10/2024 22:42",
+  "admin_id": {
+    "$oid": "66c710eae22d5a0ca27b52c4"
+  }
+},
+{
+  "_id": {
+    "$oid": "670ea0eb77e7c06ae2d0ea2c"
+  },
+  "quiz_name": "ข้อสอบ1",
+  "category": "คณิต ป.1",
+  "explanation": "ทดสอบ",
+  "questions": [
+    {
+      "type": "question",
+      "question": "<num1,int>50</num1> × <num2,int><r>4-9</r></num2>",
+      "answer": "<num1*num2>"
+    },
+    {
+      "type": "question",
+      "question": "<num1,int><r>20,30,40</r></num1> + <num2,int><r>10,20</r></num2>  ÷ <num3,int>5</num3>",
+      "answer": "<(num1+num2)/num3>",
+      "choices": []
+    }
+  ],
+  "created_at": "16/10/2024 00:05",
+  "admin_id": {
+    "$oid": "66c710eae22d5a0ca27b52c4"
+  }
+},
+{
+  "_id": {
+    "$oid": "670eaa379ae7962878f2ee12"
+  },
+  "quiz_name": "บวกลบคูณหาร",
+  "category": "ยากพิเศษ",
+  "explanation": "dfdf",
+  "questions": [
+    {
+      "type": "question",
+      "question": "<person1> <person2> <person3> <person4> <person5> <person6>\r\n<person7> <person8>",
+      "answer": "person7"
+    },
+    {
+      "type": "question",
+      "question": "<person1> <person2> <person3> <person4> <person5> <person6>\r\n<person7> <person8>",
+      "answer": "person7"
+    }
+  ],
+  "created_at": "16/10/2024 00:45",
+  "admin_id": {
+    "$oid": "66c710eae22d5a0ca27b52c4"
+  }
+},
+{
+  "_id": {
+    "$oid": "670eb1d49ae7962878f2ee14"
+  },
+  "quiz_name": "บวกลบคูณหาร",
+  "category": "คณิต ป.6",
+  "explanation": "หห",
+  "questions": [
+    {
+      "type": "question",
+      "question": "<person1> ทักทาย <person2> ",
+      "answer": "person2"
+    }
+  ],
+  "created_at": "16/10/2024 01:17",
+  "admin_id": {
+    "$oid": "66c710eae22d5a0ca27b52c4"
+  }
+},
+{
+  "_id": {
+    "$oid": "670ee6a177e7c06ae2d0ea2f"
+  },
+  "quiz_name": "ข้อสอบ0",
+  "category": "คณิต ป.1",
+  "explanation": "",
+  "questions": [
+    {
+      "type": "question",
+      "question": "<person1>ซื้อ<obj1,a>มา 3,000 บาท โดยใช้บัตรส่วนลด<num1,int><r>10,15,20,30</r></num1>% อยากทราบว่าราคาเต็มของ<obj1,a>คือเท่าไหร่",
+      "answer": "<3000/((100-num1)/100)>"
+    },
+    {
+      "type": "question",
+      "question": "<num1,int>50</num1> × <num2,int><r>4-9</r></num2>",
+      "answer": "<num1*num2>"
+    }
+  ],
+  "created_at": "16/10/2024 05:03",
+  "admin_id": {
+    "$oid": "66c710eae22d5a0ca27b52c4"
+  }
+},
+{
+  "_id": {
+    "$oid": "670f3ebf6d0c120e28ef334a"
+  },
+  "quiz_name": "แบบทดสอบ บวก ลบ คูณ และ หาร",
+  "category": "คณิต ป.1",
+  "explanation": "จงตอบคำถามต่อไปนี้",
+  "questions": [
+    {
+      "type": "question",
+      "question": "<num1,int><r>200-2500</r></num1> + <num2,int><r>200-2500</r></num2>",
+      "answer": "<num1+num2>"
+    },
+    {
+      "type": "question",
+      "question": "<num1,int><r>200-2500</r></num1> + <num2,int><r>200-2500</r></num2>",
+      "answer": "<num1+num2>"
+    },
+    {
+      "type": "question",
+      "question": "<num1,int><r>200-2500</r></num1> + <num2,int><r>200-2500</r></num2>",
+      "answer": "<num1+num2>"
+    },
+    {
+      "type": "question",
+      "question": "<num1,int><r>30-150</r></num1> - <num2,int><r>20-150</r></num2>",
+      "answer": "<num1-num2>"
+    },
+    {
+      "type": "question",
+      "question": "<num1,int><r>30-150</r></num1> - <num2,int><r>20-150</r></num2>",
+      "answer": "<num1-num2>"
+    },
+    {
+      "type": "question",
+      "question": "<num1,int><r>1-200</r></num1> × <num2,int><r>1-300</r></num2> ",
+      "answer": "<num1*num2>"
+    },
+    {
+      "type": "question",
+      "question": "<num1,int><r>1-200</r></num1> × <num2,int><r>1-300</r></num2> ",
+      "answer": "<num1*num2>"
+    },
+    {
+      "type": "question",
+      "question": "<num1,int><r>1-200</r></num1> × <num2,int><r>1-300</r></num2> ",
+      "answer": "<num1*num2>"
+    },
+    {
+      "type": "question",
+      "question": "<num1,int><r>50-500</r></num1> ÷ <num2,int><r>5-25</r></num2>",
+      "answer": "<nf(0)><num1/num2></nf>"
+    },
+    {
+      "type": "question",
+      "question": "<num1,int><r>50-500</r></num1> ÷ <num2,int><r>5-25</r></num2>",
+      "answer": "<nf(0)><num1/num2></nf>"
+    }
+  ],
+  "created_at": "16/10/2024 11:19",
+  "admin_id": {
+    "$oid": "66c710eae22d5a0ca27b52c4"
+  }
+},
+{
+  "_id": {
+    "$oid": "670f6b556d0c120e28ef334e"
+  },
+  "quiz_name": "เดะลลบ",
+  "category": "หห",
+  "explanation": "ดด",
+  "questions": [
+    {
+      "type": "question",
+      "question": "<num1,int><r>1,2,3</r></num1><num2,int><r>1,2,3</r></num2><num3,int><r>1,2,3</r></num3><num4,int><r>1,2,3</r></num4><num5,int><r>1,2,3</r></num5><num6,int><r>1,2,3</r></num6><num7,int><r>1,2,3</r></num7><num8,int><r>1,2,3</r></num8><num9,int><r>1,2,3</r></num9><num10,int><r>1,2,3</r></num10><num11,int><r>1,2,3</r></num11><num12,int><r>1,2,3</r></num12><num13,int><r>1,2,3</r></num13><num14,int><r>1,2,3</r></num14><num15,int><r>1,2,3</r></num15><num16,int><r>1,2,3</r></num16><num17,int><r>1,2,3</r></num17><num18,int><r>1,2,3</r></num18><num19,int><r>1,2,3</r></num19><num20,int><r>1,2,3</r></num20>",
+      "answer": "<num1+num2+num3+num4+num5+num6+num7+num8+num9+num10+num11+num12+num13+num14+num15+num16+num17+num18>"
+    },
+    {
+      "type": "question",
+      "question": "<num1,int><r>1,2,3</r></num1><num2,int><r>1,2,3</r></num2><num3,int><r>1,2,3</r></num3><num4,int><r>1,2,3</r></num4><num5,int><r>1,2,3</r></num5><num6,int><r>1,2,3</r></num6><num7,int><r>1,2,3</r></num7><num8,int><r>1,2,3</r></num8><num9,int><r>1,2,3</r></num9><num10,int><r>1,2,3</r></num10><num11,int><r>1,2,3</r></num11><num12,int><r>1,2,3</r></num12><num13,int><r>1,2,3</r></num13><num14,int><r>1,2,3</r></num14><num15,int><r>1,2,3</r></num15><num16,int><r>1,2,3</r></num16><num17,int><r>1,2,3</r></num17><num18,int><r>1,2,3</r></num18><num19,int><r>1,2,3</r></num19><num20,int><r>1,2,3</r></num20>",
+      "answer": "<num1+num2+num3+num4+num5+num6+num7+num8+num9+num10+num11+num12+num13+num14+num15+num16+num17+num18>"
+    }
+  ],
+  "created_at": "16/10/2024 14:29",
+  "admin_id": {
+    "$oid": "66c710eae22d5a0ca27b52c4"
+  }
+},
+{
+  "_id": {
+    "$oid": "670f83c66d0c120e28ef3350"
+  },
+  "quiz_name": "เทสสส",
+  "category": "คณิต ป.1",
+  "explanation": "",
+  "questions": [
+    {
+      "type": "question",
+      "question": "ข้าวสาร <num1,int><r>125,150,175</r></num1> กิโลกรัม แบ่งใส่ถุงละ 5 กิโลกรัมจะแบ่งข้างสารได้กี่ถุง",
+      "answer": "<num1/5>"
+    }
+  ],
+  "created_at": "16/10/2024 16:13",
+  "admin_id": {
+    "$oid": "66c710eae22d5a0ca27b52c4"
+  }
+},
+{
+  "_id": {
+    "$oid": "670f84646d0c120e28ef3351"
+  },
+  "quiz_name": "เทสช้อยส์",
+  "category": "คณิต ป.6",
+  "explanation": "เทสสส",
+  "questions": [
+    {
+      "type": "question",
+      "question": "จาก 123, 234, 345, 456, . . . จำนวนที่ <num1,int><r>5-10</r></num1> ตรงกับข้อใด",
+      "answer": "<123+(111*num1)>",
+      "choices": [
+        "<123+(111*num1)>",
+        "<123+(111*(num1-1))>",
+        "<123+(111*(num1-2))>"
+      ]
+    },
+    {
+      "type": "question",
+      "question": "จาก 123, 234, 345, 456, . . . จำนวนที่ <num1,int><r>5-10</r></num1> ตรงกับข้อใด",
+      "answer": "<123+(111*num1)>",
+      "choices": [
+        "<123+(111*num1)>",
+        "<123+(111*(num1-1))>",
+        "<123+(111*(num1-2))>"
+      ]
+    },
+    {
+      "type": "question",
+      "question": "ให้ x = <num1,int><r>1-20</r></num1> และ y = <num2,int><r>1-20</r></num2> คำตอบของ x+y เท่ากับเท่าไหร่?",
+      "answer": "<num1+num2>",
+      "choices": [
+        "<num1>",
+        "<num2>",
+        "<num1+num2>"
+      ]
+    },
+    {
+      "type": "question",
+      "question": "ให้ x = <num1,int><r>1-20</r></num1> และ y = <num2,int><r>1-20</r></num2> คำตอบของ x+y เท่ากับเท่าไหร่?",
+      "answer": "<num1+num2>",
+      "choices": [
+        "<num1>",
+        "<num2>",
+        "<num1+num2>"
+      ]
+    },
+    {
+      "type": "question",
+      "question": "มีหมา <num1,int><r>6-10</r></num1> ตัว หายไป <num2,int><r>1-6</r></num2> ตัว เหลือหมากี่ตัว",
+      "answer": "<num1-num2>",
+      "choices": [
+        "<num1>",
+        "<num1-num2>",
+        "<num1-num2-2>"
+      ]
+    }
+  ],
+  "created_at": "16/10/2024 16:16",
+  "admin_id": {
+    "$oid": "66c710eae22d5a0ca27b52c4"
+  }
+}]

@@ -1,17 +1,18 @@
-import re
-from bson import ObjectId
 from flask import Flask, render_template, request, redirect, url_for, flash ,session, jsonify 
 from flask_wtf import FlaskForm
 from wtforms import TextAreaField, StringField, SubmitField, FieldList, FormField
 from wtforms.validators import DataRequired
 from pymongo import MongoClient
+import re
 from datetime import datetime, timezone, timedelta
-from bson import ObjectId, errors  # เพิ่ม errors สำหรับจัดการข้อผิดพลาด ObjectId
+from bson import ObjectId, errors  
 import random
 import bcrypt
 from functools import wraps
 
 
+#พรีวิทยานิพนธ์เสร็จละ feedback คือ ข้อช้อยส์จะมีจุดอ่อนใหญ่อยู่คือเฉลย ซึ่งถ้าใช้ template เดียว 5 ครั้ง 
+#(ต่อ) สุดท้ายคำตอบก็คือ ช้อยส์เดิม เช่น ช้อย์ a. จะถูกทั้ง 5 ข้อที่ใช้เทมเพลตเดียวกัน เพราะงั้นกำหนดให้เฉลยคือรูป
 
 
 app = Flask(__name__)
@@ -257,7 +258,7 @@ def logout():
 def index():
     form = NameForm()
 
-    # ดึงหมวดหมู่ทั้งหมดจาก MongoDB
+    # ดึงหมวดหมู่จากฐานข้อมูล
     existing_categories = questions_template_collection.distinct('category')
 
     if form.validate_on_submit():
@@ -1133,7 +1134,7 @@ def update_score():
 
 @app.route('/data_variables', methods=['GET'])
 def data_variables():
-    # ดึงข้อมูลจาก MongoDB collections ทั้ง p_name และ obj
+    # ดึงข้อมูลจาก p_name และ obj
     p_name_data = list(p_name_collection.find())  # ดึงข้อมูล p_name ทั้งหมด
     obj_data = list(obj_db.find())  # ดึงข้อมูล obj ทั้งหมด
     
@@ -1223,13 +1224,13 @@ def edit_object(object_id):
 def process_question_template(template):
     question_text = template
     
-    # Patterns for numbers, operators, persons, and objects
+    # รูปแบบของ  numbers, operators, persons, และ objects
     num_pattern = re.compile(r'<num(\d+),(int|float)>(.*?)</num\1>')
     opt_pattern = re.compile(r'<opt>(.*?)</opt>')
     person_pattern = re.compile(r'<person(\d+)>')
     obj_pattern = re.compile(r'<obj(\d+),(.*?)>')
 
-    # Dictionaries to store extracted values
+    # Dictionaries สำหรับเก็บ values
     num_dict = {}
     opt_dict = {}
     person_dict = {}
